@@ -3,7 +3,7 @@
   color: white;
   text-align: center;
   padding: 20px 0;
-  position: absolute; /* Change to absolute positioning */
+  position: relative; /* Change to absolute positioning */
   bottom: 0;
   width: 100%;
 }
