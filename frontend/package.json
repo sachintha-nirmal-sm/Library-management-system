@@ -12,6 +12,7 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-icons": "^5.5.0",
+    "react-qr-reader": "^3.0.0-beta-1",
     "react-router-dom": "^7.3.0",
     "react-scripts": "5.0.1",
     "react-slick": "^0.30.3",
@@ -42,5 +43,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "typescript": "^5.8.2"
   }
 }
