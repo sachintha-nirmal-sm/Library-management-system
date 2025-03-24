@@ -3,13 +3,17 @@ nav {
     background-color: var(--primary-color);
     padding: 15px 20px;
     position: relative;
+    width: 100%; /* Ensure the navbar spans the full width */
+
     z-index: 2;
 }
 
 ul {
     list-style: none;
     display: flex;
-    justify-content: space-between; /* Aligns items to the edges */
+    justify-content: center; /* Center aligns items */
+
+
     gap: 20px;
     margin: 0;
     padding: 0;
@@ -21,7 +25,8 @@ li {
 
 /* Style for the login button */
 .navbar li:last-child {
-    margin-left: auto; /* Aligns the login button to the right */
+    margin-left: 20px; /* Adds space between the centered items and the login button */
+
 }
 
 a {
