@@ -1,0 +1,253 @@
+/* Main container */
+.mood-reader-container {
+    max-width: 800px;
+    margin: 100px auto 0; /* Added margin-top to move it down */
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+  
+  /* Header */
+  .header {
+    background-color: #1a73e8;
+    color: white;
+    padding: 16px;
+    text-align: center;
+  }
+  
+  .header h1 {
+    margin: 0;
+    font-size: 24px;
+    font-weight: bold;
+  }
+  
+  /* Content area */
+  .content-area {
+    min-height: 400px;
+    padding: 20px;
+  }
+  
+  /* Welcome screen */
+  .welcome-screen {
+    text-align: center;
+    padding: 16px;
+  }
+  
+  .welcome-screen h2 {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 24px;
+    color: #202124;
+  }
+  
+  .welcome-screen p {
+    margin-bottom: 16px;
+    color: #5f6368;
+    line-height: 1.5;
+  }
+  
+  /* Button styles */
+  .primary-button {
+    background-color: #1a73e8;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 24px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+  
+  .primary-button:hover {
+    background-color: #0d62d6;
+  }
+  
+  /* Question container */
+  .question-container {
+    padding: 16px;
+  }
+  
+  .progress-bar-container {
+    margin-bottom: 24px;
+  }
+  
+  .progress-bar {
+    display: flex;
+    margin-bottom: 8px;
+  }
+  
+  .progress-segment {
+    height: 8px;
+    flex: 1;
+    margin: 0 4px;
+    background-color: #e0e0e0;
+    border-radius: 4px;
+  }
+  
+  .progress-segment.active {
+    background-color: #1a73e8;
+  }
+  
+  .progress-text {
+    text-align: right;
+    font-size: 14px;
+    color: #5f6368;
+    margin: 0;
+  }
+  
+  .question-text {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 24px;
+    color: #202124;
+  }
+  
+  .options-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .option-button {
+    width: 100%;
+    text-align: left;
+    padding: 16px;
+    background-color: rgba(24, 40, 115, 0.721);
+    border: 1px solid #dadce0;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.2s, border-color 0.2s;
+  }
+  
+  .option-button:hover {
+    background-color: #031103b3;
+    border-color: #1a73e8;
+  }
+  
+  /* Loading screen */
+  .loading-screen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 32px;
+    height: 300px;
+  }
+  
+  .loader {
+    width: 48px;
+    height: 48px;
+    border: 4px solid #1a73e8;
+    border-top: 4px solid transparent;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 16px;
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  
+  /* Results container */
+  .results-container {
+    padding: 16px;
+  }
+  
+  .results-container h2 {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 16px;
+    color: #202124;
+  }
+  
+  .mood-description {
+    margin-bottom: 24px;
+    color: #5f6368;
+  }
+  
+  .mood-highlight {
+    font-weight: 600;
+    color: #1a73e8;
+  }
+  
+  .book-grid {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    gap: 24px;
+    margin-bottom: 32px;
+  }
+  
+  @media (min-width: 768px) {
+    .book-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  
+  @media (min-width: 992px) {
+    .book-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  
+  .book-card {
+    border: 1px solid #dadce0;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  
+  .book-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .book-cover {
+    width: 100%;
+    height: 256px;
+    object-fit: cover;
+  }
+  
+  .book-info {
+    padding: 16px;
+  }
+  
+  .book-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 4px;
+    color: #202124;
+  }
+  
+  .book-author {
+    font-size: 14px;
+    color: #5f6368;
+    margin-bottom: 8px;
+  }
+  
+  .book-themes, .book-tone {
+    font-size: 14px;
+    margin-bottom: 4px;
+    color: #5f6368;
+  }
+  
+  .info-label {
+    font-weight: 500;
+    color: #202124;
+  }
+  
+  .no-results {
+    text-align: center;
+    margin-bottom: 24px;
+    color: #5f6368;
+  }
+  
+  .restart-container {
+    text-align: center;
+  }
