@@ -243,10 +243,13 @@
 
 /* Navigation Styles - Moved outside media query */
 .nav-container {
-  position: fixed;
+  position: sticky;
   top: 0;
   width: 100%;
-  padding: 1.5rem 5%;
+  padding-left: 0;
+  padding-right: 0;
+  padding-top: 15px;
+  padding-bottom: 15px;
   background: rgba(255, 255, 255, 0.85);
   backdrop-filter: blur(12px);
   z-index: 1000;
@@ -259,6 +262,7 @@
 .nav-logo {
   font-size: 1.8rem;
   font-weight: 700;
+  margin-left: 20px;
   color: var(--primary-color);
   text-decoration: none;
   letter-spacing: -0.5px;
@@ -268,7 +272,7 @@
   display: flex;
   gap: 2.5rem;
   list-style: none;
-  margin: 0;
+  margin-right: 20px;
   padding: 0;
 }
 
