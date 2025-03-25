@@ -13,7 +13,7 @@ import Sidebar from "./components/Sidebar";
 import LibraryManagement from "./pages/dashboard";
 import BorrowBooksForm from "./pages/BorrowBooksForm";
 import ReturnBooksForm from "./pages/ReturnBooksForm";
-import Transactions from "./pages/transactions";
+// import Transactions from "./pages/transactions";
 import UpdateBorrowedBookForm from"./pages/BorrowUpdate";
 
 function App() {
@@ -46,7 +46,7 @@ function MainContent() {
         <Route path="/dashboard" element={<LibraryManagement />} />
         <Route path="/borrow" element={<BorrowBooksForm />} />
         <Route path="/returns" element={<ReturnBooksForm />} />
-        <Route path="/transactions" element={<Transactions />} />
+        {/* <Route path="/transactions" element={<Transactions />} /> */}
         <Route path="/Borrowerupdate"element={<UpdateBorrowedBookForm/>}/>
       </Routes>
       {!hideNavbarAndFooter && <Footer />}
