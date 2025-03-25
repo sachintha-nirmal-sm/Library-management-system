@@ -1,0 +1,135 @@
+.signup-container {
+  width: 40%;
+  margin: auto;
+  padding: 20px;
+  background-color: #6e8d9f;
+  border: 2px solid #0a0501;
+  border-radius: 10px;
+  text-align: center;
+  font-family: Arial, sans-serif;
+}
+
+h2 {
+  color: #faf8fc;
+}
+
+.profile-section {
+  margin-bottom: 15px;
+}
+
+.profile-photo {
+  display: inline-block;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid #150921;
+  cursor: pointer;
+  position: relative;
+}
+
+.profile-photo input {
+  display: none;
+}
+
+.profile-photo img,
+.profile-photo .placeholder {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  color: #6b21a8;
+  background: #ddd;
+}
+
+.form-group {
+  margin-bottom: 15px;
+  text-align: left;
+}
+
+.form-group label {
+  display: block;
+  font-size: 14px;
+  font-weight: bold;
+  color: #ffffff;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 8px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  background-color: #f5f5f5;
+}
+
+/* Email Input Styling */
+.form-group input[type="email"] {
+  border: 1px solid #0077b6;
+}
+
+/* Placeholder text for inputs */
+.form-group input::placeholder {
+  color: #666;
+  font-size: 13px;
+}
+
+.payment-method {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin: 15px 0;
+}
+
+.payment-method label {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.upload-slip {
+  margin-top: 10px;
+}
+
+.upload-slip input {
+  margin-top: 5px;
+}
+
+.card-details {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+  margin-top: 15px;
+}
+
+.otp-button {
+  background-color: #0077b6;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.otp-button:hover {
+  background-color: #005b8e;
+}
+
+.confirm-button {
+  background: linear-gradient(135deg, #008b19, #054513);
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 15px;
+  transition: background 0.3s, transform 0.2s;
+}
+
+.confirm-button:hover {
+  background: linear-gradient(135deg, #600000, #cc0000);
+  transform: scale(1.05);
+}
