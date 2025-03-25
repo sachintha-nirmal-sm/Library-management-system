@@ -6,6 +6,8 @@
   position: relative; /* Change to absolute positioning */
   bottom: 0;
   width: 100%;
+  z-index: 1;
+
 }
 
 .footer-links {
