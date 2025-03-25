@@ -1,0 +1,296 @@
+:root {
+  --primary-color: #2a6fdb; /* Default primary color */
+  --accent-color: #5ca2e0; /* Default accent color */
+  --transition: all 0.3s ease; /* Added transition variable */
+}
+
+/* Home1.css */
+/* ... Previous styles ... */
+
+/* Enhanced Section Styling */
+
+/* Unified Section Styling */
+.services-section,
+.about-section,
+.contact-section {
+  padding: 8rem 2rem;
+  margin: 4rem 0;
+  border-radius: 30px;
+  backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease; /* Added transition for smooth effects */
+}
+
+/* Section Background Patterns */
+.services-section::before,
+.about-section::before,
+.contact-section::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    45deg,
+    transparent 45%,
+    rgba(42, 111, 219, 0.1) 50%,
+    transparent 55%
+  );
+  animation: sectionGlow 20s linear infinite;
+  z-index: -1;
+  opacity: 0.3;
+}
+
+@keyframes sectionGlow {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Services Section Enhancements */
+.services-section {
+  background: radial-gradient(
+    circle at center,
+    rgba(42, 111, 219, 0.08) 0%,
+    rgba(255, 255, 255, 0.03) 100%
+  );
+}
+
+.service-card {
+  padding: 2.5rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 20px;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Added shadow for depth */
+}
+
+.service-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 15px 30px rgba(42, 111, 219, 0.2);
+}
+
+.service-icon {
+  font-size: 3.5rem;
+  background: linear-gradient(to right, #2a6fdb, #5ca2e0);
+  -webkit-background-clip: text;
+  background-clip: text; /* Ensure this is included for compatibility */
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 4px 6px rgba(42, 111, 219, 0.2));
+}
+
+/* About Section Enhancements */
+.about-section {
+  background: linear-gradient(
+    135deg,
+    rgba(42, 111, 219, 0.08),
+    rgba(255, 255, 255, 0.03)
+  );
+}
+
+.about-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+  align-items: center;
+}
+
+.about-text {
+  font-size: 1.1rem;
+  line-height: 1.8;
+  color: rgba(59, 125, 224, 0.9);
+  position: relative;
+  padding-left: 2rem;
+  border-left: 3px solid var(--primary-blue);
+}
+
+/* Contact Section Enhancements */
+.contact-section {
+  background: radial-gradient(
+    circle at center,
+    rgba(26, 54, 95, 0.15) 0%,
+    rgba(255, 255, 255, 0.03) 100%
+  );
+}
+
+.contact-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+}
+
+.contact-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.info-item {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 1.5rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 15px;
+  transition: all 0.3s ease;
+  border: 1px solid transparent; /* Added border for hover effect */
+}
+
+.info-item:hover {
+  border-color: var(--primary-blue); /* Highlight border on hover */
+}
+
+.info-item:hover {
+  transform: translateX(10px);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.info-icon {
+  font-size: 1.8rem;
+  color: var(--secondary-blue);
+  min-width: 40px;
+}
+
+.contact-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.contact-form input,
+.contact-form textarea {
+  background: rgba(255, 255, 255, 0.55) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  padding: 1.2rem;
+  border-radius: 12px;
+  color: rgb(46, 119, 193);
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Added shadow for input fields */
+}
+
+.contact-form input::placeholder,
+.contact-form textarea::placeholder {
+  color: gray; /* Change this to your preferred color */
+  opacity: 1; /* Ensures the color is fully visible */
+}
+
+.contact-form input:focus,
+.contact-form textarea:focus {
+  border-color: var(--primary-blue) !important;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+}
+
+.submit-button {
+  background: linear-gradient(135deg, #2a6fdb, #5ba4e6);
+  padding: 1.2rem 2.5rem;
+  border: none;
+  border-radius: 12px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.submit-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 15px rgba(42, 111, 219, 0.3);
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .about-content,
+  .contact-container {
+    grid-template-columns: 1fr;
+    gap: 3rem;
+  }
+
+  .services-section,
+  .about-section,
+  .contact-section {
+    padding: 4rem 1.5rem;
+    margin: 2rem 0;
+  }
+
+  .service-card {
+    padding: 2rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .about-text {
+    padding-left: 1rem;
+    border-left-width: 2px;
+  }
+
+  .info-item {
+    padding: 1rem;
+  }
+
+  .contact-form input,
+  .contact-form textarea {
+    padding: 1rem;
+  }
+  
+  /* Navigation responsiveness */
+  .nav-links {
+    display: none; /* Hide navigation links on mobile */
+  }
+}
+
+/* Navigation Styles - Moved outside media query */
+.nav-container {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  padding: 1.5rem 5%;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  z-index: 1000;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+}
+
+.nav-logo {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--primary-color);
+  text-decoration: none;
+  letter-spacing: -0.5px;
+}
+
+.nav-links {
+  display: flex;
+  gap: 2.5rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.nav-links a {
+  text-decoration: none;
+  color: var(--primary-color);
+  font-weight: 500;
+  position: relative;
+  transition: var(--transition);
+}
+
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: var(--accent-color);
+  transition: var(--transition);
+}
+
+.nav-links a:hover::after {
+  width: 100%;
+}
