@@ -43,8 +43,18 @@ const IForme = () => {
     }));
   }, []);
 
+  // Regular expression to allow only letters and spaces
+  const letterOnlyRegex = /^[A-Za-z\s]+$/;
+
   const handleChange = (e) => {
-    setBook({ ...book, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+
+    // If the field is "name" or "author", validate the input
+    if ((name === "name" || name === "author") && !letterOnlyRegex.test(value)) {
+      return; // Don't update the state if the input is invalid
+    }
+
+    setBook({ ...book, [name]: value });
   };
 
   const handleSubmit = (e) => {
