@@ -11,7 +11,7 @@ const Login = () => {
 
   return (
     <div className="login-container">
-      <div className="login-form">
+      <div className="login-form" style={{ flexGrow: 1 }}>
         <h2>Login</h2>
         <form>
           <div className="form-group">
@@ -27,6 +27,7 @@ const Login = () => {
         <p className="forgot-password">Forgot password?</p>
         <p className="signup-link" onClick={handleSignupClick}>Not a member? Signup now</p>
       </div>
+
     </div>
   );
 };
