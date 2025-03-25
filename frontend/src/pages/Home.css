@@ -40,7 +40,7 @@ footer {
   padding: 120px 20px;
   text-align: center;
   border-radius: 15px;
-  margin: 20px 0;
+  margin-bottom: 20px;
   overflow: hidden; /* Ensure the slideshow doesn't overflow */
 }
 
