@@ -1,0 +1,97 @@
+/* Styling for the UpdateBook container */
+.Ucontainer {
+  background-color: #f9f9f9;
+  border-radius: 10px;
+  padding: 15px; /* Reduced padding */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  max-width: 500px; /* Reduced width */
+  margin: 20px auto;
+}
+
+/* Header styling */
+h2 {
+  font-size: 1.5rem; /* Reduced size */
+  font-weight: bold;
+  color: #333;
+  text-align: center;
+  margin-bottom: 15px;
+  font-family: 'Arial', sans-serif;
+}
+
+/* Form label styling */
+.form-label {
+  font-size: 1rem; /* Adjusted size */
+  font-weight: 600;
+  color: #444;
+  margin-bottom: 6px;
+  display: block;
+  font-family: 'Roboto', sans-serif;
+}
+
+/* Text input styling */
+input[type="text"] {
+  font-size: 0.9rem; /* Adjusted size */
+  padding: 8px; /* Reduced padding */
+  width: 100%;
+  border: 1.5px solid #ccc;
+  border-radius: 6px;
+  box-sizing: border-box;
+  margin-bottom: 15px;
+  color: #333;
+  background-color: #fff;
+  transition: border-color 0.3s ease;
+}
+
+/* Text input focus state */
+input[type="text"]:focus {
+  border-color: #007bff;
+  outline: none;
+  box-shadow: 0 0 4px rgba(0, 123, 255, 0.5);
+}
+
+/* Button styling */
+button[type="button"] {
+  padding: 8px 16px; /* Reduced padding */
+  font-size: 0.9rem; /* Adjusted size */
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button[type="button"]:hover {
+  background-color: #218838;
+}
+
+/* Overall form styling */
+form {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Styling for spacing between elements */
+.mb-3 {
+  margin-bottom: 12px; /* Reduced spacing */
+}
+
+/* Responsive styling */
+@media (max-width: 768px) {
+  .container {
+      padding: 10px;
+      max-width: 90%;
+  }
+
+  h2 {
+      font-size: 1.3rem;
+  }
+
+  .form-label {
+      font-size: 0.9rem;
+  }
+
+  input[type="text"] {
+      font-size: 0.85rem;
+  }
+}
