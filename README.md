@@ -42,35 +42,28 @@ A comprehensive MERN stack-based Library Management System that simplifies and s
 
 1. *Clone the repository:*
    ```bash
-   git clone https://github.com/your-username/library-management-system.git
+   git clone https://github.com/sachintha-nirmal-sm/Library-management-system.git
    cd library-management-system
+   ```
+2. *Backend Setup:*
 
-```
-Backend Setup:
-
-bash
-Copy
-Edit
+```bash
 cd backend
 npm install
-npm start
-Frontend Setup:
+npm run dev
+```
+3. *Frontend Setup:*
 
-bash
-Copy
-Edit
+```bash
 cd frontend
 npm install
-npm run dev
-Environment Variables: Create .env files in both frontend and backend folders with appropriate configuration (MongoDB URI, JWT secret, etc.)
+npm start
+```
 
-📸 Screenshots (Optional)
-Add screenshots of your UI here to visually describe the project.
+4. Environment Variables: Create .env files in both frontend and backend folders with appropriate configuration (MongoDB URI, JWT secret, etc.)
 
 📂 Folder Structure
-pgsql
-Copy
-Edit
+```
 library-management-system/
 ├── backend/
 │   ├── models/
@@ -79,6 +72,9 @@ library-management-system/
 ├── frontend/
 │   ├── src/
 │   └── public/
+
+```
+---
 🤝 Contributing
 Feel free to fork this repo and make contributions. Pull requests are welcome!
 
