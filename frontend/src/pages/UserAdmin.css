@@ -1,0 +1,93 @@
+.user-admin-container {
+    width: 90%;
+    margin: auto;
+    margin-top: 50px;
+    padding: 20px;
+    background: #e5dfb0;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  h2 {
+    text-align: center;
+    color: #333;
+  }
+  
+  .add-user-button {
+    display: block;
+    margin: 10px auto;
+    padding: 10px 15px;
+    background: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+  }
+  
+  th, td {
+    padding: 10px;
+    text-align: center;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  th {
+    background: #007bff;
+    color: white;
+  }
+  
+  input {
+    width: 90%;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  
+  .profile-upload input {
+    display: none;
+  }
+  
+  .profile-upload .placeholder {
+    width: 50px;
+    height: 50px;
+    background: #eee;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+  
+  .profile-upload img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+  }
+  
+  .update-button, .done-button, .delete-button {
+    margin: 5px;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .update-button {
+    background: #0656ac;
+    color: white;
+  }
+  
+  .done-button {
+    background: #28a745;
+    color: white;
+  }
+  
+  .delete-button {
+    background: #dc3545;
+    color: white;
+  }
+  
