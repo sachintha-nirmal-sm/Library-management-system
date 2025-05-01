@@ -1,13 +1,14 @@
-import React, { useEffect } from 'react';
-import Footer from '../components/Footer'; // Import the Footer component
-
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom'; // Import for navigation
+import Footer from '../components/Footer';
 import { FaSearch, FaBookOpen, FaBookReader } from 'react-icons/fa';
-import SplineBackground from '../components/SplineBackground'; // Import the Spline background
-
+import SplineBackground from '../components/SplineBackground';
 import './Home.css';
 
 const Home = () => {
-  // Temporary data - replace with real data from your backend
+  const navigate = useNavigate();
+  const [showPopup, setShowPopup] = useState(false);
+
   const featuredBooks = [
     { id: 1, title: 'Digital Literacy 101', author: 'John Smith', genre: 'Education', cover: '/images/book1.jpg' },
     { id: 2, title: 'The React Guide', author: 'Sarah Johnson', genre: 'Technology', cover: '/images/book2.jpg' },
@@ -25,12 +26,9 @@ const Home = () => {
 
   return (
     <div className="home">
-      {/* Spline 3D Background */}
       <SplineBackground />
 
-      {/* Scrollable Content Container */}
       <div className="content-container">
-        {/* Hero Section */}
         <section className="hero">
           <div className="hero-content">
             <h1>Welcome to Digital Library</h1>
@@ -45,17 +43,17 @@ const Home = () => {
                 <span>24/7 Access</span>
               </div>
             </div>
-
           </div>
         </section>
 
-        {/* Rest of the components */}
+        {/* Search Section */}
         <section className="search-section">
           <div className="search-container">
             <input 
               type="text" 
               placeholder="Search books, authors, or topics..." 
               className="search-input"
+              onClick={() => setShowPopup(true)} // Show popup when clicking on search bar
             />
             <button className="search-button">
               <FaSearch className="search-icon" />
@@ -63,6 +61,19 @@ const Home = () => {
             </button>
           </div>
         </section>
+
+        {/* Popup Message */}
+        {showPopup && (
+          <div className="popup">
+            <div className="popup-content">
+              <p>Do You Like To Try A Book As Your Mood?</p>
+              <div className="popup-buttons">
+                <button onClick={() => setShowPopup(false)} className="skip-button">Skip</button>
+                <button onClick={() => navigate('/moodbasebookreccomendation')} className="try-button">Let's Try</button>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Featured Books */}
         <section className="featured-books">
@@ -104,14 +115,14 @@ const Home = () => {
             <p>Create a free account to access our full collection</p>
             <div className="cta-buttons">
               <button className="cta-button secondary">Get Started</button>
-
               <button className="cta-button primary">Sign Up Free</button>
               <button className="cta-button secondary">Learn More</button>
             </div>
           </div>
         </section>
       </div>
-      <Footer /> {/* Render the Footer component */}
+      
+      <Footer />
     </div>
   );
 };

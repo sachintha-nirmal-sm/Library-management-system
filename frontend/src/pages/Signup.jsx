@@ -1,22 +1,138 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./Signup.css";
 import { useNavigate } from "react-router-dom";
+import { FiUpload, FiCheckCircle } from "react-icons/fi";
 
 const Signup = () => {
-  const navigate = useNavigate();
-  const [profilePhoto, setProfilePhoto] = useState("");
   const [name, setName] = useState("");
-  const [email, setEmail] = useState(""); // Added state for email
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("cash");
   const [cardNumber, setCardNumber] = useState("");
   const [cvv, setCvv] = useState("");
   const [otp, setOtp] = useState("");
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [profilePhoto, setProfilePhoto] = useState("");
+  const [errors, setErrors] = useState({});
+
+  const navigate = useNavigate();
+
+  // Particle animation effect
+  useEffect(() => {
+    const canvas = document.createElement('canvas');
+    canvas.style.position = 'fixed';
+    canvas.style.top = '0';
+    canvas.style.left = '0';
+    canvas.style.width = '100%';
+    canvas.style.height = '100%';
+    canvas.style.zIndex = '-1';
+    document.body.appendChild(canvas);
+
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const particles = [];
+    const particleCount = window.innerWidth < 768 ? 30 : 80;
+
+    for (let i = 0; i < particleCount; i++) {
+      particles.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        size: Math.random() * 3 + 1,
+        speedX: Math.random() * 1 - 0.5,
+        speedY: Math.random() * 1 - 0.5,
+        color: `rgba(255, 255, 255, ${Math.random() * 0.3 + 0.1})`
+      });
+    }
+
+    function animate() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      
+      // Draw connecting lines
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+          const dx = particles[i].x - particles[j].x;
+          const dy = particles[i].y - particles[j].y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+          
+          if (distance < 150) {
+            ctx.strokeStyle = `rgba(255, 255, 255, ${0.2 - distance/750})`;
+            ctx.lineWidth = 0.5;
+            ctx.beginPath();
+            ctx.moveTo(particles[i].x, particles[i].y);
+            ctx.lineTo(particles[j].x, particles[j].y);
+            ctx.stroke();
+          }
+        }
+      }
+      
+      // Draw particles
+      particles.forEach(p => {
+        ctx.fillStyle = p.color;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fill();
+        
+        p.x += p.speedX;
+        p.y += p.speedY;
+        
+        if (p.x < 0 || p.x > canvas.width) p.speedX *= -1;
+        if (p.y < 0 || p.y > canvas.height) p.speedY *= -1;
+      });
+      
+      requestAnimationFrame(animate);
+    }
+
+    animate();
+
+    return () => {
+      document.body.removeChild(canvas);
+    };
+  }, []);
+
+  const validateForm = () => {
+    const newErrors = {};
+    
+    if (!name.trim()) newErrors.name = "Name is required";
+    if (!phone.trim()) newErrors.phone = "Phone number is required";
+    if (!address.trim()) newErrors.address = "Address is required";
+    
+    if (paymentMethod === "card") {
+      if (!cardNumber.trim()) newErrors.cardNumber = "Card number is required";
+      if (!cvv.trim()) newErrors.cvv = "CVV is required";
+      if (!otp.trim()) newErrors.otp = "OTP is required";
+    }
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    
+    if (validateForm()) {
+      setShowSuccess(true);
+      setTimeout(() => {
+        navigate('/');
+      }, 2000);
+    }
+  };
 
   const handlePhotoUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
+      // Validate file type and size
+      if (!file.type.match('image.*')) {
+        alert('Please select an image file');
+        return;
+      }
+      
+      if (file.size > 2 * 1024 * 1024) {
+        alert('Image size should be less than 2MB');
+        return;
+      }
+      
       const reader = new FileReader();
       reader.onloadend = () => {
         setProfilePhoto(reader.result);
@@ -25,36 +141,32 @@ const Signup = () => {
     }
   };
 
-  const handlePaymentMethodChange = (method) => {
-    setPaymentMethod(method);
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log("Form submitted", { name, email, phone, address, paymentMethod });
-    navigate('/');
-  };
-
   return (
     <div className="signup-container">
       <h2>Sign-Up</h2>
-      <p>Membership fee for 1Y plan: 1000 LKR</p>
+      <p className="membership-text">Membership fee for 1Y plan: 1000 LKR</p>
 
       {/* Profile Photo Upload */}
       <div className="profile-section">
         <label className="profile-photo">
-          <input type="file" accept="image/*" onChange={handlePhotoUpload} />
+          <input 
+            type="file" 
+            accept="image/*" 
+            onChange={handlePhotoUpload} 
+          />
           {profilePhoto ? (
             <img src={profilePhoto} alt="Profile" />
           ) : (
-            <div className="placeholder">Upload Photo</div>
+            <div className="placeholder">
+              <FiUpload className="upload-icon" />
+              Upload Photo
+            </div>
           )}
         </label>
       </div>
 
       <form onSubmit={handleSubmit}>
-        {/* Personal Details Section */}
-        <div className="form-group">
+        <div className={`form-group ${errors.name ? 'error' : ''}`}>
           <label htmlFor="name">Full Name</label>
           <input
             type="text"
@@ -63,21 +175,10 @@ const Signup = () => {
             onChange={(e) => setName(e.target.value)}
             required
           />
+          {errors.name && <span className="error-message">{errors.name}</span>}
         </div>
 
-        {/* Email Input Field */}
-        <div className="form-group">
-          <label htmlFor="email">Email</label>
-          <input
-            type="email"
-            id="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-        </div>
-
-        <div className="form-group">
+        <div className={`form-group ${errors.phone ? 'error' : ''}`}>
           <label htmlFor="phone">Phone Number</label>
           <input
             type="tel"
@@ -86,9 +187,10 @@ const Signup = () => {
             onChange={(e) => setPhone(e.target.value)}
             required
           />
+          {errors.phone && <span className="error-message">{errors.phone}</span>}
         </div>
 
-        <div className="form-group">
+        <div className={`form-group ${errors.address ? 'error' : ''}`}>
           <label htmlFor="address">Address</label>
           <input
             type="text"
@@ -97,6 +199,7 @@ const Signup = () => {
             onChange={(e) => setAddress(e.target.value)}
             required
           />
+          {errors.address && <span className="error-message">{errors.address}</span>}
         </div>
 
         {/* Payment Method Selection */}
@@ -107,9 +210,9 @@ const Signup = () => {
               name="paymentMethod"
               value="cash"
               checked={paymentMethod === "cash"}
-              onChange={() => handlePaymentMethodChange("cash")}
+              onChange={() => setPaymentMethod("cash")}
             />
-            Cash
+            <span className="payment-label">Cash</span>
           </label>
           <label>
             <input
@@ -117,47 +220,52 @@ const Signup = () => {
               name="paymentMethod"
               value="card"
               checked={paymentMethod === "card"}
-              onChange={() => handlePaymentMethodChange("card")}
+              onChange={() => setPaymentMethod("card")}
             />
-            Card
+            <span className="payment-label">Card</span>
           </label>
         </div>
 
         {/* Card Payment Section */}
         {paymentMethod === "card" && (
           <div className="card-details">
-            <div className="form-group">
+            <div className={`form-group ${errors.cardNumber ? 'error' : ''}`}>
               <label htmlFor="cardNumber">Card Number</label>
               <input
                 type="text"
                 id="cardNumber"
                 value={cardNumber}
                 onChange={(e) => setCardNumber(e.target.value)}
-                required
+                placeholder="1234 5678 9012 3456"
               />
+              {errors.cardNumber && <span className="error-message">{errors.cardNumber}</span>}
             </div>
-            <div className="form-group">
-              <label htmlFor="cvv">CVN</label>
+            <div className={`form-group ${errors.cvv ? 'error' : ''}`}>
+              <label htmlFor="cvv">CVV</label>
               <input
                 type="text"
                 id="cvv"
                 value={cvv}
                 onChange={(e) => setCvv(e.target.value)}
-                required
+                placeholder="123"
+                maxLength="3"
               />
+              {errors.cvv && <span className="error-message">{errors.cvv}</span>}
             </div>
             <button type="button" className="otp-button">
               Send OTP via phone
             </button>
-            <div className="form-group">
+            <div className={`form-group ${errors.otp ? 'error' : ''}`}>
               <label htmlFor="otp">OTP</label>
               <input
                 type="text"
                 id="otp"
                 value={otp}
                 onChange={(e) => setOtp(e.target.value)}
-                required
+                placeholder="Enter 6-digit OTP"
+                maxLength="6"
               />
+              {errors.otp && <span className="error-message">{errors.otp}</span>}
             </div>
           </div>
         )}
@@ -165,16 +273,33 @@ const Signup = () => {
         {/* Cash Payment Section */}
         {paymentMethod === "cash" && (
           <div className="upload-slip">
-            <label htmlFor="slip">Upload Your Slip Here</label>
-            <input type="file" id="slip" accept="image/*" required />
+            <label htmlFor="slip">Upload Your Payment Slip Here</label>
+            <input 
+              type="file" 
+              id="slip" 
+              accept="image/*,.pdf" 
+              required 
+            />
+            <p className="file-hint">(JPEG, PNG or PDF, max 5MB)</p>
           </div>
         )}
 
         {/* Submit Button */}
         <button type="submit" className="confirm-button">
-          CONFIRMED
+          CONFIRM
         </button>
       </form>
+
+      {/* Success Popup */}
+      {showSuccess && (
+        <div className="popup">
+          <div className="popup-content">
+            <FiCheckCircle className="success-icon" />
+            <p>Registration Successful!</p>
+            <p>Redirecting to homepage...</p>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
