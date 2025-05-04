@@ -1,0 +1,237 @@
+/* h-Learnmore.css */
+:root {
+  --primary-blue: #2A6BCC;
+  --secondary-blue: #E8F1FD;
+  --accent-blue: #1A4D8F;
+  --text-dark: #2D3748;
+  --text-light: #4A5568;
+}
+
+.hl-learnmore-container {
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 4rem 2rem;
+  color: var(--text-dark);
+}
+
+/* Header Section */
+.hl-learnmore-header {
+  text-align: center;
+  margin-bottom: 4rem;
+}
+
+.hl-learnmore-header h2 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  color: var(--text-dark);
+}
+
+.hl-learnmore-header h2 span {
+  color: var(--primary-blue);
+  position: relative;
+}
+
+.hl-learnmore-header h2 span::after {
+  content: '';
+  position: absolute;
+  bottom: -5px;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: var(--primary-blue);
+  border-radius: 2px;
+}
+
+.hl-learnmore-header p {
+  font-size: 1.1rem;
+  color: var(--text-light);
+  max-width: 600px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+/* Features Grid */
+.hl-features {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2rem;
+  margin-bottom: 6rem;
+}
+
+.hl-feature-card {
+  background: white;
+  padding: 2rem;
+  border-radius: 12px;
+  text-align: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border: 1px solid #E2E8F0;
+}
+
+.hl-feature-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+.hl-feature-icon {
+  width: 60px;
+  height: 60px;
+  background: var(--secondary-blue);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.5rem;
+  color: var(--primary-blue);
+  font-size: 1.5rem;
+  transition: background 0.3s ease;
+}
+
+.hl-feature-card:hover .hl-feature-icon {
+  background: var(--primary-blue);
+  color: white;
+}
+
+.hl-feature-card h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: var(--text-dark);
+}
+
+.hl-feature-card p {
+  color: var(--text-light);
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+/* How It Works Section */
+.hl-how-it-works {
+  margin-bottom: 6rem;
+}
+
+.hl-how-it-works h2 {
+  text-align: center;
+  font-size: 2rem;
+  margin-bottom: 3rem;
+  color: var(--text-dark);
+}
+
+.hl-steps {
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+}
+
+.hl-step {
+  flex: 1;
+  text-align: center;
+  position: relative;
+  padding: 0 1.5rem;
+}
+
+.hl-step span {
+  display: inline-block;
+  width: 40px;
+  height: 40px;
+  background: var(--primary-blue);
+  color: white;
+  border-radius: 50%;
+  font-weight: 700;
+  line-height: 40px;
+  margin-bottom: 1.5rem;
+  position: relative;
+  z-index: 1;
+}
+
+.hl-step p {
+  color: var(--text-light);
+  font-size: 0.95rem;
+  line-height: 1.5;
+  max-width: 250px;
+  margin: 0 auto;
+}
+
+.hl-steps::before {
+  content: '';
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  width: 80%;
+  height: 2px;
+  background: #E2E8F0;
+  transform: translateX(-50%);
+}
+
+/* Call to Action Section */
+.hl-call-to-action {
+  background: var(--primary-blue);
+  padding: 4rem 2rem;
+  border-radius: 16px;
+  text-align: center;
+  color: white;
+}
+
+.hl-call-to-action h2 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+.hl-call-to-action p {
+  margin-bottom: 2rem;
+  opacity: 0.9;
+}
+
+.hl-cta-button {
+  background: white;
+  color: var(--primary-blue);
+  border: none;
+  padding: 1rem 2.5rem;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.hl-cta-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  background: #f0f4ff;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .hl-features {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .hl-steps {
+    flex-direction: column;
+    align-items: center;
+    gap: 3rem;
+  }
+
+  .hl-steps::before {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .hl-learnmore-header h2 {
+    font-size: 2rem;
+  }
+
+  .hl-features {
+    grid-template-columns: 1fr;
+  }
+
+  .hl-step {
+    margin-bottom: 2rem;
+  }
+
+  .hl-call-to-action {
+    padding: 3rem 1.5rem;
+  }
+}
