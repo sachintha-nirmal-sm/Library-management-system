@@ -1,142 +1,163 @@
 import React, { useEffect, useState } from 'react';
-import { FaSearch, FaCode, FaPalette, FaMobile, FaMapMarker, FaPhone, FaEnvelope } from 'react-icons/fa';
+import { FaSearch, FaCode, FaPalette, FaMobile, FaMapMarker, FaPhone, FaEnvelope, FaBook, FaUsers, FaArrowRight, FaPaperPlane } from 'react-icons/fa';
 import SplineBackground from '../components/SplineBackground';
 import './Home1.css';
+import { Link } from 'react-router-dom';
 
 const Home1 = () => {
-  const [activeNav, setActiveNav] = useState('');
+  const [activeSection, setActiveSection] = useState('home');
   
-  const services = [
-    { id: 1, title: 'Web Development', icon: <FaCode />, description: 'Custom web solutions for modern businesses' },
-    { id: 2, title: 'UI/UX Design', icon: <FaPalette />, description: 'User-centered interface design' },
-    { id: 3, title: 'Mobile Apps', icon: <FaMobile />, description: 'Cross-platform mobile applications' },
-  ];
-
   const scrollToSection = (sectionId) => {
     const section = document.getElementById(sectionId);
     if (section) {
       section.scrollIntoView({ behavior: 'smooth' });
-      setActiveNav(sectionId);
+      setActiveSection(sectionId);
     }
   };
 
+  const handleScroll = () => {
+    const sections = ['home', 'services', 'about', 'contact' ,'login'];
+    const scrollPosition = window.scrollY + 100;
+
+    for (const section of sections) {
+      const element = document.getElementById(section);
+      if (element) {
+        const { top, bottom } = element.getBoundingClientRect();
+        if (top <= scrollPosition && bottom > scrollPosition) {
+          setActiveSection(section);
+          break;
+        }
+      }
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   const handleSubmit = (event) => {
     event.preventDefault();
-    // Handle form submission logic here
     const formData = new FormData(event.target);
     console.log(Object.fromEntries(formData));
   };
 
-  useEffect(() => {
-    console.log("✅ Home component is rendering!");
-  }, []);
-
   return (
-    <div className="home-container">
+    <div className="h1-home-container">
       {/* Navigation */}
-      <nav className="nav-container">
-        <a href="/home" className="nav-logo">NOVELNest</a>
-        <ul className="nav-links">
-          <li><a href="#home">Home</a></li>
-          <li><a href="#about">About</a></li>
-          <li><a href="#services">Services</a></li>
-          <li><a href="#contact">Contact</a></li>
-          <li><a href="/register">Register</a></li>
-          <li><a href="/login">Login</a></li>
-        </ul>
+      <nav className="h1-nav-container">
+        <div className="h1-nav-logo">
+          <h1>NOVELNest</h1>
+        </div>
+        <div className="h1-nav-links">
+          <button 
+            className={`h1-nav-link ${activeSection === 'home' ? 'active' : ''}`}
+            onClick={() => scrollToSection('home')}
+          >
+            Home
+          </button>
+          <button 
+            className={`h1-nav-link ${activeSection === 'services' ? 'active' : ''}`}
+            onClick={() => scrollToSection('services')}
+          >
+            Services
+          </button>
+          <button 
+            className={`h1-nav-link ${activeSection === 'about' ? 'active' : ''}`}
+            onClick={() => scrollToSection('about')}
+          >
+            About Us
+          </button>
+          <button 
+            className={`h1-nav-link ${activeSection === 'contact' ? 'active' : ''}`}
+            onClick={() => scrollToSection('contact')}
+          >
+            Contact
+          </button>
+
+          <button 
+            className={`h1-nav-link ${activeSection === 'login' ? 'active' : ''}`}
+            onClick={() => scrollToSection('login')}
+          >
+            Login
+          </button>
+        </div>
       </nav>
 
       <SplineBackground />
 
-      <div className="content-container">
-        {/* Hero Section */}
-        <section className="hero">
-          <div className="hero-content">
-            <h1>Welcome to NOVELNest</h1>
-            <p>Innovative technology services for the modern era</p>
-            <div className="stats">
-              <div className="stat-item">
-                <FaCode className="stat-icon" />
-                <span>100+ Projects</span>
-              </div>
-              <div className="stat-item">
-                <FaPalette className="stat-icon" />
-                <span>15+ Years Experience</span>
-              </div>
-            </div>
+      {/* Home Section */}
+      <section id="home" className="h1-hero-section">
+        <div className="h1-content-container">
+          <div className="h1-hero-content">
+            <h2>Welcome to Our Library</h2>
+            <p>Discover a world of knowledge with our extensive collection of books. Browse, borrow, and learn with our easy-to-use library management system.</p>
+            <Link to="/h-Learnmore" className="h1-cta-button">
+              Learn More <FaArrowRight />
+            </Link>
           </div>
-        </section>
+          <div className="h1-image-container">
+            <img src="/library-hero.jpg" alt="Library Interior" className="h1-hero-image" />
+          </div>
+        </div>
+      </section>
 
-        {/* Services Section */}
-        <section className="services-section" id="services">
-          <h2 className="section-title">Our Services</h2>
-          <div className="services-grid">
-            {services.map((service) => (
-              <div key={service.id} className="service-card">
-                <div className="service-icon">{service.icon}</div>
-                <h3>{service.title}</h3>
-                <p>{service.description}</p>
-              </div>
-            ))}
+      {/* Services Section */}
+      <section id="services" className="h1-services-section">
+        <h2>Our Services</h2>
+        <div className="h1-services-grid">
+          <div className="h1-service-card">
+            <FaBook className="h1-service-icon" />
+            <h3>Book Management</h3>
+            <p>Easily add, update, and manage your book collection with our intuitive interface.</p>
           </div>
-        </section>
+          <div className="h1-service-card">
+            <FaSearch className="h1-service-icon" />
+            <h3>Advanced Search</h3>
+            <p>Find books quickly with our powerful search and filter capabilities.</p>
+          </div>
+          <div className="h1-service-card">
+            <FaUsers className="h1-service-icon" />
+            <h3>User Management</h3>
+            <p>Track user activities and manage library memberships efficiently.</p>
+          </div>
+        </div>
+      </section>
 
-        {/* About Section */}
-        <section className="about-section" id="about">
-          <div className="about-content">
-            <h2 className="section-title">About Us</h2>
-            <p className="about-text">
-              We are a digital solutions provider dedicated to creating innovative 
-              technology solutions for businesses worldwide. With over 15 years of 
-              experience, our team of experts delivers cutting-edge web and mobile 
-              applications that drive business growth.
-            </p>
+      {/* About Section */}
+      <section id="about" className="h1-about-section">
+        <h2>About Us</h2>
+        <div className="h1-about-content">
+          <div className="h1-about-text">
+            <p>Our library management system is designed to make book management simple and efficient. With features like easy book addition, quick updates, and powerful search capabilities, we help libraries of all sizes manage their collections effectively.</p>
+            <p>Whether you're a small community library or a large academic institution, our system provides the tools you need to organize and maintain your book collection.</p>
           </div>
-        </section>
+          <img src="/library-about.jpg" alt="Library Collection" className="h1-about-image" />
+        </div>
+      </section>
 
-        {/* Contact Section */}
-        <section className="contact-section" id="contact">
-          <h2 className="section-title">Contact Us</h2>
-          <div className="contact-container">
-            <div className="contact-info">
-              <div className="info-item">
-                <FaMapMarker className="info-icon" />
-                <p>123 Tech Street, Digital City, DC 12345</p>
-              </div>
-              <div className="info-item">
-                <FaPhone className="info-icon" />
-                <p>+1 (555) 123-4567</p>
-              </div>
-              <div className="info-item">
-                <FaEnvelope className="info-icon" />
-                <p>contact@digitalsolutions.com</p>
-              </div>
-            </div>
-            
-            <form className="contact-form" onSubmit={handleSubmit}>
-              <input type="text" name="name" placeholder="Name" required />
-              <input type="email" name="email" placeholder="Email" required />
-              <textarea name="message" placeholder="Message" rows="5" required></textarea>
-              <button type="submit" className="submit-button">
-                Send Message
-              </button>
-            </form>
+      {/* Contact Section */}
+      <section id="contact" className="h1-contact-section">
+        <h2>Get in Touch</h2>
+        <p>Have questions or suggestions? We'd love to hear from you!</p>
+        <form className="h1-contact-form" onSubmit={handleSubmit}>
+          <div className="h1-form-group">
+            <label htmlFor="name">Name</label>
+            <input type="text" id="name" name="name" required />
           </div>
-        </section>
-
-        {/* CTA Section */}
-        <section className="cta-section" id="cta">
-          <div className="cta-content">
-            <h2>Start Your Digital Journey</h2>
-            <p>Get in touch to discuss your project requirements</p>
-            <div className="cta-buttons">
-              <button className="cta-button primary" onClick={() => scrollToSection('contact')}>
-                Get Started
-              </button>
-            </div>
+          <div className="h1-form-group">
+            <label htmlFor="email">Email</label>
+            <input type="email" id="email" name="email" required />
           </div>
-        </section>
-      </div>
+          <div className="h1-form-group">
+            <label htmlFor="message">Message</label>
+            <textarea id="message" name="message" required></textarea>
+          </div>
+          <button type="submit" className="h1-submit-button">
+            Send Message <FaPaperPlane />
+          </button>
+        </form>
+      </section>
     </div>
   );
 };
