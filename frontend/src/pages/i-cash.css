@@ -1,0 +1,177 @@
+/* General Styling */
+body {
+    font-family: "Poppins", sans-serif;
+    background: #f4f4f4;
+    margin: 0;
+    /* Removed full-viewport flex centering to keep header and footer unchanged */
+  }
+  
+  /* Wrapper for Cash Payment Content */
+  .cash-payment-wrapper {
+    /* Center the payment container without affecting header/footer */
+    max-width: 1000px;
+    margin: 40px auto; /* Adjust top margin to account for header space */
+    padding: 0 20px;
+  }
+  
+  /* Payment Container */
+  .cash-payment-container {
+    background: #fff;
+    width: 400px;
+    margin: 0 auto; /* Center horizontally */
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.15);
+    text-align: center;
+    animation: fadeIn 0.5s ease-in-out;
+    transition: transform 0.3s ease-in-out;
+  }
+  
+  .cash-payment-container:hover {
+    transform: scale(1.02);
+  }
+  
+  /* Fade-in Animation */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(-20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  /* 🟢 CASH PAYMENT TITLE */
+  .cash-payment-container h2 {
+    color: #333;
+    font-size: 26px;
+    font-weight: 700;
+    margin-bottom: 20px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    border-bottom: 3px solid #28a745;
+    display: inline-block;
+    padding-bottom: 5px;
+  }
+  
+  /* 🟡 INVOICE ID & TOTAL AMOUNT */
+  .payment-details {
+    font-size: 18px;
+    color: #555;
+    font-weight: 500;
+    margin-bottom: 15px;
+    text-align: left;
+    background: #f8f9fa;
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+  }
+  
+  .payment-details strong {
+    color: #333;
+  }
+  
+  /* 🔵 UPLOAD PAYMENT SLIP SECTION */
+  .upload-section {
+    margin-top: 15px;
+    text-align: left;
+  }
+  
+  .upload-section label {
+    display: block;
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: #444;
+  }
+  
+  /* File Input Styling */
+  .upload-section input[type="file"] {
+    width: 100%;
+    padding: 12px;
+    border: 2px dashed #bbb;
+    border-radius: 6px;
+    background: #f9f9f9;
+    cursor: pointer;
+    transition: border-color 0.3s ease-in-out;
+    outline: none;
+    font-size: 14px;
+    text-align: center;
+  }
+  
+  .upload-section input[type="file"]:hover {
+    border-color: #007bff;
+  }
+  
+  /* Custom File Upload Button */
+  .upload-section input[type="file"]::file-selector-button {
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    margin-right: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.2s;
+  }
+  
+  .upload-section input[type="file"]::file-selector-button:hover {
+    background: #0056b3;
+    transform: scale(1.05);
+  }
+  
+  /* 🔴 CONFIRM BUTTON */
+  .btn-success {
+    display: block;
+    width: 100%;
+    background: linear-gradient(135deg, #28a745, #218838);
+    color: white;
+    font-size: 18px;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s ease-in-out, transform 0.2s;
+    margin-top: 20px;
+    font-weight: 600;
+    letter-spacing: 1px;
+  }
+  
+  .btn-success:hover {
+    background: linear-gradient(135deg, #218838, #1e7e34);
+    transform: scale(1.05);
+  }
+  
+  /* Box Shadow Effect */
+  .btn-success {
+    box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.2);
+  }
+  
+  .btn-success:active {
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.3);
+  }
+  
+  /* 🟣 RESPONSIVE DESIGN */
+  @media (max-width: 500px) {
+    .cash-payment-container {
+      width: 90%;
+      padding: 20px;
+    }
+    
+    .cash-payment-container h2 {
+      font-size: 22px;
+    }
+    
+    .payment-details {
+      font-size: 16px;
+      padding: 8px;
+    }
+    
+    .btn-success {
+      font-size: 16px;
+      padding: 10px;
+    }
+  }
+  

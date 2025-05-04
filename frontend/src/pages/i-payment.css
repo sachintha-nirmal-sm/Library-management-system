@@ -1,0 +1,90 @@
+/* Global Styles */
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: #f4f7fc;
+    margin: 0;
+    padding: 0;
+}
+
+/* Container */
+.container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 30px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Heading */
+h2 {
+    font-size: 2.2rem;
+    color: #333;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/* Table Styling */
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 30px 0;
+    border: 2px solid #ddd; /* Table border */
+}
+
+.table th,
+.table td {
+    padding: 14px 20px;
+    text-align: left;
+    font-size: 1rem;
+    color: #333;
+    border: 1px solid #ddd; /* Border for rows and cells */
+}
+
+.table th {
+    background-color: #03a9f4;
+    color: white;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.table tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.table tr:hover {
+    background-color: #f1f1f1;
+}
+
+/* Table Action Buttons */
+.table .btn {
+    font-size: 0.875rem;
+    border-radius: 20px;
+    padding: 8px 15px;
+    transition: transform 0.2s ease, opacity 0.3s ease;
+}
+
+/* Pay Button */
+.table .btn-success {
+    background-color: #4caf50;
+    color: white;
+}
+
+.table .btn-success:hover {
+    background-color: #388e3c;
+    transform: scale(1.05);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .table th,
+    .table td {
+        padding: 10px;
+        font-size: 0.9rem;
+    }
+
+    .table .btn {
+        padding: 6px 12px;
+        font-size: 0.75rem;
+    }
+}

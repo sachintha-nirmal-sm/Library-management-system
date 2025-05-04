@@ -1,0 +1,115 @@
+/* Container for the form */
+.Bcontainer {
+  max-width: 500px;
+  margin: 50px auto;
+  padding: 20px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  font-family: Arial, sans-serif;
+}
+
+/* Form Heading */
+h2 {
+  font-size: 2rem;
+  margin-bottom: 30px;
+  color: #333;
+  font-weight: 600;
+}
+
+/* Form Input Fields */
+.form-control {
+  width: 100%;
+  padding: 12px;
+  font-size: 1rem;
+  margin-bottom: 20px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+  box-sizing: border-box;
+  transition: border-color 0.3s ease;
+}
+
+/* Focus Effect on Input Fields */
+.form-control:focus {
+  border-color: #007bff;
+  outline: none;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+}
+
+/* Disabled Input Fields */
+input[disabled] {
+  background-color: #f0f0f0;
+  cursor: not-allowed;
+  border: 1px solid #ccc;
+}
+
+/* Form Group */
+.mb-3 {
+  text-align: left;
+  margin-bottom: 15px;
+}
+
+/* Labels for form fields */
+.form-label {
+  font-weight: 600;
+  color: #555;
+  display: block;
+  margin-bottom: 5px;
+  text-align: left;
+}
+
+/* Select dropdown for Category */
+select.form-control {
+  font-size: 1rem;
+}
+
+/* RewardForm Button Styles */
+.form-buttons {
+  display: flex;
+  justify-content: space-between;  /* Align buttons on opposite ends */
+  margin-top: 20px;  /* Add some space from form fields */
+}
+
+.form-buttons .custom-btn {
+  width: 48%;  /* Give both buttons 48% width */
+  padding: 10px;
+  border-radius: 10px;
+  font-size: 14px;
+}
+
+.form-buttons .cancel-btn {
+  background-color: #f44336; /* Red color for Cancel */
+  color: white;
+}
+
+.form-buttons .submit-btn {
+  background-color: #4CAF50; /* Green color for Submit */
+  color: white;
+}
+
+.form-buttons .custom-btn:hover {
+  opacity: 0.8;
+}
+
+/* Responsive Design */
+@media (max-width: 400px) {
+  .Bcontainer {
+    padding: 15px;
+    max-width: 90%;
+  }
+
+  h2 {
+    font-size: 1.5rem;
+  }
+
+  .form-control {
+    padding: 10px;
+    font-size: 0.9rem;
+  }
+
+  .form-buttons .custom-btn {
+    width: 100%;
+    font-size: 0.9rem;
+  }
+}
