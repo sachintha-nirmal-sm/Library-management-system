@@ -1,40 +1,34 @@
-import React, { useEffect, useRef } from "react"; // Import useRef for the Spline viewer
-import SplineBackground from "../components/SplineBackground"; // Import SplineBackground component
+import React from 'react';
+import './Login.css';
+import { useNavigate } from 'react-router-dom';
 
-import './Login.css'; // Importing the CSS for styling
+const Login = () => {
+  const navigate = useNavigate();
 
-function Login() {
-  const viewerRef = useRef(null); // Create a ref for the Spline viewer
-
-  useEffect(() => {
-    // The viewer is now initialized in SplineBackground, so this line is removed.
-
-    return () => {
-      // Cleanup logic if needed
-    };
-  }, []);
+  const handleSignupClick = () => {
+    navigate('/signup');
+  };
 
   return (
-    <div className="login-page">
-      <SplineBackground /> {/* Add SplineBackground component for the login background animation */}
-      <div ref={viewerRef} style={{ position: "fixed", top: 0, left: 0, width: "100%", height: "100%", zIndex: -1 }}></div>
-
-      <div className="login-container">
-        <h2 style={{ position: "relative", zIndex: 1 }}>Login</h2>
+    <div className="login-container">
+      <div className="login-form">
+        <h2>Login</h2>
         <form>
-          <div>
-            <label htmlFor="username">Username:</label>
-            <input type="text" id="username" name="username" required />
+          <div className="form-group">
+            <label htmlFor="email">Email Address</label>
+            <input type="email" id="email" name="email" required />
           </div>
-          <div>
-            <label htmlFor="password">Password:</label>
+          <div className="form-group">
+            <label htmlFor="password">Password</label>
             <input type="password" id="password" name="password" required />
           </div>
-          <button type="submit">Login</button>
+          <button type="submit" className="login-button">Login</button>
         </form>
+        <p className="forgot-password">Forgot password?</p>
+        <p className="signup-link" onClick={handleSignupClick}>Not a member? Signup now</p>
       </div>
     </div>
   );
-}
+};
 
 export default Login;
