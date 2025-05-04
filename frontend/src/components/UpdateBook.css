@@ -1,0 +1,384 @@
+/* updateBook.css */
+:root {
+    --primary-color: #1a73e8;
+    --secondary-color: #4285f4;
+    --error-color: #d93025;
+    --success-color: #188038;
+    --background-color: #ffffff;
+    --input-border: #dadce0;
+    --transition-speed: 0.3s;
+    --glass-bg: #ffffff;
+    --blur-intensity: 10px;
+    --card-radius: 12px;
+    --text-dark: #202124;
+    --text-light: #5f6368;
+    --primary-blue: #1a73e8;
+    --secondary-blue: #4285f4;
+    --hover-blue: #1557b0;
+    --light-blue: #e8f0fe;
+    --shadow-color: rgba(26, 115, 232, 0.1);
+    --form-bg: #f8f9fa;
+    --hover-bg: #f1f3f4;
+    --gradient-blue: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
+    --card-shadow: 0 4px 20px var(--shadow-color);
+    --input-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    --hover-shadow: 0 8px 24px rgba(26, 115, 232, 0.15);
+}
+
+body {
+    background-color: #ffffff;
+    min-height: 100vh;
+    margin: 0;
+    padding: 2rem 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+}
+
+.ub-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+    background: var(--background-color);
+    border-radius: var(--card-radius);
+    box-shadow: 0 2px 6px var(--shadow-color);
+}
+
+.ub-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 2rem;
+    gap: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--input-border);
+}
+
+.ub-header h2 {
+    color: var(--primary-blue);
+    font-size: 1.75rem;
+    margin: 0;
+    font-weight: 500;
+}
+
+.ub-back-button {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1.5rem;
+    background: transparent;
+    color: var(--primary-blue);
+    border: none;
+    border-radius: 8px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all var(--transition-speed) ease;
+}
+
+.ub-back-button:hover {
+    background: var(--light-blue);
+}
+
+.ub-form {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.ub-form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+}
+
+.ub-form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.ub-form-group.full-width {
+    grid-column: 1 / -1;
+}
+
+.ub-form-group label {
+    font-weight: 500;
+    color: var(--text-dark);
+    font-size: 0.95rem;
+}
+
+.ub-form-group input,
+.ub-form-group select,
+.ub-form-group textarea {
+    padding: 0.75rem;
+    border: 1px solid var(--input-border);
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: all var(--transition-speed) ease;
+    background: var(--background-color);
+    width: 100%;
+}
+
+.ub-form-group input:focus,
+.ub-form-group select:focus,
+.ub-form-group textarea:focus {
+    outline: none;
+    border-color: var(--primary-blue);
+    box-shadow: 0 0 0 2px var(--light-blue);
+}
+
+.ub-form-group input.error,
+.ub-form-group select.error,
+.ub-form-group textarea.error {
+    border-color: var(--error-color);
+}
+
+.ub-error-message {
+    color: var(--error-color);
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+}
+
+.ub-formats-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 1rem;
+}
+
+.ub-format-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem;
+    background: var(--light-blue);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all var(--transition-speed) ease;
+}
+
+.ub-format-checkbox:hover {
+    background: #e3effe;
+}
+
+.ub-format-checkbox input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+}
+
+input[type="file"] {
+    padding: 0.75rem;
+    border: 1px solid var(--input-border);
+    border-radius: 8px;
+    background: var(--background-color);
+    cursor: pointer;
+    width: 100%;
+}
+
+.preview-image {
+    margin-top: 1rem;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    position: relative;
+    aspect-ratio: 3/4;
+    background: var(--background-color);
+    border: 1px solid var(--input-border);
+}
+
+.preview-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.image-dimensions {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 0.75rem;
+    text-align: center;
+    font-size: 0.9rem;
+    backdrop-filter: blur(4px);
+}
+
+.preview-pdf {
+    margin-top: 1rem;
+    padding: 1rem;
+    background: var(--light-blue);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.ub-form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--input-border);
+}
+
+.ub-submit-button {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1.5rem;
+    background: var(--primary-blue);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all var(--transition-speed) ease;
+}
+
+.ub-submit-button:hover:not(:disabled) {
+    background: var(--hover-blue);
+}
+
+.ub-submit-button:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.ub-spinner {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.ub-loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 400px;
+    gap: 1rem;
+}
+
+.ub-loading-container p {
+    color: var(--text-light);
+    font-size: 1.1rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .ub-container {
+        margin: 1rem;
+        padding: 1.5rem;
+    }
+    
+    .ub-form-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .ub-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .ub-container {
+        margin: 0.5rem;
+        padding: 1rem;
+    }
+    
+    .ub-form-group input,
+    .ub-form-group select,
+    .ub-form-group textarea {
+        padding: 0.5rem;
+        font-size: 0.95rem;
+    }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+    body {
+        background-color: #1a1a1a;
+    }
+    
+    .ub-container {
+        background: #2d2d2d;
+        color: #ffffff;
+    }
+    
+    .ub-form-group input,
+    .ub-form-group select,
+    .ub-form-group textarea {
+        background: #363636;
+        border-color: #404040;
+        color: #ffffff;
+    }
+    
+    .ub-form-group input:hover,
+    .ub-form-group select:hover,
+    .ub-form-group textarea:hover {
+        background: #404040;
+    }
+    
+    .ub-form-group label {
+        color: #e0e0e0;
+    }
+    
+    .ub-back-button {
+        background: #363636;
+        color: #ffffff;
+    }
+    
+    .ub-back-button:hover {
+        background: #404040;
+    }
+    
+    .ub-format-checkbox {
+        background: #363636;
+    }
+    
+    .ub-format-checkbox:hover {
+        background: #404040;
+    }
+    
+    .preview-image {
+        background: #363636;
+    }
+    
+    .preview-pdf {
+        background: #363636;
+    }
+    
+    input[type="file"] {
+        background: #363636;
+        border-color: #404040;
+    }
+    
+    input[type="file"]:hover {
+        background: #404040;
+    }
+    
+    .ub-loading-container {
+        background: #2d2d2d;
+    }
+    
+    .ub-loading-container p {
+        color: #e0e0e0;
+    }
+    
+    ::-webkit-scrollbar-track {
+        background: #363636;
+    }
+    
+    ::-webkit-scrollbar-thumb {
+        background: #404040;
+    }
+    
+    ::-webkit-scrollbar-thumb:hover {
+        background: #505050;
+    }
+}
