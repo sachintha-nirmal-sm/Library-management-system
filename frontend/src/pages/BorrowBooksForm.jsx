@@ -1,17 +1,20 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { bookAPI, borrowingAPI } from '../services/api';
 import './BorrowBooksForm.css';
 
 const BorrowBooksForm = () => {
-  const navigate = useNavigate(); // Initialize useNavigate
+  const navigate = useNavigate();
+  const [books, setBooks] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   // State for Book Details
   const [bookDetails, setBookDetails] = useState({
-    isbn: '',
+    bookId: '',
     bookName: '',
     author: '',
-    category: '',  // Category field
-    publishedDate: '',
+    category: '',
   });
 
   // State for Borrower Details
@@ -19,8 +22,24 @@ const BorrowBooksForm = () => {
     userId: '',
     name: '',
     contactNumber: '',
-    borrowDate: '',
+    borrowDate: new Date().toISOString().split('T')[0],
   });
+
+  // Load available books
+  useEffect(() => {
+    const fetchBooks = async () => {
+      try {
+        const response = await bookAPI.getAllBooks();
+        const availableBooks = response.data.filter(book => book.available);
+        setBooks(availableBooks);
+      } catch (err) {
+        setError('Failed to load books');
+        console.error('Error fetching books:', err);
+      }
+    };
+
+    fetchBooks();
+  }, []);
 
   // Handle Input Change for Book Details
   const handleBookDetailsChange = (e) => {
@@ -35,123 +54,98 @@ const BorrowBooksForm = () => {
   };
 
   // Handle Form Submission
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
+    setError(null);
 
-    const borrowedBook = {
-      isbn: bookDetails.isbn,
-      bookName: bookDetails.bookName,
-      borrowerName: borrowerDetails.name,
-      borrowDate: borrowerDetails.borrowDate,
-      category: bookDetails.category,  // Pass the category here
-    };
+    try {
+      // Borrow the book
+      await borrowingAPI.borrowBook(bookDetails.bookId);
+      
+      // Reset form
+      setBookDetails({
+        bookId: '',
+        bookName: '',
+        author: '',
+        category: '',
+      });
+      setBorrowerDetails({
+        userId: '',
+        name: '',
+        contactNumber: '',
+        borrowDate: new Date().toISOString().split('T')[0],
+      });
 
-    // Navigate to Transactions page and pass the borrowed book details
-    navigate('/transactions', { state: { borrowedBook } });
-
-    // Reset Form Fields
-    setBookDetails({
-      isbn: '',
-      bookName: '',
-      author: '',
-      category: '',
-      publishedDate: '',
-    });
-    setBorrowerDetails({
-      userId: '',
-      name: '',
-      contactNumber: '',
-      borrowDate: '',
-    });
-
-    alert('Book borrowed successfully!');
-  };
-
-  // Handle Cancel Button (Reset form and navigate back)
-  const handleCancel = () => {
-    // Reset Form Fields
-    setBookDetails({
-      isbn: '',
-      bookName: '',
-      author: '',
-      category: '',
-      publishedDate: '',
-    });
-    setBorrowerDetails({
-      userId: '',
-      name: '',
-      contactNumber: '',
-      borrowDate: '',
-    });
-
-    // Navigate to previous page (e.g., Transactions page)
-    navigate('/transactions');
+      alert('Book borrowed successfully!');
+      navigate('/dashboard');
+    } catch (err) {
+      setError('Failed to borrow book');
+      console.error('Error borrowing book:', err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <div className="borrow-books-form">
-      <h1>Borrow Books Form</h1>
-
+    <div className="borrow-form-container">
+      <h2>Borrow a Book</h2>
+      {error && <div className="error-message">{error}</div>}
+      
       <form onSubmit={handleSubmit}>
-        <div className="form-container">
-          <div className="form-section">
-            <h2>Book Details</h2>
-            <div className="form-group">
-              <label>ISBN:</label>
-              <input type="text" name="isbn" value={bookDetails.isbn} onChange={handleBookDetailsChange} required />
-            </div>
-            <div className="form-group">
-              <label>Book Name:</label>
-              <input type="text" name="bookName" value={bookDetails.bookName} onChange={handleBookDetailsChange} required />
-            </div>
-            <div className="form-group">
-              <label>Author:</label>
-              <input type="text" name="author" value={bookDetails.author} onChange={handleBookDetailsChange} required />
-            </div>
-            <div className="form-group">
-              <label>Category:</label>
-              <select name="category" value={bookDetails.category} onChange={handleBookDetailsChange} required>
-                <option value="">Select Category</option>
-                <option value="Novel">Novel</option>
-                <option value="Horror">Horror</option>
-                <option value="Adventure">Adventure</option>
-                <option value="Mystery&thriler">Mystery</option>
-                <option value="Romance">Romance</option>
-                <option value="Fantasy">Fantasy</option>
-                <option value="Education">Education</option>
-              </select>
-            </div>
-            <div className="form-group">
-              <label>Published Date:</label>
-              <input type="date" name="publishedDate" value={bookDetails.publishedDate} onChange={handleBookDetailsChange} required />
-            </div>
-          </div>
-
-          <div className="form-section">
-            <h2>Borrower Details</h2>
-            <div className="form-group">
-              <label>User ID:</label>
-              <input type="text" name="userId" value={borrowerDetails.userId} onChange={handleBorrowerDetailsChange} required />
-            </div>
-            <div className="form-group">
-              <label>Name of Borrower:</label>
-              <input type="text" name="name" value={borrowerDetails.name} onChange={handleBorrowerDetailsChange} required />
-            </div>
-            <div className="form-group">
-              <label>Contact Number:</label>
-              <input type="text" name="contactNumber" value={borrowerDetails.contactNumber} onChange={handleBorrowerDetailsChange} required />
-            </div>
-            <div className="form-group">
-              <label>Borrow Date:</label>
-              <input type="date" name="borrowDate" value={borrowerDetails.borrowDate} onChange={handleBorrowerDetailsChange} required />
-            </div>
-          </div>
+        <div className="form-group">
+          <label>Select Book</label>
+          <select
+            name="bookId"
+            value={bookDetails.bookId}
+            onChange={handleBookDetailsChange}
+            required
+          >
+            <option value="">Select a book</option>
+            {books.map(book => (
+              <option key={book._id} value={book._id}>
+                {book.title} by {book.author}
+              </option>
+            ))}
+          </select>
         </div>
 
-        <div className="button-container">
-          <button type="submit">Borrow</button>
-          <button type="button" onClick={handleCancel} className="cancel-button">Cancel</button>
+        <div className="form-group">
+          <label>Borrower Name</label>
+          <input
+            type="text"
+            name="name"
+            value={borrowerDetails.name}
+            onChange={handleBorrowerDetailsChange}
+            required
+          />
         </div>
+
+        <div className="form-group">
+          <label>Contact Number</label>
+          <input
+            type="tel"
+            name="contactNumber"
+            value={borrowerDetails.contactNumber}
+            onChange={handleBorrowerDetailsChange}
+            required
+          />
+        </div>
+
+        <div className="form-group">
+          <label>Borrow Date</label>
+          <input
+            type="date"
+            name="borrowDate"
+            value={borrowerDetails.borrowDate}
+            onChange={handleBorrowerDetailsChange}
+            required
+          />
+        </div>
+
+        <button type="submit" disabled={loading}>
+          {loading ? 'Borrowing...' : 'Borrow Book'}
+        </button>
       </form>
     </div>
   );
