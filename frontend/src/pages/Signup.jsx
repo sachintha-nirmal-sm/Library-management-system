@@ -2,10 +2,15 @@ import React, { useState, useEffect } from "react";
 import "./Signup.css";
 import { useNavigate } from "react-router-dom";
 import { FiUpload, FiCheckCircle } from "react-icons/fi";
+import axios from 'axios';
 
 const Signup = () => {
+  const [username, setUsername] = useState("");
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [address, setAddress] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("cash");
   const [cardNumber, setCardNumber] = useState("");
@@ -17,7 +22,6 @@ const Signup = () => {
 
   const navigate = useNavigate();
 
-  // Particle animation effect
   useEffect(() => {
     const canvas = document.createElement('canvas');
     canvas.style.position = 'fixed';
@@ -48,14 +52,13 @@ const Signup = () => {
 
     function animate() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      
-      // Draw connecting lines
+
       for (let i = 0; i < particles.length; i++) {
         for (let j = i + 1; j < particles.length; j++) {
           const dx = particles[i].x - particles[j].x;
           const dy = particles[i].y - particles[j].y;
           const distance = Math.sqrt(dx * dx + dy * dy);
-          
+
           if (distance < 150) {
             ctx.strokeStyle = `rgba(255, 255, 255, ${0.2 - distance/750})`;
             ctx.lineWidth = 0.5;
@@ -66,21 +69,20 @@ const Signup = () => {
           }
         }
       }
-      
-      // Draw particles
+
       particles.forEach(p => {
         ctx.fillStyle = p.color;
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
         ctx.fill();
-        
+
         p.x += p.speedX;
         p.y += p.speedY;
-        
+
         if (p.x < 0 || p.x > canvas.width) p.speedX *= -1;
         if (p.y < 0 || p.y > canvas.height) p.speedY *= -1;
       });
-      
+
       requestAnimationFrame(animate);
     }
 
@@ -93,46 +95,92 @@ const Signup = () => {
 
   const validateForm = () => {
     const newErrors = {};
-    
+
+    if (!username.trim()) newErrors.username = "Username is required";
     if (!name.trim()) newErrors.name = "Name is required";
     if (!phone.trim()) newErrors.phone = "Phone number is required";
+    if (!email.trim()) newErrors.email = "Email is required";
+    if (!password.trim()) newErrors.password = "Password is required";
+    if (!confirmPassword.trim()) {
+      newErrors.confirmPassword = "Please confirm your password";
+    } else if (password !== confirmPassword) {
+      newErrors.confirmPassword = "Passwords do not match";
+    }
     if (!address.trim()) newErrors.address = "Address is required";
-    
+
     if (paymentMethod === "card") {
       if (!cardNumber.trim()) newErrors.cardNumber = "Card number is required";
       if (!cvv.trim()) newErrors.cvv = "CVV is required";
       if (!otp.trim()) newErrors.otp = "OTP is required";
     }
-    
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (validateForm()) {
-      setShowSuccess(true);
-      setTimeout(() => {
-        navigate('/');
-      }, 2000);
+      try {
+        const userData = {
+          username,
+          name,
+          email,
+          password,
+          phone,
+          address,
+          paymentMethod,
+          cardNumber: paymentMethod === 'card' ? cardNumber : undefined,
+          cvv: paymentMethod === 'card' ? cvv : undefined,
+          profilePhoto
+        };
+
+        const response = await axios.post('http://localhost:5001/api/users/register', userData);
+
+        if (response.data) {
+          setShowSuccess(true);
+          // Store user data in localStorage
+          localStorage.setItem('user', JSON.stringify({
+            _id: response.data._id,
+            name: response.data.name,
+            email: response.data.email,
+            role: response.data.role
+          }));
+          
+          setTimeout(() => {
+            navigate('/');
+          }, 2000);
+        }
+      } catch (error) {
+        console.error('Registration error:', error.response?.data || error.message);
+        // Show more specific error messages
+        if (error.response?.data?.message) {
+          alert(error.response.data.message);
+        } else if (error.response?.status === 400) {
+          alert('Invalid data. Please check your inputs.');
+        } else if (error.response?.status === 500) {
+          alert('Server error. Please try again later.');
+        } else {
+          alert('Registration failed. Please try again.');
+        }
+      }
     }
   };
 
   const handlePhotoUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
-      // Validate file type and size
       if (!file.type.match('image.*')) {
         alert('Please select an image file');
         return;
       }
-      
+
       if (file.size > 2 * 1024 * 1024) {
         alert('Image size should be less than 2MB');
         return;
       }
-      
+
       const reader = new FileReader();
       reader.onloadend = () => {
         setProfilePhoto(reader.result);
@@ -146,14 +194,9 @@ const Signup = () => {
       <h2>Sign-Up</h2>
       <p className="membership-text">Membership fee for 1Y plan: 1000 LKR</p>
 
-      {/* Profile Photo Upload */}
       <div className="profile-section">
         <label className="profile-photo">
-          <input 
-            type="file" 
-            accept="image/*" 
-            onChange={handlePhotoUpload} 
-          />
+          <input type="file" accept="image/*" onChange={handlePhotoUpload} />
           {profilePhoto ? (
             <img src={profilePhoto} alt="Profile" />
           ) : (
@@ -166,6 +209,19 @@ const Signup = () => {
       </div>
 
       <form onSubmit={handleSubmit}>
+        <div className={`form-group ${errors.username ? 'error' : ''}`}>
+          <label htmlFor="username">Username</label>
+          <input
+            type="text"
+            id="username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            required
+            placeholder="Choose a unique username"
+          />
+          {errors.username && <span className="error-message">{errors.username}</span>}
+        </div>
+
         <div className={`form-group ${errors.name ? 'error' : ''}`}>
           <label htmlFor="name">Full Name</label>
           <input
@@ -190,6 +246,42 @@ const Signup = () => {
           {errors.phone && <span className="error-message">{errors.phone}</span>}
         </div>
 
+        <div className={`form-group ${errors.email ? 'error' : ''}`}>
+          <label htmlFor="email">Email</label>
+          <input
+            type="email"
+            id="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+          {errors.email && <span className="error-message">{errors.email}</span>}
+        </div>
+
+        <div className={`form-group ${errors.password ? 'error' : ''}`}>
+          <label htmlFor="password">Password</label>
+          <input
+            type="password"
+            id="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+          {errors.password && <span className="error-message">{errors.password}</span>}
+        </div>
+
+        <div className={`form-group ${errors.confirmPassword ? 'error' : ''}`}>
+          <label htmlFor="confirmPassword">Confirm Password</label>
+          <input
+            type="password"
+            id="confirmPassword"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            required
+          />
+          {errors.confirmPassword && <span className="error-message">{errors.confirmPassword}</span>}
+        </div>
+
         <div className={`form-group ${errors.address ? 'error' : ''}`}>
           <label htmlFor="address">Address</label>
           <input
@@ -202,7 +294,6 @@ const Signup = () => {
           {errors.address && <span className="error-message">{errors.address}</span>}
         </div>
 
-        {/* Payment Method Selection */}
         <div className="payment-method">
           <label>
             <input
@@ -226,7 +317,6 @@ const Signup = () => {
           </label>
         </div>
 
-        {/* Card Payment Section */}
         {paymentMethod === "card" && (
           <div className="card-details">
             <div className={`form-group ${errors.cardNumber ? 'error' : ''}`}>
@@ -270,7 +360,6 @@ const Signup = () => {
           </div>
         )}
 
-        {/* Cash Payment Section */}
         {paymentMethod === "cash" && (
           <div className="upload-slip">
             <label htmlFor="slip">Upload Your Payment Slip Here</label>
@@ -284,13 +373,11 @@ const Signup = () => {
           </div>
         )}
 
-        {/* Submit Button */}
         <button type="submit" className="confirm-button">
           CONFIRM
         </button>
       </form>
 
-      {/* Success Popup */}
       {showSuccess && (
         <div className="popup">
           <div className="popup-content">
