@@ -1,4 +1,5 @@
 const express = require('express');
+require('dotenv').config(); // Load environment variables from .env file
 const dbConnection = require('./config/db');
 const borrowRoutes = require('./routes/borrowbooks');
 const returnRoutes = require('./routes/returnbooks'); // ✅ Import return book routes
