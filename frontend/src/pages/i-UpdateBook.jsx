@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import axios from "axios";
 import "./i-UpdateBook.css";
 
 const UpdateBook = () => {
   const { state } = useLocation();
-  const { book } = state || {}; // Retrieve the book passed from the BookList page
+  const { book } = state || {};
 
   const [updatedBook, setUpdatedBook] = useState(book || {});
-
   const navigate = useNavigate();
 
   const categories = [
@@ -25,13 +25,15 @@ const UpdateBook = () => {
     setUpdatedBook({ ...updatedBook, [name]: value });
   };
 
-  const handleUpdate = () => {
-    const storedBooks = JSON.parse(localStorage.getItem("books")) || [];
-    const updatedBooks = storedBooks.map((b) =>
-      b.isbn === updatedBook.isbn ? updatedBook : b
-    );
-    localStorage.setItem("books", JSON.stringify(updatedBooks));
-    navigate("/booklist"); // Redirect back to the BookList page
+  const handleUpdate = async () => {
+    try {
+      await axios.put(`http://localhost:5000/api/inventorys/${updatedBook._id}`, updatedBook);
+      alert("Book updated successfully!");
+      navigate("/booklist");
+    } catch (err) {
+      console.error("Update error:", err);
+      alert("Failed to update book.");
+    }
   };
 
   return (
@@ -43,8 +45,8 @@ const UpdateBook = () => {
           <input
             type="text"
             className="form-control"
-            name="name"
-            value={updatedBook.name || ""}
+            name="BookName"
+            value={updatedBook.BookName || ""}
             onChange={handleChange}
           />
         </div>
@@ -53,8 +55,8 @@ const UpdateBook = () => {
           <input
             type="text"
             className="form-control"
-            name="author"
-            value={updatedBook.author || ""}
+            name="Author"
+            value={updatedBook.Author || ""}
             onChange={handleChange}
           />
         </div>
@@ -62,8 +64,8 @@ const UpdateBook = () => {
           <label className="form-label">Category</label>
           <select
             className="form-control"
-            name="category"
-            value={updatedBook.category || ""}
+            name="Category"
+            value={updatedBook.Category || ""}
             onChange={handleChange}
           >
             <option value="">Select Category</option>
@@ -73,6 +75,16 @@ const UpdateBook = () => {
               </option>
             ))}
           </select>
+        </div>
+        <div className="mb-3">
+          <label className="form-label">Published Date</label>
+          <input
+            type="date"
+            className="form-control"
+            name="PublishedDate"
+            value={updatedBook.PublishedDate || ""}
+            onChange={handleChange}
+          />
         </div>
         <button type="button" className="btn btn-success" onClick={handleUpdate}>
           OK
