@@ -1,7 +1,7 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 
-import Navbar from "./components/Navbar";
+// import Navbar from "./components/Navbar";
 import Login from "./pages/Login";
 import Contact from "./pages/Contact";
 import Services from "./pages/Services";
@@ -15,6 +15,7 @@ import BorrowBooksForm from "./pages/BorrowBooksForm";
 import ReturnBooksForm from "./pages/ReturnBooksForm";
 import Transactions from "./pages/transactions";
 import UpdateBorrowedBookForm from"./pages/BorrowUpdate";
+import Analyze from "./pages/Analyze";
 
 function App() {
   console.log("App component is rendering!");
@@ -34,7 +35,7 @@ function MainContent() {
 
   return (
     <>
-      {!hideNavbarAndFooter && <Navbar />}
+      {/* {!hideNavbarAndFooter && <Navbar />} */}
       <Routes>
         <Route path="/" element={<Home />} /> {/* Home page added correctly here */}
         <Route path="/login" element={<Login />} />
@@ -48,6 +49,8 @@ function MainContent() {
         <Route path="/returns" element={<ReturnBooksForm />} />
         <Route path="/transactions" element={<Transactions />} />
         <Route path="/Borrowerupdate"element={<UpdateBorrowedBookForm/>}/>
+        <Route path="/banalyze" element={<Analyze/>}/>
+        
       </Routes>
       {!hideNavbarAndFooter && <Footer />}
     </>
