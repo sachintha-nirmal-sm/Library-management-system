@@ -26,7 +26,7 @@ const Analyze = () => {
   const location = useLocation();
   const borrowedBooks = location.state?.borrowedBooks || [];
   const [categoryData, setCategoryData] = useState({});
-  const [titleData, setTitleData] = useState({});
+  const [monthlyData, setMonthlyData] = useState({});
 
   useEffect(() => {
     // Process data for category analysis
@@ -35,23 +35,15 @@ const Analyze = () => {
       return acc;
     }, {});
 
-    // Process data for title analysis (top 10 most borrowed)
-    const titleCount = borrowedBooks.reduce((acc, book) => {
-      acc[book.bookName] = (acc[book.bookName] || 0) + 1;
+    // Process data for monthly analysis
+    const monthlyCount = borrowedBooks.reduce((acc, book) => {
+      const month = new Date(book.borrowDate).toLocaleString('default', { month: 'long', year: 'numeric' });
+      acc[month] = (acc[month] || 0) + 1;
       return acc;
     }, {});
 
-    // Sort titles by count and get top 10
-    const sortedTitles = Object.entries(titleCount)
-      .sort(([, a], [, b]) => b - a)
-      .slice(0, 10)
-      .reduce((acc, [key, value]) => {
-        acc[key] = value;
-        return acc;
-      }, {});
-
     setCategoryData(categoryCount);
-    setTitleData(sortedTitles);
+    setMonthlyData(monthlyCount);
   }, [borrowedBooks]);
 
   const categoryChartData = {
@@ -67,12 +59,12 @@ const Analyze = () => {
     ],
   };
 
-  const titleChartData = {
-    labels: Object.keys(titleData),
+  const monthlyChartData = {
+    labels: Object.keys(monthlyData),
     datasets: [
       {
-        label: 'Number of Times Borrowed',
-        data: Object.values(titleData),
+        label: 'Books Borrowed per Month',
+        data: Object.values(monthlyData),
         backgroundColor: 'rgba(2, 58, 89, 0.5)',
         borderColor: 'rgb(7, 7, 7)',
         borderWidth: 1,
@@ -107,12 +99,12 @@ const Analyze = () => {
           <Bar options={options} data={categoryChartData} />
         </div>
         <div className="chart-wrapper">
-          <h2>Top 10 Most Borrowed Books</h2>
-          <Bar options={options} data={titleChartData} />
+          <h2>Monthly Number of Books Borrowed</h2>
+          <Bar options={options} data={monthlyChartData} />
         </div>
       </div>
     </div>
   );
 };
 
-export default Analyze; 
+export default Analyze;

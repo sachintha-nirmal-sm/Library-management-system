@@ -22,9 +22,9 @@ const BorrowBooksForm = () => {
 
   const handleBookDetailsChange = (e) => {
     const { name, value } = e.target;
-    if (name === 'isbn' && !/^\d*$/.test(value)) return;
+    if (name === 'isbn' && (!/^[0-9]{0,6}$/.test(value) || value.length > 6)) return; // Validate ISBN to allow only up to 6 digits
     if ((name === 'bookName' || name === 'author') && !/^[A-Za-z\s]*$/.test(value)) return;
-    if (name === 'publishedDate' && value > new Date().toISOString().split('T')[0]) return;
+    if (name === 'publishedDate' && new Date(value) > new Date()) return; // Ensure published date is in the past
     setBookDetails(prev => ({ ...prev, [name]: value }));
   };
 
@@ -32,7 +32,10 @@ const BorrowBooksForm = () => {
     const { name, value } = e.target;
     if (name === 'userId' && value.length > 6) return;
     if (name === 'contactNumber' && !/^\d*$/.test(value)) return;
-    // borrowDate is readOnly, so no need to validate here
+    if (name === 'borrowDate' && value !== new Date().toISOString().split('T')[0]) {
+      alert('Borrow Date must be today.');
+      return;
+    }
     setBorrowerDetails(prev => ({ ...prev, [name]: value }));
   };
 
@@ -180,6 +183,7 @@ const BorrowBooksForm = () => {
                 name="publishedDate"
                 value={bookDetails.publishedDate}
                 onChange={handleBookDetailsChange}
+                max={new Date().toISOString().split('T')[0]} // Restrict to past dates
                 required
               />
             </div>
@@ -225,7 +229,7 @@ const BorrowBooksForm = () => {
                 type="date"
                 name="borrowDate"
                 value={borrowerDetails.borrowDate}
-                readOnly
+                onChange={handleBorrowerDetailsChange}
                 required
               />
             </div>
