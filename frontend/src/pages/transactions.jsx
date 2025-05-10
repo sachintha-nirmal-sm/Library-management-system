@@ -45,7 +45,7 @@ const Transactions = () => {
   const calculateFineStatus = (borrowDate, returnDate) => {
     const diff = (new Date(validateDateString(returnDate)) - new Date(validateDateString(borrowDate))) 
                    / (1000 * 60 * 60 * 24);
-    return diff > 14 ? "Add fine" : "No fine";
+    return diff > 7 ? "Add fine" : "No fine";
   };
 
   const generatePDF = (data, title) => {
