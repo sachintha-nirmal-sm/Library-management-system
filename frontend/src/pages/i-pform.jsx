@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./i-pform.css";
 
 const OverdueForm = () => {
   const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     ISBN: "",
     BookName: "",
@@ -11,29 +12,25 @@ const OverdueForm = () => {
     BorrowDate: "",
     ReturnDate: "",
     OverdueDays: 0,
-    TotalFine: 0, // This will hold the total fine calculated value
+    TotalFine: 0,
   });
 
-  // Function to calculate overdue days based on borrow date and return date
   const calculateOverdueDays = (borrowDate, returnDate) => {
-    if (!borrowDate || !returnDate) return 0; // If either date is missing, return 0 overdue days
+    if (!borrowDate || !returnDate) return 0;
     const borrowDateObj = new Date(borrowDate);
     const returnDateObj = new Date(returnDate);
     const timeDiff = returnDateObj - borrowDateObj;
-    const daysOverdue = Math.floor(timeDiff / (1000 * 3600 * 24)); // Convert milliseconds to days
-    return daysOverdue > 0 ? daysOverdue : 0; // If overdue days is negative, set to 0
+    const daysOverdue = Math.floor(timeDiff / (1000 * 3600 * 24));
+    return daysOverdue > 0 ? daysOverdue : 0;
   };
 
-  // Function to calculate fine based on overdue days
   const calculateFine = (overdueDays) => overdueDays * 25;
 
-  // Handle changes in form fields
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => {
       const updatedData = { ...prevData, [name]: value };
 
-      // Recalculate overdue days and total fine when either BorrowDate or ReturnDate changes
       if (name === "BorrowDate" || name === "ReturnDate") {
         const overdueDays = calculateOverdueDays(updatedData.BorrowDate, updatedData.ReturnDate);
         updatedData.OverdueDays = overdueDays;
@@ -44,19 +41,38 @@ const OverdueForm = () => {
     });
   };
 
-  // Handle form submission
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    navigate("/payment-table", { state: formData });
+
+    try {
+      const response = await fetch("http://localhost:5000/api/payments", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(formData)
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        alert("Payment added successfully!");
+        navigate("/payment-table", { state: formData }); // Navigate after successful save
+      } else {
+        alert("Failed to add payment: " + data.msg);
+      }
+    } catch (error) {
+      console.error("Error submitting payment:", error);
+      alert("An error occurred.");
+    }
   };
 
   return (
     <div className="Fcontainer">
       <h2>Overdue Fine Form</h2>
       <form onSubmit={handleSubmit}>
-        {/* Render all form fields except for TotalFine */}
         {Object.keys(formData).map((key) => {
-          if (key === "TotalFine") return null; // Skip TotalFine from the form
+          if (key === "TotalFine") return null;
           return (
             <div className="form-group" key={key}>
               <label>{key.replace(/([A-Z])/g, ' $1').trim()}:</label>
@@ -65,21 +81,18 @@ const OverdueForm = () => {
                 name={key}
                 value={formData[key]}
                 onChange={handleChange}
-                readOnly={key === "OverdueDays" || key === "TotalFine"}
+                readOnly={key === "OverdueDays"}
                 required
               />
             </div>
           );
         })}
-        {/* Display the calculated fine in the table */}
+
         <div className="form-group">
           <label>Total Fine:</label>
-          <input
-            type="text"
-            value={`$${formData.TotalFine}`}
-            readOnly
-          />
+          <input type="text" value={`$${formData.TotalFine}`} readOnly />
         </div>
+
         <button type="submit" className="custom-btn-submit">OK</button>
       </form>
     </div>
