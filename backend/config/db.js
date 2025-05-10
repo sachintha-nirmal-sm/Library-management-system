@@ -1,8 +1,8 @@
 const mongoose = require('mongoose');
 
-const dburl = "mongodb+srv://snirmalsm:dbuser@library.qapvjlz.mongodb.net/?retryWrites=true&w=majority&appName=Library";
+const dburl = process.env.DB_URL; // Use environment variable for database URL
 
-mongoose.set("strrictQuery",true,"userNewUrlParser" ,true);
+mongoose.set("strrictQuery", true, "userNewUrlParser", true);
 
 const connection = async () => {
    try{
