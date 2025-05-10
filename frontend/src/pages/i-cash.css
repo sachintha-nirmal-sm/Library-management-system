@@ -1,7 +1,7 @@
 /* General Styling */
 body {
     font-family: "Poppins", sans-serif;
-    background: #f4f4f4;
+    background: #f1eef1;
     margin: 0;
     /* Removed full-viewport flex centering to keep header and footer unchanged */
   }
