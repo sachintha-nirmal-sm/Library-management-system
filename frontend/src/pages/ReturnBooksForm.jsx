@@ -135,7 +135,7 @@ const ReturnBooksForm = () => {
     return diffDays > 14 ? (diffDays - 14) * fineRate : 0;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!isValidPublishedDate(bookDetails.publishedDate)) {
@@ -151,28 +151,46 @@ const ReturnBooksForm = () => {
     const returnedBook = {
       isbn: bookDetails.isbn,
       bookName: bookDetails.bookName,
+      author: bookDetails.author, // Ensure author is included
+      category: bookDetails.category, // Ensure category is included
+      publishedDate: bookDetails.publishedDate, // Ensure publishedDate is included
       borrowerName: borrowerDetails.name,
       borrowDate: borrowerDetails.borrowDate,
       returnDate: borrowerDetails.returnDate,
-      fine: calculateFine(borrowerDetails.borrowDate, borrowerDetails.returnDate),
     };
 
-    navigate('/transactions', { state: { returnedBook } });
+    try {
+      const response = await fetch('http://localhost:5000/api/returnbooks', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(returnedBook),
+      });
 
-    setBookDetails({
-      isbn: '',
-      bookName: '',
-      author: '',
-      category: '',
-      publishedDate: '',
-    });
-    setBorrowerDetails({
-      name: '',
-      borrowDate: '',
-      returnDate: '',
-    });
+      if (!response.ok) {
+        const error = await response.json();
+        alert(`Failed to return book: ${error.msg}`);
+        return;
+      }
 
-    alert('Book returned successfully!');
+      alert('Book returned successfully!');
+      navigate('/transactions');
+
+      setBookDetails({
+        isbn: '',
+        bookName: '',
+        author: '',
+        category: '',
+        publishedDate: '',
+      });
+      setBorrowerDetails({
+        name: '',
+        borrowDate: '',
+        returnDate: '',
+      });
+    } catch (error) {
+      console.error('Error submitting return:', error);
+      alert('An error occurred while returning the book.');
+    }
   };
 
   const handleCancel = () => {
@@ -228,7 +246,7 @@ const ReturnBooksForm = () => {
             </div>
             <div className="form-group">
               <label>Borrow Date:</label>
-              <input type="date" name="borrowDate" value={borrowerDetails.borrowDate} onChange={handleBorrowerDetailsChange} required />
+              <input type="date" name="borrowDate" value={borrowerDetails.borrowDate} readOnly />
             </div>
             <div className="form-group">
               <label>Return Date:</label>
