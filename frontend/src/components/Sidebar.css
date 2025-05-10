@@ -1,0 +1,81 @@
+.sidebar {
+    width: 250px;
+    height: 100vh; /* Full height of the viewport */
+    background-color: #5b88d5; /* Background color */
+    padding: 15px;
+    border-right: 1px solid #ccc;
+    box-sizing: border-box; /* Include padding in the width */
+  }
+  
+  .sidebar h2 {
+    font-size: 1.5em;
+    margin-bottom: 15px;
+    color: white; /* Text color */
+    text-align: center; /* Center the heading */
+  }
+  
+  .sidebar ul {
+    list-style-type: none; /* Remove bullet points */
+    padding: 0;
+  }
+  
+  .sidebar ul li {
+    margin: 10px 0;
+  }
+  
+  .sidebar ul li a {
+    text-decoration: none; /* Remove underline from links */
+    color: white; /* Link text color */
+    font-size: 1.1em;
+    display: block; /* Make the entire area clickable */
+    padding: 8px;
+    border-radius: 4px; /* Rounded corners */
+    transition: color 0.3s; /* Smooth hover effect for text color */
+  }
+  
+  .sidebar ul li a:hover {
+    color: black; /* Change text color to black on hover */
+    background-color: transparent; /* Remove background color on hover */
+  }
+  
+  .sidebar ul li a:active {
+    color: black; /* Change text color to black when clicked */
+    background-color: transparent; /* Remove background color when clicked */
+  }
+  
+  /* Styles for nested dropdown list */
+  .nested-dropdown-list {
+    margin-left: 20px; /* Indent nested list */
+    padding-left: 0; /* Remove default padding */
+    display: block; /* Ensure it displays as a block (vertical) */
+  }
+  
+  .nested-dropdown-list li {
+    margin: 5px 0; /* Adjust spacing for nested items */
+  }
+  
+  .dropdown-header {
+    color: white;
+    font-size: 1.1em;
+    cursor: pointer; /* Change cursor to pointer on hover */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px;
+    border-radius: 4px;
+    transition: color 0.3s; /* Smooth hover effect for text color */
+  }
+  
+  .dropdown-header:hover {
+    color: black; /* Change text color to black on hover */
+    background-color: transparent; /* Remove background color on hover */
+  }
+  
+  .dropdown-header:active {
+    color: black; /* Change text color to black when clicked */
+    background-color: transparent; /* Remove background color when clicked */
+  }
+  
+  .dropdown-icon {
+    font-size: 0.8em;
+  }
