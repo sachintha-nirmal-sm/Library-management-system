@@ -25,20 +25,21 @@ const IForme = () => {
     "Travel",
   ];
 
-  // Auto-generate ISBN on mount
+  // Auto-generate a 6-digit ISBN on mount or reset
   useEffect(() => {
-    setBook((prev) => ({ ...prev, isbn: generateISBN() }));
+    setBook((prev) => ({
+      ...prev,
+      isbn: generateISBN(),
+    }));
   }, []);
 
   const generateISBN = () => {
-    return "ISBN" + Date.now();
+    return Math.floor(100000 + Math.random() * 900000).toString(); // Random 6-digit number
   };
 
   const handleChange = (e) => {
-    setBook({
-      ...book,
-      [e.target.name]: e.target.value,
-    });
+    const { name, value } = e.target;
+    setBook((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e) => {
@@ -56,7 +57,7 @@ const IForme = () => {
       const response = await axios.post("http://localhost:5000/api/inventorys", payload);
       alert(response.data.msg || "Book added successfully!");
 
-      // Reset form
+      // Reset form with new ISBN
       setBook({
         isbn: generateISBN(),
         name: "",
@@ -65,7 +66,7 @@ const IForme = () => {
         publishedDate: "",
       });
 
-      navigate("/booklist"); // Navigate to the book list
+      navigate("/booklist");
     } catch (error) {
       console.error("Error adding book:", error);
       alert("Failed to add book. Please check console for details.");
@@ -77,16 +78,33 @@ const IForme = () => {
       <h2>Add New Book</h2>
       <form onSubmit={handleSubmit}>
         <div>
-          <label htmlFor="isbn">ISBN:</label>
-          <input type="text" name="isbn" value={book.isbn} readOnly />
+          <label htmlFor="isbn">ISBN </label>
+          <input
+            type="text"
+            name="isbn"
+            value={book.isbn}
+            readOnly
+          />
         </div>
         <div>
           <label htmlFor="name">Book Name:</label>
-          <input type="text" name="name" value={book.name} onChange={handleChange} required />
+          <input
+            type="text"
+            name="name"
+            value={book.name}
+            onChange={handleChange}
+            required
+          />
         </div>
         <div>
           <label htmlFor="author">Author:</label>
-          <input type="text" name="author" value={book.author} onChange={handleChange} required />
+          <input
+            type="text"
+            name="author"
+            value={book.author}
+            onChange={handleChange}
+            required
+          />
         </div>
         <div>
           <label htmlFor="category">Category:</label>
@@ -100,7 +118,13 @@ const IForme = () => {
         </div>
         <div>
           <label htmlFor="publishedDate">Published Date:</label>
-          <input type="date" name="publishedDate" value={book.publishedDate} onChange={handleChange} required />
+          <input
+            type="date"
+            name="publishedDate"
+            value={book.publishedDate}
+            onChange={handleChange}
+            required
+          />
         </div>
 
         <div className="form-buttons">
