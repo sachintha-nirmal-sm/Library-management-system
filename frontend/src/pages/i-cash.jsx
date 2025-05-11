@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import axios from "axios";
 import "./i-cash.css";
 
 const CashPayment = () => {
@@ -24,14 +25,26 @@ const CashPayment = () => {
       alert("Please upload the payment slip before confirming.");
       return;
     }
-  
-    // Set the success message
-    sessionStorage.setItem("paymentSuccessMessage", "Payment Successful ✅");
-  
-    // Redirect to payment table
-    navigate("/payment-table");
+
+    // Prepare payment data for the update
+    const paymentData = {
+      status: "Paid",
+      paymentSlip: slipName, // You can later save the file on your server or use a file upload service
+    };
+
+    // Update payment status to "Paid" in the backend
+    axios.put(`http://localhost:5000/api/payments/${id}`, paymentData)
+      .then(() => {
+        setPaymentStatus("Payment Successful ✅");
+        // Redirect to payment table with a success message
+        sessionStorage.setItem("paymentSuccessMessage", "Payment Successful ✅");
+        navigate("/payment-table");
+      })
+      .catch((err) => {
+        console.error("Payment update failed:", err);
+        alert("Failed to confirm payment.");
+      });
   };
-  
 
   return (
     <div className="cash-payment-container">
