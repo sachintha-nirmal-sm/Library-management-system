@@ -22,7 +22,7 @@ const BorrowBooksForm = () => {
 
   const handleBookDetailsChange = (e) => {
     const { name, value } = e.target;
-    if (name === 'isbn' && (!/^[0-9]{0,6}$/.test(value) || value.length > 6)) return; // Validate ISBN to allow only up to 6 digits
+    if (name === 'isbn' && (!/^[0-9]{0,6}$/.test(value))) return; // Validate ISBN to allow only up to 6 digits
     if ((name === 'bookName' || name === 'author') && !/^[A-Za-z\s]*$/.test(value)) return;
     if (name === 'publishedDate' && new Date(value) > new Date()) return; // Ensure published date is in the past
     setBookDetails(prev => ({ ...prev, [name]: value }));
@@ -30,8 +30,9 @@ const BorrowBooksForm = () => {
 
   const handleBorrowerDetailsChange = (e) => {
     const { name, value } = e.target;
+    if (name === 'isbn' && (!/^[0-9]{0,6}$/.test(value))) return; // Validate ISBN to allow only up to 6 digits
     if (name === 'userId' && value.length > 6) return;
-    if (name === 'contactNumber' && !/^\d*$/.test(value)) return;
+    if (name === 'contactNumber' && (!/^\d{0,10}$/.test(value))) return; // Ensure only up to 10 digits are allowed
     if (name === 'borrowDate' && value !== new Date().toISOString().split('T')[0]) {
       alert('Borrow Date must be today.');
       return;
@@ -40,8 +41,8 @@ const BorrowBooksForm = () => {
   };
 
   const validateForm = () => {
-    if (bookDetails.isbn.length !== 10) {
-      alert('ISBN must be exactly 10 digits.');
+    if (bookDetails.isbn.length !== 6) {
+      alert('ISBN must be exactly 6 digits.');
       return false;
     }
     if (!/^[A-Za-z\s]+$/.test(bookDetails.bookName)) {
