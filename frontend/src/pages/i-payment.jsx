@@ -1,22 +1,33 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import axios from "axios"; // Ensure axios is imported
 import { jsPDF } from "jspdf";
 import "./i-payment.css";
 
 const IPaymentTable = () => {
   const location = useLocation();
-  const newPayment = location.state;
+  const newPayment = location.state; // The new payment passed via location state
   const navigate = useNavigate();
 
   const [payments, setPayments] = useState([]);
   const [selectedISBN, setSelectedISBN] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
 
+  // Fetching and adding payments
   useEffect(() => {
+    // Fetch existing payments
+    axios.get("http://localhost:5000/api/payments")
+      .then((res) => setPayments(res.data))
+      .catch((err) => console.error("Error fetching payments:", err));
+
+    // Add new payment
     if (newPayment) {
-      // Assign initial status to new payments (e.g., "Pending")
-      newPayment.status = "Pending";
-      setPayments((prevPayments) => [...prevPayments, newPayment]);
+      const paymentWithStatus = { ...newPayment, status: "Pending" };
+      axios.post("http://localhost:5000/api/payments", paymentWithStatus)
+        .then(() => {
+          setPayments((prev) => [...prev, paymentWithStatus]);
+        })
+        .catch((err) => console.error("Error adding new payment:", err));
     }
 
     const message = sessionStorage.getItem("paymentSuccessMessage");
@@ -117,7 +128,6 @@ const IPaymentTable = () => {
         payment.returnDate,
         payment.overdueDays,
         payment.totalFine,
-        
       ];
   
       row.forEach((value, colIndex) => {
@@ -196,7 +206,7 @@ const IPaymentTable = () => {
                 }
                 return null;
               })}
-              <td>{payment.status}</td> {/* Display the status */}
+              <td>{payment.status}</td>
               <td>
                 <button className="btn btn-success" onClick={() => handlePay(payment.isbn)}>
                   Pay
