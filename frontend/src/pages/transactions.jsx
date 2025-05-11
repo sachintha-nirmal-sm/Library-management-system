@@ -19,16 +19,32 @@ const Transactions = () => {
 
   useEffect(() => {
     fetch("http://localhost:5000/api/borrowbooks")
-      .then(res => res.json())
+      .then(res => {
+        if (!res.ok) {
+          throw new Error(`HTTP error! status: ${res.status}`);
+        }
+        return res.json();
+      })
       .then(data => setBorrowedBooks(data))
-      .catch(err => console.error("Failed loading borrowed books:", err));
+      .catch(err => {
+        console.error("Failed loading borrowed books:", err);
+        setBorrowedBooks([]); // Default to an empty array on failure
+      });
   }, []);
 
   useEffect(() => {
     fetch("http://localhost:5000/api/returnbooks")
-      .then(res => res.json())
+      .then(res => {
+        if (!res.ok) {
+          throw new Error(`HTTP error! status: ${res.status}`);
+        }
+        return res.json();
+      })
       .then(data => setReturnedBooks(data))
-      .catch(err => console.error("Failed loading returned books:", err));
+      .catch(err => {
+        console.error("Failed loading returned books:", err);
+        setReturnedBooks([]); // Default to an empty array on failure
+      });
   }, []);
 
   useEffect(() => {
