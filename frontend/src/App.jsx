@@ -2,6 +2,7 @@ import React from "react";
 import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 
 // Import components
+// Import components
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 
@@ -12,13 +13,14 @@ import Contact from "./pages/Contact";
 import Services from "./pages/Services";
 import About from "./pages/About";
 import GetStartedPage from "./pages/GetStartedPage";
-import IForme from "./pages/i-forme"; // Book form page
-import BookList from "./pages/i-booklist"; // Book list page
+import IForme from "./pages/i-forme"; 
+import BookList from "./pages/i-booklist"; 
 import UpdateBook from "./pages/i-UpdateBook";
 import OverdueForm from "./pages/i-pform";
 import IPaymentTable from "./pages/i-payment";
-import CashPayment from "./pages/i-cash"; // Cash Payment page
-import CardPayment from "./pages/i-card"; // Card Payment page
+import CashPayment from "./pages/i-cash"; // Ensure correct path
+import CardPayment from "./pages/i-card";
+import NotificationForm from "./pages/notification";
 
 import EmyLibrary from "./pages/EmyLibrary";
 import Home1 from "./pages/Home1"; // Home1 page
@@ -31,10 +33,8 @@ import ReturnBooksForm from "./pages/ReturnBooksForm";
 import UpdateBorrowedBookForm from "./pages/BorrowUpdate";
 
 function App() {
-  console.log("App component is rendering!");
   return (
     <Router>
-      {console.log("🔄 Rendering MainContent")}
       <MainContent />
     </Router>
   );
@@ -73,8 +73,10 @@ function MainContent() {
         <Route path="/cash-payment/:id/:total" element={<CashPayment />} />
         <Route path="/card-payment/:id/:total" element={<CardPayment />} />
 
-        {/* Library management routes */}
-        <Route path="/mylibrary" element={<EmyLibrary />} />
+        <Route path="/notification" element={<NotificationForm />} />
+
+         {/* Library management routes */}
+         <Route path="/mylibrary" element={<EmyLibrary />} />
         <Route path="/bookmodel" element={<BookModal />} />
         <Route path="/bookform" element={<BookForm />} />
         <Route path="/sidebar" element={<Sidebar />} />
