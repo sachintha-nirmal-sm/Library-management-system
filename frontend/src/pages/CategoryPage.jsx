@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { FaBook, FaBookmark, FaEye } from 'react-icons/fa';
+import { FaBook, FaBookmark, FaEye, FaStar } from 'react-icons/fa';
 import axiosInstance from '../utils/axiosConfig';
 import './CategoryPage.css';
 
@@ -65,11 +65,8 @@ const CategoryPage = () => {
 
   const getBookCover = (book) => {
     if (book.coverImage) {
-      if (book.coverImage.startsWith('data:image') || book.coverImage.startsWith('http')) {
+      if (book.coverImage.startsWith('http')) {
         return book.coverImage;
-      }
-      if (book.coverImage.startsWith('/uploads/')) {
-        return `http://localhost:5000${book.coverImage}`;
       }
       return `http://localhost:5000/uploads/${book.coverImage}`;
     }
@@ -104,8 +101,8 @@ const CategoryPage = () => {
       <div className="books-grid">
         {books.length > 0 ? (
           books.map((book) => (
-            <div key={book._id} className="book-card">
-              <div className="book-cover">
+            <div key={book._id} className="category-book-card">
+              <div className="category-book-cover">
                 {getBookCover(book) ? (
                   <img 
                     src={getBookCover(book)}
@@ -113,7 +110,7 @@ const CategoryPage = () => {
                     onError={(e) => {
                       e.target.onerror = null;
                       e.target.parentElement.innerHTML = `
-                        <div class="no-cover">
+                        <div class="category-no-cover">
                           <FaBook />
                           <span>${book.title}</span>
                         </div>
@@ -121,28 +118,44 @@ const CategoryPage = () => {
                     }}
                   />
                 ) : (
-                  <div className="no-cover">
+                  <div className="category-no-cover">
                     <FaBook />
                     <span>{book.title}</span>
                   </div>
                 )}
               </div>
-              <div className="book-info">
+              <div className="category-book-info">
                 <h3>{book.title}</h3>
-                <p className="book-author">{book.author}</p>
-                <p className="book-genre">{book.genre}</p>
-                <div className="book-rating">
-                  <span>{book.rating ? `${book.rating} / 5` : 'Not Rated'}</span>
+                <p className="category-book-author">{book.author}</p>
+                <span className="category-book-category">{book.category}</span>
+                <div className="category-book-rating">
+                  {book.rating
+                    ? (
+                      <>
+                        <span className="category-rating-count">{book.rating}</span>
+                        <span className="category-rating-stars">
+                          {[...Array(5)].map((_, i) => (
+                            <FaStar
+                              key={i}
+                              color={i < Math.round(book.rating) ? "#ffd700" : "#e0e0e0"}
+                              style={{ marginLeft: 1, marginRight: 1 }}
+                            />
+                          ))}
+                        </span>
+                      </>
+                    )
+                    : <span className="category-rating-count">Not Rated</span>
+                  }
                 </div>
-                <div className="book-actions">
+                <div className="category-book-actions">
                   <button 
-                    className="view-button"
+                    className="category-view-button"
                     onClick={() => navigate(`/book/${book.isbn}`)}
                   >
                     <FaEye /> View Details
                   </button>
                   <button 
-                    className={`watch-later-button ${
+                    className={`category-watch-later-button ${
                       watchLaterList.some(item => item.bookId === book._id) ? 'active' : ''
                     }`}
                     onClick={() => handleWatchLater(book)}
