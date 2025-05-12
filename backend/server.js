@@ -4,12 +4,19 @@ const cors = require('cors');
 const dotenv = require('dotenv');
 const path = require('path');
 const fs = require('fs');
-const { GridFSBucket } = require('mongodb');
-const multer = require('multer');
-const { GridFsStorage } = require('multer-gridfs-storage');
+const upload = require('./middleware/upload');
 
 // Load environment variables
 dotenv.config();
+
+// Validate required environment variables
+const requiredEnvVars = ['MONGODB_URI', 'CLOUDINARY_CLOUD_NAME', 'CLOUDINARY_API_KEY', 'CLOUDINARY_API_SECRET'];
+const missingEnvVars = requiredEnvVars.filter(envVar => !process.env[envVar]);
+
+if (missingEnvVars.length > 0) {
+  console.error('Missing required environment variables:', missingEnvVars.join(', '));
+  process.exit(1);
+}
 
 // Create Express app
 const app = express();
@@ -20,8 +27,15 @@ if (!fs.existsSync(uploadsDir)) {
   fs.mkdirSync(uploadsDir, { recursive: true });
 }
 
+// CORS configuration
+app.use(cors({
+  origin: ['http://localhost:3000', 'http://localhost:3001'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true
+}));
+
 // Middleware
-app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -31,28 +45,19 @@ app.use(express.static(path.join(__dirname, '../frontend/build')));
 // Serve uploaded files
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// Database connection
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/library_management';
-
-// Debugging: Log the MongoDB URI to verify it is loaded correctly
-console.log('MONGODB_URI:', MONGODB_URI);
-
-mongoose.connect(MONGODB_URI)
-  .then(() => console.log('Connected to MongoDB'))
-  .catch(err => console.error('MongoDB connection error:', err));
-
-// Create GridFS storage engine
-const storage = new GridFsStorage({
-  url: process.env.MONGODB_URI,
-  file: (req, file) => {
-    return {
-      filename: file.originalname,
-      bucketName: 'uploads' // Collection name for files
-    };
+// Database connection with improved error handling
+const connectDB = async () => {
+  try {
+    const conn = await mongoose.connect(process.env.MONGODB_URI, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
+    console.log(`MongoDB Connected: ${conn.connection.host}`);
+  } catch (error) {
+    console.error('MongoDB connection error:', error);
+    process.exit(1);
   }
-});
-
-const upload = require('./middleware/upload');
+};
 
 // Routes
 const bookRoutes = require('./routes/bookRoutes');
@@ -60,34 +65,13 @@ const watchLaterRoutes = require('./routes/watchLaterRoutes');
 app.use('/api/books', bookRoutes);
 app.use('/api/watch-later', watchLaterRoutes);
 
-// Upload PDF/image
-app.post('/api/upload', upload.single('file'), (req, res) => {
-  if (!req.file) return res.status(400).send('No file uploaded');
-  res.json({ fileId: req.file.id });
-});
-
-// Get file by ID
-app.get('/api/file/:id', async (req, res) => {
-  try {
-    const bucket = new GridFSBucket(mongoose.connection.db, {
-      bucketName: 'uploads'
-    });
-
-    const fileId = new mongoose.Types.ObjectId(req.params.id);
-    const downloadStream = bucket.openDownloadStream(fileId);
-
-    downloadStream.on('data', (chunk) => res.write(chunk));
-    downloadStream.on('error', () => res.status(404).send('File not found'));
-    downloadStream.on('end', () => res.end());
-  } catch (err) {
-    res.status(500).send('Server error');
-  }
-});
-
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error(err.stack);
-  res.status(500).send('Something broke!');
+  res.status(500).json({
+    message: 'Something went wrong!',
+    error: process.env.NODE_ENV === 'development' ? err.message : undefined
+  });
 });
 
 // Serve React app
@@ -97,8 +81,12 @@ app.get('*', (req, res) => {
 
 // Start server
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+
+// Connect to MongoDB before starting the server
+connectDB().then(() => {
+  app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+  });
 });
 
-module.exports = { upload };
+module.exports = app;
