@@ -1,27 +1,26 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { FaArrowLeft, FaSave, FaSpinner } from 'react-icons/fa';
-import axios from 'axios';
+import axiosInstance from '../config/axiosInstance';
 import './UpdateBook.css';
 
 const UpdateBook = () => {
   const { isbn } = useParams();
   const navigate = useNavigate();
   const [book, setBook] = useState({
-    title: '',
-    author: '',
-    isbn: '',
-    description: '',
-    publishedYear: '',
-    genre: '',
+    isbn: "",
+    title: "",
+    author: "",
+    category: "Novel",
+    publishedDate: "",
+    description: "No description available",
+    bookText: "",
     coverImage: null,
-    pdfFile: null,
-    available: true
+    genre: ""
   });
+
   const [errors, setErrors] = useState({});
   const [touchedFields, setTouchedFields] = useState({});
   const [coverPreview, setCoverPreview] = useState(null);
-  const [pdfName, setPdfName] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -32,24 +31,26 @@ const UpdateBook = () => {
     "Mystery & Thriller",
     "Romance",
     "Fantasy",
-    "Education",
+    "Education"
   ];
 
   useEffect(() => {
     const fetchBook = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/api/books/${isbn}`);
-        if (!response.ok) {
-          throw new Error('Failed to fetch book');
-        }
-        const data = await response.json();
+        const response = await axiosInstance.get(`/api/books/${isbn}`);
+        const bookData = response.data;
         setBook({
-          ...data,
-          publishedDate: data.publishedYear ? new Date(data.publishedYear, 0).toISOString().split('T')[0] : '',
-          category: data.genre || 'Novel'
+          isbn: bookData.isbn,
+          title: bookData.title,
+          author: bookData.author,
+          publishedDate: bookData.publishedYear ? new Date(bookData.publishedYear, 0).toISOString().split('T')[0] : '',
+          category: bookData.category || 'Novel',
+          description: bookData.description || 'No description available',
+          bookText: bookData.bookText || '',
+          genre: bookData.genre || '',
+          coverImage: null
         });
-        setCoverPreview(data.coverImage);
-        setPdfName(data.pdfFile);
+        setCoverPreview(bookData.coverImage);
         setIsLoading(false);
       } catch (error) {
         console.error('Error fetching book:', error);
@@ -67,12 +68,14 @@ const UpdateBook = () => {
         if (!value) return 'Title is required';
         if (value.length < 2) return 'Title must be at least 2 characters long';
         if (value.length > 100) return 'Title must not exceed 100 characters';
+        if (!/^[a-zA-Z0-9\s.,!?-]+$/.test(value)) return 'Title can only contain letters, numbers, and basic punctuation';
         return '';
       
       case 'author':
         if (!value) return 'Author is required';
         if (value.length < 2) return 'Author name must be at least 2 characters long';
         if (value.length > 50) return 'Author name must not exceed 50 characters';
+        if (!/^[a-zA-Z\s'-]+$/.test(value)) return 'Author name can only contain letters, spaces, hyphens, and apostrophes';
         return '';
       
       case 'description':
@@ -86,6 +89,12 @@ const UpdateBook = () => {
         const date = new Date(value);
         if (isNaN(date.getTime())) return 'Invalid date format';
         if (date > new Date()) return 'Published date cannot be in the future';
+        return '';
+      
+      case 'genre':
+        if (!value) return 'Genre is required';
+        if (value.length < 2) return 'Genre must be at least 2 characters long';
+        if (value.length > 50) return 'Genre must not exceed 50 characters';
         return '';
       
       default:
@@ -120,49 +129,35 @@ const UpdateBook = () => {
     setErrors(prev => ({ ...prev, [name]: error }));
   };
 
-  const handleFileChange = (e, type) => {
+  const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      if (type === 'cover') {
-        if (file.type.startsWith('image/')) {
-          const reader = new FileReader();
-          reader.onloadend = () => {
-            const img = new Image();
-            img.onload = () => {
-              if (img.width < 300 || img.height < 300) {
-                setErrors(prev => ({ ...prev, coverImage: 'Image dimensions must be at least 300x300 pixels' }));
-                return;
-              }
-              if (img.width > 2000 || img.height > 2000) {
-                setErrors(prev => ({ ...prev, coverImage: 'Image dimensions must not exceed 2000x2000 pixels' }));
-                return;
-              }
-              if (file.size > 5 * 1024 * 1024) {
-                setErrors(prev => ({ ...prev, coverImage: 'Image file size must not exceed 5MB' }));
-                return;
-              }
-              setCoverPreview(reader.result);
-              setBook(prev => ({ ...prev, coverImage: file.name }));
-              setErrors(prev => ({ ...prev, coverImage: '' }));
-            };
-            img.src = reader.result;
+      if (file.type.startsWith('image/')) {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          const img = new Image();
+          img.onload = () => {
+            if (img.width < 300 || img.height < 300) {
+              setErrors(prev => ({ ...prev, coverImage: 'Image dimensions must be at least 300x300 pixels' }));
+              return;
+            }
+            if (img.width > 2000 || img.height > 2000) {
+              setErrors(prev => ({ ...prev, coverImage: 'Image dimensions must not exceed 2000x2000 pixels' }));
+              return;
+            }
+            if (file.size > 5 * 1024 * 1024) {
+              setErrors(prev => ({ ...prev, coverImage: 'Image file size must not exceed 5MB' }));
+              return;
+            }
+            setCoverPreview(reader.result);
+            setBook(prev => ({ ...prev, coverImage: file }));
+            setErrors(prev => ({ ...prev, coverImage: '' }));
           };
-          reader.readAsDataURL(file);
-        } else {
-          setErrors(prev => ({ ...prev, coverImage: 'Please upload an image file for the cover page' }));
-        }
-      } else if (type === 'pdf') {
-        if (file.type === 'application/pdf') {
-          if (file.size > 10 * 1024 * 1024) {
-            setErrors(prev => ({ ...prev, pdfFile: 'PDF file size must not exceed 10MB' }));
-            return;
-          }
-          setBook(prev => ({ ...prev, pdfFile: file.name }));
-          setPdfName(file.name);
-          setErrors(prev => ({ ...prev, pdfFile: '' }));
-        } else {
-          setErrors(prev => ({ ...prev, pdfFile: 'Please upload a PDF file' }));
-        }
+          img.src = reader.result;
+        };
+        reader.readAsDataURL(file);
+      } else {
+        setErrors(prev => ({ ...prev, coverImage: 'Please upload an image file for the cover page' }));
       }
     }
   };
@@ -181,44 +176,45 @@ const UpdateBook = () => {
     setIsSubmitting(true);
 
     try {
-      // Create FormData for file uploads
       const formData = new FormData();
+      
+      // Append all text fields
       formData.append('title', book.title.trim());
       formData.append('author', book.author.trim());
-      formData.append('description', book.description.trim() || "No description available");
+      formData.append('description', book.description.trim() || 'No description available');
+      formData.append('bookText', book.bookText.trim());
+      formData.append('category', book.category);
       formData.append('publishedYear', new Date(book.publishedDate).getFullYear());
-      formData.append('genre', book.category.trim());
-      formData.append('available', true);
+      formData.append('genre', book.genre.trim());
 
-      // Only append files if they exist
+      // Append cover image if it's a new file
       if (book.coverImage instanceof File) {
         formData.append('coverImage', book.coverImage);
       }
-      if (book.pdfFile instanceof File) {
-        formData.append('pdfFile', book.pdfFile);
-      }
 
-      const response = await axios.put(
-        `http://localhost:5000/api/books/${isbn}`,
-        formData,
-        {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
+      const response = await axiosInstance.put(`/api/books/${isbn}`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
         }
-      );
+      });
 
       if (response.status === 200) {
         alert('Book updated successfully!');
         navigate('/a-booklist');
-      } else {
-        throw new Error('Failed to update book');
       }
-    } catch (error) {
-      console.error('Error updating book:', error);
+    } catch (err) {
+      console.error('Update failed:', err);
+      let errorMessage = 'Failed to update book. Please try again.';
+      
+      if (err.response?.data?.message) {
+        errorMessage = err.response.data.message;
+      } else if (err.response?.data?.error) {
+        errorMessage = err.response.data.error;
+      }
+      
       setErrors(prev => ({
         ...prev,
-        submit: error.response?.data?.message || 'Error updating book. Please try again.'
+        submit: errorMessage
       }));
     } finally {
       setIsSubmitting(false);
@@ -226,7 +222,7 @@ const UpdateBook = () => {
   };
 
   const handleCancel = () => {
-    navigate("/a-booklist");
+    navigate('/a-booklist');
   };
 
   if (isLoading) {
@@ -242,17 +238,17 @@ const UpdateBook = () => {
     return (
       <div className="update-book-error">
         <p>{errors.fetch}</p>
-        <button onClick={() => navigate("/a-booklist")}>Back to Book List</button>
+        <button onClick={() => navigate('/a-booklist')}>Back to Book List</button>
       </div>
     );
   }
 
   return (
-    <div className="update-book-container">
-      <div className="update-book-header">
+    <div className="book-form-container">
+      <div className="book-form-header">
         <h2>Update Book</h2>
       </div>
-      <form onSubmit={handleSubmit} className="update-book-form">
+      <form onSubmit={handleSubmit} className="book-form">
         <div className="form-grid">
           <div className="form-group">
             <label htmlFor="isbn">ISBN</label>
@@ -309,9 +305,10 @@ const UpdateBook = () => {
               onChange={handleChange}
               onBlur={handleBlur}
               className={`form-control ${touchedFields.category && errors.category ? 'error' : ''}`}
+              required
             >
-              {categories.map((cat, index) => (
-                <option key={index} value={cat}>{cat}</option>
+              {categories.map((cat) => (
+                <option key={cat} value={cat}>{cat}</option>
               ))}
             </select>
             {touchedFields.category && errors.category && (
@@ -336,6 +333,23 @@ const UpdateBook = () => {
             )}
           </div>
 
+          <div className="form-group">
+            <label htmlFor="genre">Genre</label>
+            <input
+              type="text"
+              id="genre"
+              name="genre"
+              value={book.genre}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              className={`form-control ${touchedFields.genre && errors.genre ? 'error' : ''}`}
+              required
+            />
+            {touchedFields.genre && errors.genre && (
+              <div className="error-message">{errors.genre}</div>
+            )}
+          </div>
+
           <div className="form-group full-width">
             <label htmlFor="description">Description</label>
             <textarea
@@ -353,12 +367,29 @@ const UpdateBook = () => {
             )}
           </div>
 
+          <div className="form-group full-width">
+            <label htmlFor="bookText">Book Text</label>
+            <textarea
+              id="bookText"
+              name="bookText"
+              value={book.bookText}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              rows="8"
+              className={`form-control ${touchedFields.bookText && errors.bookText ? 'error' : ''}`}
+              placeholder="Enter the book's text content here..."
+            />
+            {touchedFields.bookText && errors.bookText && (
+              <div className="error-message">{errors.bookText}</div>
+            )}
+          </div>
+
           <div className="form-group">
             <label htmlFor="coverImage">Cover Image</label>
             <input
               type="file"
               id="coverImage"
-              onChange={(e) => handleFileChange(e, 'cover')}
+              onChange={handleFileChange}
               accept="image/*"
               className={`form-control ${touchedFields.coverImage && errors.coverImage ? 'error' : ''}`}
             />
@@ -369,23 +400,6 @@ const UpdateBook = () => {
               <div className="image-preview">
                 <img src={coverPreview} alt="Cover Preview" />
               </div>
-            )}
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="pdfFile">PDF File</label>
-            <input
-              type="file"
-              id="pdfFile"
-              onChange={(e) => handleFileChange(e, 'pdf')}
-              accept="application/pdf"
-              className={`form-control ${touchedFields.pdfFile && errors.pdfFile ? 'error' : ''}`}
-            />
-            {touchedFields.pdfFile && errors.pdfFile && (
-              <div className="error-message">{errors.pdfFile}</div>
-            )}
-            {pdfName && (
-              <div className="file-name">{pdfName}</div>
             )}
           </div>
         </div>

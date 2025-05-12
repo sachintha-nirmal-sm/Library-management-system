@@ -1,5 +1,6 @@
 import React from "react";
 import { FaBook, FaDownload, FaStar, FaHeart, FaShare } from "react-icons/fa";
+import { Link } from "react-router-dom";
 import "./h-Learnmore.css";
 
 const LearnMore = () => {
@@ -65,7 +66,7 @@ const LearnMore = () => {
       <div className="hl-call-to-action">
         <h2>Ready to Start Reading?</h2>
         <p>Join our community of readers and discover your next favorite book</p>
-        <button className="hl-cta-button">Get Started</button>
+        <Link to="/login" className="hl-cta-button">Get Started</Link>
       </div>
     </div>
   );

@@ -33,80 +33,57 @@ body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
 }
 
-.ub-container {
+.book-form-container {
     max-width: 1200px;
-    margin: 0 auto;
+    margin: 2rem auto;
     padding: 2rem;
     background: var(--background-color);
     border-radius: var(--card-radius);
-    box-shadow: 0 2px 6px var(--shadow-color);
+    box-shadow: var(--card-shadow);
 }
 
-.ub-header {
-    display: flex;
-    align-items: center;
+.book-form-header {
     margin-bottom: 2rem;
-    gap: 2rem;
     padding-bottom: 1rem;
     border-bottom: 1px solid var(--input-border);
 }
 
-.ub-header h2 {
+.book-form-header h2 {
     color: var(--primary-blue);
     font-size: 1.75rem;
     margin: 0;
     font-weight: 500;
 }
 
-.ub-back-button {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    padding: 0.75rem 1.5rem;
-    background: transparent;
-    color: var(--primary-blue);
-    border: none;
-    border-radius: 8px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all var(--transition-speed) ease;
-}
-
-.ub-back-button:hover {
-    background: var(--light-blue);
-}
-
-.ub-form {
+.book-form {
     display: flex;
     flex-direction: column;
     gap: 2rem;
 }
 
-.ub-form-grid {
+.form-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 1.5rem;
 }
 
-.ub-form-group {
+.form-group {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
 }
 
-.ub-form-group.full-width {
+.form-group.full-width {
     grid-column: 1 / -1;
 }
 
-.ub-form-group label {
+.form-group label {
     font-weight: 500;
     color: var(--text-dark);
     font-size: 0.95rem;
 }
 
-.ub-form-group input,
-.ub-form-group select,
-.ub-form-group textarea {
+.form-control {
     padding: 0.75rem;
     border: 1px solid var(--input-border);
     border-radius: 8px;
@@ -116,63 +93,23 @@ body {
     width: 100%;
 }
 
-.ub-form-group input:focus,
-.ub-form-group select:focus,
-.ub-form-group textarea:focus {
+.form-control:focus {
     outline: none;
     border-color: var(--primary-blue);
     box-shadow: 0 0 0 2px var(--light-blue);
 }
 
-.ub-form-group input.error,
-.ub-form-group select.error,
-.ub-form-group textarea.error {
+.form-control.error {
     border-color: var(--error-color);
 }
 
-.ub-error-message {
+.error-message {
     color: var(--error-color);
     font-size: 0.875rem;
     margin-top: 0.25rem;
 }
 
-.ub-formats-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-    gap: 1rem;
-}
-
-.ub-format-checkbox {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.75rem;
-    background: var(--light-blue);
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all var(--transition-speed) ease;
-}
-
-.ub-format-checkbox:hover {
-    background: #e3effe;
-}
-
-.ub-format-checkbox input[type="checkbox"] {
-    width: 18px;
-    height: 18px;
-    cursor: pointer;
-}
-
-input[type="file"] {
-    padding: 0.75rem;
-    border: 1px solid var(--input-border);
-    border-radius: 8px;
-    background: var(--background-color);
-    cursor: pointer;
-    width: 100%;
-}
-
-.preview-image {
+.image-preview {
     margin-top: 1rem;
     border-radius: 8px;
     overflow: hidden;
@@ -183,36 +120,13 @@ input[type="file"] {
     border: 1px solid var(--input-border);
 }
 
-.preview-image img {
+.image-preview img {
     width: 100%;
     height: 100%;
     object-fit: contain;
 }
 
-.image-dimensions {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: rgba(0, 0, 0, 0.7);
-    color: white;
-    padding: 0.75rem;
-    text-align: center;
-    font-size: 0.9rem;
-    backdrop-filter: blur(4px);
-}
-
-.preview-pdf {
-    margin-top: 1rem;
-    padding: 1rem;
-    background: var(--light-blue);
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-}
-
-.ub-form-actions {
+.form-actions {
     display: flex;
     justify-content: flex-end;
     gap: 1rem;
@@ -221,10 +135,22 @@ input[type="file"] {
     border-top: 1px solid var(--input-border);
 }
 
-.ub-submit-button {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
+.cancel-button {
+    padding: 0.75rem 1.5rem;
+    background: var(--light-blue);
+    color: var(--primary-blue);
+    border: none;
+    border-radius: 8px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all var(--transition-speed) ease;
+}
+
+.cancel-button:hover {
+    background: #e3effe;
+}
+
+.submit-button {
     padding: 0.75rem 1.5rem;
     background: var(--primary-blue);
     color: white;
@@ -235,25 +161,25 @@ input[type="file"] {
     transition: all var(--transition-speed) ease;
 }
 
-.ub-submit-button:hover:not(:disabled) {
+.submit-button:hover:not(:disabled) {
     background: var(--hover-blue);
 }
 
-.ub-submit-button:disabled {
+.submit-button:disabled {
     opacity: 0.7;
     cursor: not-allowed;
 }
 
-.ub-spinner {
-    animation: spin 1s linear infinite;
+.submit-error {
+    text-align: center;
+    margin-top: 1rem;
+    padding: 1rem;
+    background: #fde8e8;
+    border-radius: 8px;
+    color: var(--error-color);
 }
 
-@keyframes spin {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
-}
-
-.ub-loading-container {
+.update-book-loading {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -262,23 +188,65 @@ input[type="file"] {
     gap: 1rem;
 }
 
-.ub-loading-container p {
+.update-book-loading p {
     color: var(--text-light);
     font-size: 1.1rem;
 }
 
+.spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid var(--light-blue);
+    border-top: 4px solid var(--primary-blue);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.update-book-error {
+    text-align: center;
+    padding: 2rem;
+    background: #fde8e8;
+    border-radius: 8px;
+    margin: 2rem auto;
+    max-width: 600px;
+}
+
+.update-book-error p {
+    color: var(--error-color);
+    margin-bottom: 1rem;
+}
+
+.update-book-error button {
+    padding: 0.75rem 1.5rem;
+    background: var(--primary-blue);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all var(--transition-speed) ease;
+}
+
+.update-book-error button:hover {
+    background: var(--hover-blue);
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
-    .ub-container {
+    .book-form-container {
         margin: 1rem;
         padding: 1.5rem;
     }
     
-    .ub-form-grid {
+    .form-grid {
         grid-template-columns: 1fr;
     }
     
-    .ub-header {
+    .book-form-header {
         flex-direction: column;
         align-items: flex-start;
         gap: 1rem;
@@ -286,14 +254,12 @@ input[type="file"] {
 }
 
 @media (max-width: 480px) {
-    .ub-container {
+    .book-form-container {
         margin: 0.5rem;
         padding: 1rem;
     }
     
-    .ub-form-group input,
-    .ub-form-group select,
-    .ub-form-group textarea {
+    .form-control {
         padding: 0.5rem;
         font-size: 0.95rem;
     }
@@ -301,55 +267,35 @@ input[type="file"] {
 
 /* Dark mode support */
 @media (prefers-color-scheme: dark) {
-    body {
-        background-color: #1a1a1a;
-    }
-    
-    .ub-container {
+    .book-form-container {
         background: #2d2d2d;
         color: #ffffff;
     }
     
-    .ub-form-group input,
-    .ub-form-group select,
-    .ub-form-group textarea {
+    .form-control {
         background: #363636;
         border-color: #404040;
         color: #ffffff;
     }
     
-    .ub-form-group input:hover,
-    .ub-form-group select:hover,
-    .ub-form-group textarea:hover {
+    .form-control:hover {
         background: #404040;
     }
     
-    .ub-form-group label {
+    .form-group label {
         color: #e0e0e0;
     }
     
-    .ub-back-button {
+    .cancel-button {
         background: #363636;
         color: #ffffff;
     }
     
-    .ub-back-button:hover {
+    .cancel-button:hover {
         background: #404040;
     }
     
-    .ub-format-checkbox {
-        background: #363636;
-    }
-    
-    .ub-format-checkbox:hover {
-        background: #404040;
-    }
-    
-    .preview-image {
-        background: #363636;
-    }
-    
-    .preview-pdf {
+    .image-preview {
         background: #363636;
     }
     
@@ -362,11 +308,11 @@ input[type="file"] {
         background: #404040;
     }
     
-    .ub-loading-container {
+    .update-book-loading {
         background: #2d2d2d;
     }
     
-    .ub-loading-container p {
+    .update-book-loading p {
         color: #e0e0e0;
     }
     
