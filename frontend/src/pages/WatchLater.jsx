@@ -10,18 +10,28 @@ const WatchLater = () => {
   const [selectedBook, setSelectedBook] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [storedBooks, setStoredBooks] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Fetch watch later list from the backend
-    axiosInstance.get('/api/watch-later')
-      .then(response => setWatchLaterList(response.data))
-      .catch(error => console.error('Error fetching watch later list:', error));
+    const fetchData = async () => {
+      try {
+        setIsLoading(true);
+        const [watchLaterResponse, booksResponse] = await Promise.all([
+          axiosInstance.get('/api/watch-later'),
+          axiosInstance.get('/api/books')
+        ]);
+        
+        setWatchLaterList(watchLaterResponse.data);
+        setStoredBooks(booksResponse.data);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
-    // Fetch all books from the backend
-    axiosInstance.get('/api/books')
-      .then(response => setStoredBooks(response.data))
-      .catch(error => console.error('Error fetching books:', error));
+    fetchData();
   }, []);
 
   const handleViewDetails = (watchLaterItem) => {
@@ -31,7 +41,7 @@ const WatchLater = () => {
     );
 
     if (fullBook) {
-      navigate(`/book/${fullBook.isbn || fullBook._id}`); // Navigate to BookDetails with ISBN or ID
+      navigate(`/book/${fullBook.isbn || fullBook._id}`);
     } else {
       alert('Book details not found. It may have been removed from the library.');
     }
@@ -39,14 +49,33 @@ const WatchLater = () => {
 
   const handleRemoveFromWatchLater = (watchLaterItem) => {
     if (window.confirm('Are you sure you want to remove this book from your watch later list?')) {
-      axiosInstance.delete(`/api/watch-later/${watchLaterItem.bookId}`)
-        .then(() => {
-          const updatedList = watchLaterList.filter(item => item.bookId !== watchLaterItem.bookId);
-          setWatchLaterList(updatedList);
-        })
-        .catch(error => console.error('Error removing book from watch later list:', error));
+      const element = document.getElementById(`card-${watchLaterItem.bookId}`);
+      if (element) {
+        element.classList.add('removing');
+        
+        setTimeout(() => {
+          axiosInstance.delete(`/api/watch-later/${watchLaterItem.bookId}`)
+            .then(() => {
+              setWatchLaterList(prevList => 
+                prevList.filter(item => item.bookId !== watchLaterItem.bookId)
+              );
+            })
+            .catch(error => {
+              console.error('Error removing book from watch later list:', error);
+              element.classList.remove('removing');
+            });
+        }, 400);
+      }
     }
   };
+
+  if (isLoading) {
+    return (
+      <div className="wl-container">
+        <div className="wl-loading-spinner" />
+      </div>
+    );
+  }
 
   return (
     <div className="wl-container">
@@ -70,7 +99,11 @@ const WatchLater = () => {
         ) : (
           <div className="wl-books-grid">
             {watchLaterList.map((item, index) => (
-              <div key={index} className="wl-book-card">
+              <div 
+                key={index} 
+                className="wl-book-card" 
+                id={`card-${item.bookId}`}
+              >
                 <div className="wl-book-info">
                   <h3>{item.title}</h3>
                   <p className="wl-book-author">{item.author}</p>
