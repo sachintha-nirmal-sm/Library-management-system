@@ -21,20 +21,25 @@ const bookSchema = new mongoose.Schema({
     type: String,
     trim: true
   },
+  bookText: {
+    type: String,
+    trim: true
+  },
   publishedYear: {
     type: Number
+  },
+  category: {
+    type: String,
+    required: [true, 'Category is required'],
+    trim: true,
+    enum: ['Novel', 'Horror', 'Adventure', 'Mystery & Thriller', 'Romance', 'Fantasy', 'Education']
   },
   genre: {
     type: String,
     trim: true
   },
   coverImage: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'uploads.files' // Reference to GridFS collection
-  },
-  pdfFile: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'uploads.files' // Reference to GridFS collection
+    type: String // Cloudinary URL
   },
   available: {
     type: Boolean,
@@ -42,9 +47,9 @@ const bookSchema = new mongoose.Schema({
   },
   rating: {
     type: Number,
-    min: 1,
+    min: 0,
     max: 5,
-    default: 1 // Set default to the minimum allowed value
+    default: 0
   },
   createdAt: {
     type: Date,
