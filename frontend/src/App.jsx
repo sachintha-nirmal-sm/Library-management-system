@@ -6,7 +6,6 @@ import Login from "./pages/Login";
 import BookList from "./components/BookList";
 import BookModal from "./components/BookModal";
 import { useState } from "react";
-
 import Contact from "./pages/Contact";
 import Services from "./pages/Services";
 import About from "./pages/About";
@@ -18,6 +17,11 @@ import CategoryPage from "./pages/CategoryPage";
 import LearnMore from "./pages/h-Learnmore";
 import WatchLater from "./pages/WatchLater";
 import BookDetails from "./pages/BookDetails";
+
+import { Cloudinary } from '@cloudinary/url-gen';
+import { auto } from '@cloudinary/url-gen/actions/resize';
+import { autoGravity } from '@cloudinary/url-gen/qualifiers/gravity';
+//import { AdvancedImage } from '@cloudinary/react';
 
 function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -33,6 +37,15 @@ function App() {
     setSelectedBook(null);
   };
 
+  const cld = new Cloudinary({ cloud: { cloudName: 'dq0zuo86p' } });
+
+  // Use this sample image or upload your own via the Media Explorer
+  const img = cld
+    .image('cld-sample-5')
+    .format('auto') // Optimize delivery by resizing and applying auto-format and auto-quality
+    .quality('auto')
+    .resize(auto().gravity(autoGravity()).width(500).height(500)); // Transform the image: auto-crop to square aspect_ratio
+
   return (
     <Router>
       <div className="app">
@@ -45,7 +58,7 @@ function App() {
           <Route path="/contact" element={<Contact />} />
           <Route path="/services" element={<Services />} />
           <Route path="/mylibrary" element={<EmyLibrary />} />
-          <Route path="/bookmodel" element={<BookModal />} />
+          {/* <Route path="/bookmodel" element={<BookModal />} /> */}
           <Route path="/a-bookform" element={<BookForm />} />
           <Route path="/a-updatebook/:isbn" element={<UpdateBook />} />
           <Route path="/category/:categoryName" element={<CategoryPage />} />
@@ -56,6 +69,7 @@ function App() {
         {isModalOpen && selectedBook && (
           <BookModal book={selectedBook} onClose={handleCloseModal} />
         )}
+        {/* /<AdvancedImage cldImg={img} /> */}
         <Footer />
       </div>
     </Router>
