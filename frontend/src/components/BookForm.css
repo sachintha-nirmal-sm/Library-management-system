@@ -332,4 +332,10 @@
     width: 100%;
     justify-content: center;
   }
+
+  /* In your BookForm.css */
+.input-placeholder-style {
+  color: #050202;
+  font-style: italic;
+}
 }
