@@ -3,6 +3,8 @@ import { FaSearch, FaCode, FaPalette, FaMobile, FaMapMarker, FaPhone, FaEnvelope
 import SplineBackground from '../components/SplineBackground';
 import './Home1.css';
 import { Link } from 'react-router-dom';
+import libraryBackground from '../assets/img/library-background.jpeg';
+import libraryAbout from '../assets/img/about.jpg';
 
 const Home1 = () => {
   const [activeSection, setActiveSection] = useState('home');
@@ -75,12 +77,12 @@ const Home1 = () => {
             Contact
           </button>
 
-          <button 
+          <Link 
+            to="/login" 
             className={`h1-nav-link ${activeSection === 'login' ? 'active' : ''}`}
-            onClick={() => scrollToSection('login')}
           >
             Login
-          </button>
+          </Link>
         </div>
       </nav>
 
@@ -92,12 +94,17 @@ const Home1 = () => {
           <div className="h1-hero-content">
             <h2>Welcome to Our Library</h2>
             <p>Discover a world of knowledge with our extensive collection of books. Browse, borrow, and learn with our easy-to-use library management system.</p>
-            <Link to="/h-Learnmore" className="h1-cta-button">
-              Learn More <FaArrowRight />
-            </Link>
+            <div className="h1-button-group">
+              <Link to="/h-Learnmore" className="h1-cta-button">
+                Learn More <FaArrowRight />
+              </Link>
+              <Link to="/login" className="h1-cta-button h1-cta-button-secondary">
+                Get Started <FaArrowRight />
+              </Link>
+            </div>
           </div>
           <div className="h1-image-container">
-            <img src="/library-hero.jpg" alt="Library Interior" className="h1-hero-image" />
+            <img src={libraryBackground} alt="Library Interior" className="h1-hero-image" />
           </div>
         </div>
       </section>
@@ -132,7 +139,7 @@ const Home1 = () => {
             <p>Our library management system is designed to make book management simple and efficient. With features like easy book addition, quick updates, and powerful search capabilities, we help libraries of all sizes manage their collections effectively.</p>
             <p>Whether you're a small community library or a large academic institution, our system provides the tools you need to organize and maintain your book collection.</p>
           </div>
-          <img src="/library-about.jpg" alt="Library Collection" className="h1-about-image" />
+          <img src={libraryAbout} alt="Library Collection" className="h1-about-image" />
         </div>
       </section>
 
