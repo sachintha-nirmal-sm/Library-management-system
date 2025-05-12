@@ -45,11 +45,17 @@
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   transition: all var(--bl-transition-speed) ease;
+  cursor: pointer;
 }
 
 .bl-category-card:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.bl-category-card.selected {
+  background-color: #e3f2fd;
+  border-color: #4a90e2;
 }
 
 .bl-category-icon {
@@ -522,4 +528,248 @@
     padding: 0.4rem 0.8rem;
     font-size: 0.9rem;
   }
+}
+
+.bl-filters {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.bl-category-filter {
+  position: relative;
+}
+
+.bl-category-select {
+  padding: 0.5rem 2rem 0.5rem 1rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background-color: white;
+  font-size: 0.9rem;
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 0.5rem center;
+  background-size: 1em;
+  min-width: 150px;
+}
+
+.bl-category-select:hover {
+  border-color: #999;
+}
+
+.bl-category-select:focus {
+  outline: none;
+  border-color: #4a90e2;
+  box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
+}
+
+.bl-filter-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 1rem 0;
+  padding: 0.5rem 1rem;
+  background-color: #f8f9fa;
+  border-radius: 4px;
+}
+
+.bl-filter-info p {
+  margin: 0;
+  color: #666;
+}
+
+.bl-clear-filters {
+  padding: 0.25rem 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background-color: white;
+  color: #666;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+}
+
+.bl-clear-filters:hover {
+  background-color: #f0f0f0;
+  border-color: #999;
+}
+
+.bl-ratings-chart-section {
+  display: none;
+}
+
+.bl-chart-container {
+  display: none;
+}
+
+.bl-download-button {
+  padding: 0.5rem 1rem;
+  background: var(--bl-success-color);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--bl-transition-speed) ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 140px;
+  justify-content: center;
+}
+
+.bl-download-button:hover {
+  background: #188038;
+  transform: translateY(-2px);
+  box-shadow: 0 2px 8px rgba(24, 128, 56, 0.3);
+}
+
+.bl-download-button:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.bl-download-button svg {
+  font-size: 1rem;
+}
+
+.bl-download-spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: white;
+  animation: bl-spin 1s linear infinite;
+  margin-right: 8px;
+}
+
+@keyframes bl-spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.bl-header-buttons {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.bl-analytics-button {
+  padding: 0.75rem 1.5rem;
+  background: #6c5ce7;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  transition: all var(--bl-transition-speed) ease;
+}
+
+.bl-analytics-button:hover {
+  background: #5f4dd0;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(108, 92, 231, 0.3);
+}
+
+.bl-analytics-button svg {
+  font-size: 1.1rem;
+}
+
+.bl-analytics-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  animation: bl-fadeIn 0.3s ease;
+}
+
+.bl-analytics-modal-content {
+  background: white;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 1200px;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  animation: bl-slideUp 0.3s ease;
+}
+
+.bl-analytics-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: #666;
+  cursor: pointer;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+  z-index: 1;
+}
+
+.bl-analytics-close:hover {
+  background: rgba(0, 0, 0, 0.1);
+  color: #333;
+}
+
+@keyframes bl-slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.bl-download-all-button {
+  padding: 0.75rem 1.5rem;
+  background: #2ecc71;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  transition: all var(--bl-transition-speed) ease;
+}
+
+.bl-download-all-button:hover {
+  background: #27ae60;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(46, 204, 113, 0.3);
+}
+
+.bl-download-all-button:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.bl-download-all-button svg {
+  font-size: 1.1rem;
 }
