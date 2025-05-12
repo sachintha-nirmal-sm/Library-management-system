@@ -1,4 +1,6 @@
 const Book = require('../models/Book');
+const cloudinary = require('../config/cloudinary');
+const fs = require('fs');
 
 // Get all books
 exports.getAllBooks = async (req, res) => {
@@ -6,6 +8,7 @@ exports.getAllBooks = async (req, res) => {
     const books = await Book.find();
     res.status(200).json(books);
   } catch (error) {
+    console.error('Error fetching books:', error);
     res.status(500).json({ message: 'Error fetching books', error: error.message });
   }
 };
@@ -26,50 +29,99 @@ exports.getBookByIsbn = async (req, res) => {
 // Create a new book
 exports.createBook = async (req, res) => {
   try {
-    const { title, author, isbn, coverImage, pdfFile } = req.body;
+    const { title, author, isbn, description, genre, publishedYear, category, pages, bookText } = req.body;
 
-    if (!title || !author || !isbn) {
+    if (!title || !author || !isbn || !category) {
       return res.status(400).json({ 
         message: 'Missing required fields',
         missing: {
           title: !title,
           author: !author,
-          isbn: !isbn
+          isbn: !isbn,
+          category: !category
         }
       });
     }
 
-    console.log('Request body:', req.body); // Debugging log
+    let coverImageUrl = null;
+    let pdfFileUrl = null;
+
+    // Handle file uploads to Cloudinary if they exist
+    if (req.files) {
+      try {
+        if (req.files['coverImage'] && req.files['coverImage'][0]) {
+          const coverResult = await cloudinary.uploader.upload(req.files['coverImage'][0].path, {
+            folder: 'book-covers',
+            resource_type: 'image',
+            allowed_formats: ['jpg', 'jpeg', 'png', 'gif'],
+            transformation: [
+              { width: 1000, height: 1500, crop: 'fill', quality: 'auto' }
+            ]
+          });
+          coverImageUrl = coverResult.secure_url;
+          
+          // Clean up temporary file
+          fs.unlinkSync(req.files['coverImage'][0].path);
+        }
+
+        if (req.files['pdfFile'] && req.files['pdfFile'][0]) {
+          const pdfResult = await cloudinary.uploader.upload(req.files['pdfFile'][0].path, {
+            folder: 'book-pdfs',
+            resource_type: 'raw',
+            format: 'pdf'
+          });
+          pdfFileUrl = pdfResult.secure_url;
+          
+          // Clean up temporary file
+          fs.unlinkSync(req.files['pdfFile'][0].path);
+        }
+      } catch (uploadError) {
+        console.error('Error uploading files to Cloudinary:', uploadError);
+        // Clean up temporary files in case of error
+        if (req.files) {
+          if (req.files['coverImage']?.[0]?.path) {
+            fs.unlinkSync(req.files['coverImage'][0].path);
+          }
+          if (req.files['pdfFile']?.[0]?.path) {
+            fs.unlinkSync(req.files['pdfFile'][0].path);
+          }
+        }
+        return res.status(500).json({ 
+          message: 'Error uploading files',
+          error: uploadError.message 
+        });
+      }
+    }
 
     const book = new Book({
       title: title.trim(),
       author: author.trim(),
       isbn: isbn.trim(),
-      description: req.body.description?.trim() || "No description available",
-      publishedYear: req.body.publishedYear,
-      genre: req.body.genre?.trim(),
-      coverImage: coverImage, // Use fileId directly
-      pdfFile: pdfFile, // Use fileId directly
-      available: true
+      description: description?.trim() || "No description available",
+      publishedYear: publishedYear,
+      genre: genre?.trim(),
+      category: category.trim(),
+      pages: parseInt(pages) || 0,
+      coverImage: coverImageUrl,
+      pdfFile: pdfFileUrl,
+      available: true,
+      bookText: bookText?.trim() || ''
     });
 
     await book.save();
-    res.status(201).json(book);
+    res.status(201).json({
+      message: 'Book created successfully',
+      book
+    });
   } catch (error) {
-    console.error('Error details:', error);
+    console.error('Error creating book:', error);
     if (error.code === 11000) {
       return res.status(400).json({ message: 'ISBN already exists' });
     }
-    if (error.name === 'ValidationError') {
-      return res.status(400).json({ 
-        message: 'Validation error',
-        errors: Object.keys(error.errors).reduce((acc, key) => {
-          acc[key] = error.errors[key].message;
-          return acc;
-        }, {})
-      });
-    }
-    res.status(500).json({ message: 'Error creating book', error: error.message });
+    res.status(500).json({ 
+      message: 'Error creating book',
+      error: error.message 
+    });
   }
 };
 
@@ -77,44 +129,46 @@ exports.createBook = async (req, res) => {
 exports.updateBook = async (req, res) => {
   try {
     const { isbn } = req.params;
-    const updateData = {
-      title: req.body.title?.trim(),
-      author: req.body.author?.trim(),
-      description: req.body.description?.trim() || "No description available",
-      publishedYear: req.body.publishedYear,
-      genre: req.body.genre?.trim(),
-      available: true
-    };
+    const { title, author, description, genre, publishedYear, category, bookText } = req.body;
 
-    // Handle file uploads if they exist
-    if (req.files) {
-      if (req.files['coverImage']) {
-        updateData.coverImage = req.files['coverImage'][0].filename;
-      }
-      if (req.files['pdfFile']) {
-        updateData.pdfFile = req.files['pdfFile'][0].filename;
-      }
-    }
-
-    const book = await Book.findOneAndUpdate(
-      { isbn: isbn },
-      updateData,
-      { new: true, runValidators: true }
-    );
-
+    // Find the book
+    const book = await Book.findOne({ isbn });
     if (!book) {
       return res.status(404).json({ message: 'Book not found' });
     }
 
-    res.status(200).json(book);
-  } catch (error) {
-    console.error('Error updating book:', error);
-    if (error.code === 11000) {
-      return res.status(400).json({ message: 'ISBN already exists' });
+    // Update book fields
+    if (title) book.title = title;
+    if (author) book.author = author;
+    if (description) book.description = description;
+    if (genre) book.genre = genre;
+    if (publishedYear) book.publishedYear = publishedYear;
+    if (category) book.category = category;
+    if (bookText) book.bookText = bookText;
+
+    // Handle file uploads if any
+    if (req.files?.coverImage) {
+      const coverResult = await cloudinary.uploader.upload(
+        req.files.coverImage[0].path,
+        {
+          folder: 'book-covers',
+          resource_type: 'auto',
+          allowed_formats: ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp', 'svg', 'tiff'],
+          transformation: [
+            { quality: 'auto' }
+          ]
+        }
+      );
+      book.coverImage = coverResult.secure_url;
     }
-    res.status(500).json({ 
-      message: 'Error updating book',
-      error: error.message 
+
+    await book.save();
+    res.json({ message: 'Book updated successfully', book });
+  } catch (err) {
+    console.error('Error in updateBook:', err);
+    res.status(500).json({
+      message: 'Failed to update book',
+      error: err.message
     });
   }
 };
@@ -162,9 +216,10 @@ exports.getBooksByCategory = async (req, res) => {
   try {
     const { category } = req.params;
     
-    // Find books with the specified category
-    const books = await Book.find({ genre: category })
-      .sort({ createdAt: -1 }); // Sort by newest first
+    // Find books with the specified category (case-insensitive)
+    const books = await Book.find({ 
+      category: { $regex: new RegExp(`^${category}$`, 'i') }
+    }).sort({ createdAt: -1 }); // Sort by newest first
 
     if (!books || books.length === 0) {
       return res.status(404).json({ 
@@ -180,4 +235,97 @@ exports.getBooksByCategory = async (req, res) => {
       error: error.message 
     });
   }
+};
+
+// Add a new book with file uploads
+exports.addBook = async (req, res) => {
+  try {
+    const { title, author, isbn, description, genre, publishedYear, category, bookText } = req.body;
+
+    // Validate required fields
+    if (!title || !author || !isbn) {
+      return res.status(400).json({ message: 'Title, author, and ISBN are required' });
+    }
+
+    // Upload files to Cloudinary
+    let coverImageUrl = '';
+    let pdfUrl = '';
+
+    if (req.files?.coverImage) {
+      const coverResult = await cloudinary.uploader.upload(
+        req.files.coverImage[0].path,
+        {
+          folder: 'book-covers',
+          resource_type: 'auto',
+          allowed_formats: ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp', 'svg', 'tiff'],
+          transformation: [
+            { quality: 'auto' }
+          ]
+        }
+      );
+      coverImageUrl = coverResult.secure_url;
+    }
+
+    if (req.files?.pdfFile) {
+      const pdfResult = await cloudinary.uploader.upload(
+        req.files.pdfFile[0].path,
+        {
+          folder: 'book-pdfs',
+          resource_type: 'raw',
+          format: 'pdf'
+        }
+      );
+      pdfUrl = pdfResult.secure_url;
+    }
+
+    const newBook = new Book({
+      title,
+      author,
+      isbn,
+      description: description || 'No description available',
+      genre,
+      publishedYear,
+      category,
+      coverImage: coverImageUrl,
+      pdfFile: pdfUrl,
+      status: 'available',
+      bookText: bookText?.trim() || ''
+    });
+
+    await newBook.save();
+    res.status(201).json({
+      message: 'Book added successfully',
+      book: newBook
+    });
+  } catch (err) {
+    console.error('Error in addBook:', err);
+    res.status(500).json({
+      message: 'Failed to add book',
+      error: err.message,
+      stack: process.env.NODE_ENV === 'development' ? err.stack : undefined
+    });
+  }
+};
+
+const readBookText = (text) => {
+  if (!text) return;
+  // Stop any ongoing speech
+  synth.cancel();
+  const utterance = new window.SpeechSynthesisUtterance(text);
+  synth.speak(utterance);
+  setIsReading(true);
+  utterance.onend = () => setIsReading(false);
+};
+
+const toggleBookText = () => {
+  setShowBookText((prev) => {
+    const newState = !prev;
+    if (newState && book.bookText) {
+      readBookText(book.bookText);
+    } else {
+      synth.cancel();
+      setIsReading(false);
+    }
+    return newState;
+  });
 };
