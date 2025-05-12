@@ -9,10 +9,13 @@ import img3 from "../assets/img/slideshow3.jpg";
 import img4 from "../assets/img/slideshow4.jpg";
 import img5 from "../assets/img/slideshow5.jpeg";
 import BookModal from '../components/BookModal'; 
-import { FaSearch, FaBookOpen, FaBookReader, FaExclamationCircle, FaBookmark, FaEye, FaBook } from 'react-icons/fa';
+import { FaSearch, FaBookOpen, FaBookReader, FaExclamationCircle, FaBookmark, FaEye, FaBook, FaStar } from 'react-icons/fa';
 import SplineBackground from '../components/SplineBackground'; 
 import axiosInstance from '../utils/axiosConfig';
 import './Home.css';
+
+// Base64 encoded default cover image (a simple gray rectangle with a book icon)
+const DEFAULT_COVER = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIGhlaWdodD0iMTUwIiB2aWV3Qm94PSIwIDAgMTAwIDE1MCI+PHJlY3Qgd2lkdGg9IjEwMCIgaGVpZ2h0PSIxNTAiIGZpbGw9IiNlZWUiLz48dGV4dCB4PSI1MCIgeT0iNzUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IiM5OTkiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxMiI+Tm8gQ292ZXI8L3RleHQ+PC9zdmc+';
 
 const Home = () => {
   const [selectedBook, setSelectedBook] = useState(null);
@@ -46,7 +49,7 @@ const Home = () => {
 
         // Calculate category counts
         const counts = books.reduce((acc, book) => {
-          const category = book.genre || 'Uncategorized';
+          const category = book.category || 'Uncategorized';
           acc[category] = (acc[category] || 0) + 1;
           return acc;
         }, {});
@@ -78,26 +81,28 @@ const Home = () => {
   const settings = {
     dots: true,
     infinite: true,
-    speed: 1000,
+    speed: 500,
     slidesToShow: 1,
     slidesToScroll: 1,
     autoplay: true,
-    autoplaySpeed: 10000,
+    autoplaySpeed: 3000,
     pauseOnHover: true,
     lazyLoad: true,
     cssEase: "cubic-bezier(0.4, 0, 0.2, 1)",
     fade: true,
+    arrows: true,
     responsive: [
       {
         breakpoint: 1024,
         settings: {
-          dots: true
+          dots: true,
+          arrows: true
         }
       },
       {
         breakpoint: 600,
         settings: {
-          dots: false,
+          dots: true,
           arrows: false
         }
       }
@@ -191,7 +196,7 @@ const Home = () => {
       }
       return `http://localhost:5000/uploads/${book.coverImage}`;
     }
-    return null;
+    return DEFAULT_COVER;
   };
 
   if (loading) {
@@ -250,16 +255,17 @@ const Home = () => {
               </div>
             </div>
           </div>
-        </section>
-
-        <section className="nvl-hero-slider">
-          <Slider {...settings} className="nvl-slider">
-            {[img1, img2, img3, img4, img5].map((img, index) => (
-              <div key={index} className="nvl-slide">
-                <img src={img} alt={`Slide ${index + 1}`} className="nvl-slide-image" />
-              </div>
-            ))}
-          </Slider>
+          
+          <div className="nvl-hero-slider">
+            <Slider {...settings} className="nvl-slider">
+              {[img1, img2, img3, img4, img5].map((img, index) => (
+                <div key={index} className="nvl-slide">
+                  <div className="nvl-slide-overlay"></div>
+                  <img src={img} alt={`Slide ${index + 1}`} className="nvl-slide-image" />
+                </div>
+              ))}
+            </Slider>
+          </div>
         </section>
 
         <section className="nvl-search-section">
@@ -308,42 +314,54 @@ const Home = () => {
           {searchResults.length > 0 && (
             <div className="search-results">
               <h3>Search Results ({searchResults.length})</h3>
-              <div className="books-grid">
+              <div className="home-books-grid">
                 {searchResults.map((book, index) => (
-                  <div key={index} className="book-card">
-                    <div className="book-cover-container">
+                  <div key={index} className="home-book-card">
+                    <div className="home-book-cover">
                       {book.coverImage ? (
                         <img 
-                          src={book.coverImage} 
+                          src={getBookCover(book)} 
                           alt={book.title} 
                           className="search-book-cover"
                           onError={(e) => {
                             e.target.onerror = null;
-                            e.target.src = 'https://via.placeholder.com/150x200?text=No+Image';
+                            e.target.src = DEFAULT_COVER;
                           }}
                         />
                       ) : (
-                        <div className="default-cover">
+                        <div className="home-no-cover">
                           <FaBookOpen className="default-cover-icon" />
                         </div>
                       )}
                     </div>
-                    <div className="book-info">
+                    <div className="home-book-info">
                       <h3>{book.title}</h3>
-                      <p className="book-author">{book.author}</p>
-                      <div className="book-meta">
-                        <span className="book-category">{book.category}</span>
-                        <span className="book-genre">{book.genre}</span>
+                      <p className="home-book-author">{book.author}</p>
+                      <p className="home-book-category">{book.category || 'Uncategorized'}</p>
+                      <div className="home-book-rating">
+                        {book.rating ? (
+                          <>
+                            <span className="home-rating-count">{book.rating}</span>
+                            <span className="home-rating-stars">
+                              {[...Array(5)].map((_, i) => (
+                                <FaStar
+                                  key={i}
+                                  color={i < Math.round(book.rating) ? "#ffd700" : "#e0e0e0"}
+                                  style={{ marginLeft: 1, marginRight: 1 }}
+                                />
+                              ))}
+                            </span>
+                          </>
+                        ) : (
+                          <span className="home-rating-count">Not Rated</span>
+                        )}
                       </div>
-                      <div className="book-rating">
-                        <span>{book.rating ? `${book.rating} / 5` : 'Not Rated'}</span>
-                      </div>
-                      <div className="book-actions">
+                      <div className="home-book-actions">
                         <button 
                           type="button" 
-                          className="view-button" 
+                          className="home-view-button" 
                           onClick={(e) => {
-                            e.preventDefault(); // Prevent default navigation behavior
+                            e.preventDefault();
                             handleViewDetails(book);
                           }}
                         >
@@ -351,7 +369,7 @@ const Home = () => {
                         </button>
                         <button 
                           type="button"
-                          className={`watch-later-button ${
+                          className={`home-watch-later-button ${
                             watchLaterList.some(item => 
                               item.bookId === book._id
                             ) ? 'active' : ''
@@ -374,10 +392,10 @@ const Home = () => {
 
         <section className="featured-books">
           <h2 className="section-title">Recently Added Books</h2>
-          <div className="books-grid">
+          <div className="home-books-grid">
             {recentBooks.map((book) => (
-              <div key={book.isbn} className="book-card">
-                <div className="book-cover">
+              <div key={book.isbn} className="home-book-card">
+                <div className="home-book-cover">
                   {getBookCover(book) ? (
                     <img 
                       src={getBookCover(book)}
@@ -385,7 +403,7 @@ const Home = () => {
                       onError={(e) => {
                         e.target.onerror = null;
                         e.target.parentElement.innerHTML = `
-                          <div class="no-cover">
+                          <div class="home-no-cover">
                             <FaBook />
                             <span>${book.title}</span>
                           </div>
@@ -393,43 +411,60 @@ const Home = () => {
                       }}
                     />
                   ) : (
-                    <div className="no-cover">
+                    <div className="home-no-cover">
                       <FaBook />
                       <span>{book.title}</span>
                     </div>
                   )}
                 </div>
-                <div className="book-info">
+                <div className="home-book-info">
                   <h3>{book.title}</h3>
-                  <p className="book-author">{book.author}</p>
-                  <p className="book-genre">{book.genre}</p>
-                  <div className="book-rating">
-                    <span>{book.rating ? `${book.rating} / 5` : 'Not Rated'}</span>
+                  <p className="home-book-author">{book.author}</p>
+                  <p className="home-book-category">{book.category || 'Uncategorized'}</p>
+                  <div className="home-book-rating">
+                    {book.rating ? (
+                      <>
+                        <span className="home-rating-count">{book.rating}</span>
+                        <span className="home-rating-stars">
+                          {[...Array(5)].map((_, i) => (
+                            <FaStar
+                              key={i}
+                              color={i < Math.round(book.rating) ? "#ffd700" : "#e0e0e0"}
+                              style={{ marginLeft: 1, marginRight: 1 }}
+                            />
+                          ))}
+                        </span>
+                      </>
+                    ) : (
+                      <span className="home-rating-count">Not Rated</span>
+                    )}
                   </div>
-                  <Link 
-                    to="#" 
-                    className="view-details" 
-                    onClick={(e) => {
-                      e.preventDefault(); // Prevent navigation
-                      handleViewDetails(book);
-                    }}
-                  >
-                    View Details
-                  </Link>
-                  <button 
-                    type="button"
-                    className={`watch-later-button ${
-                      watchLaterList.some(item => 
+                  <div className="home-book-actions">
+                    <button 
+                      type="button" 
+                      className="home-view-button" 
+                      onClick={(e) => {
+                        e.preventDefault();
+                        handleViewDetails(book);
+                      }}
+                    >
+                      <FaEye /> View Details
+                    </button>
+                    <button 
+                      type="button"
+                      className={`home-watch-later-button ${
+                        watchLaterList.some(item => 
+                          item.bookId === book._id
+                        ) ? 'active' : ''
+                      }`}
+                      onClick={() => handleWatchLater(book)}
+                    >
+                      <FaBookmark />
+                      {watchLaterList.some(item => 
                         item.bookId === book._id
-                      ) ? 'active' : ''
-                    }`}
-                    onClick={() => handleWatchLater(book)}
-                  >
-                    <FaBookmark />
-                    {watchLaterList.some(item => 
-                      item.bookId === book._id
-                    ) ? 'Remove from Watch Later' : 'Add to Watch Later'}
-                  </button>
+                      ) ? 'Remove from Watch Later' : 'Add to Watch Later'}
+                    </button>
+                  </div>
                 </div>
               </div>
             ))}
