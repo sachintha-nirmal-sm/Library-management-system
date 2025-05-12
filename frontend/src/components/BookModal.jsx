@@ -112,7 +112,7 @@ const BookModal = ({ book, onClose }) => {
         <div className="bm-modal-container bm-pdf-container">
           <div className="bm-pdf-header">
             <button className="bm-back-button" onClick={() => setShowPdf(false)}>
-              <FaArrowLeft /> Back to Details
+              <FaArrowLeft /> Back to Detailssssss
             </button>
             <h3>{book.title || 'Untitled'}</h3>
             <button className="bm-close-button" onClick={onClose}>
