@@ -1,119 +1,166 @@
+/* dashboard.css */
+
 body {
-  font-family: Arial, sans-serif;
-  background-color: #f4f4f4;
   margin: 0;
-  padding: 0;
-}
-
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 20px;
-  background-color: #fff;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-
-h1 {
-  text-align: center;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f9f9f9;
   color: #333;
 }
 
-p {
+.dashboard-container {
+  padding: 30px;
+  max-width: 1200px;
+  margin: auto;
+}
+
+.dashboard-menu {
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.dashboard-btn {
+  background-color: #4a90e2;
+  color: white;
+  padding: 10px 18px;
+  font-size: 16px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.dashboard-btn:hover {
+  background-color: #357ABD;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 45px;
+  left: 0;
+  background-color: white;
+  border: 1px solid #ddd;
+  width: 220px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  list-style: none;
+  padding: 10px 0;
+  z-index: 1000;
+  border-radius: 6px;
+}
+
+.dropdown-menu li {
+  padding: 10px 20px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.dropdown-menu li:hover {
+  background-color: #f0f0f0;
+}
+
+.title {
   text-align: center;
-  color: #2e2d2d;
+  font-size: 32px;
+  margin-top: 10px;
+  color: #2c3e50;
 }
 
-/* Styling for Squares */
-.squares-container {
+.subtitle {
+  text-align: center;
+  font-size: 18px;
+  margin-bottom: 30px;
+  color: #475151;
+}
+
+.stats-container {
   display: flex;
-  justify-content: space-between;
-  margin: 20px 0;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  margin-bottom: 30px;
 }
 
-.square {
+.stat-box {
+  background-color: white;
+  padding: 20px 30px;
+  margin: 10px;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
   flex: 1;
-  margin: 0 10px;
-  padding: 20px;
-  color: rgb(2, 2, 2);
+  min-width: 250px;
   text-align: center;
-  border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
-.square h2 {
-  margin: 0;
-  font-size: 1.5em;
-}
-
-.square p {
-  font-size: 2em;
-  margin: 10px 0 0;
-}
-
-.square.books {
-  background-color: #ff4d4d;
-}
-
-.square.borrowed-books {
-  background-color: #ffcc00;
-}
-
-.square.available-books {
-  background-color: #4CAF50;
-}
-
-/* Styling for Tables */
-.tables-container {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 20px;
-}
-
-.table-box {
-  width: 48%;
-  background: #fff;
-  padding: 15px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
-}
-
-h2 {
-  color: black;
+.stat-box h2 {
   margin-bottom: 10px;
-  text-align: center;
+  font-size: 22px;
+}
+
+.stat-box p {
+  font-size: 26px;
+  font-weight: bold;
+  color: #2c3e50;
+}
+
+.stat-box.books {
+  border-left: 6px solid #3498db;
+}
+
+.stat-box.borrowed {
+  border-left: 6px solid #4f023e;
+}
+
+.stat-box.available {
+  border-left: 6px solid #c5f506;
+}
+
+.tables-container {
+  margin-top: 40px;
+}
+
+.table-section {
+  margin-bottom: 40px;
+}
+
+.table-section h2 {
+  margin-bottom: 15px;
+  color: #34495e;
 }
 
 table {
   width: 100%;
   border-collapse: collapse;
-  margin: 10px 0;
+  background-color: white;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+th {
+  background-color: #a913db;
+  color: rgb(7, 7, 7);
 }
 
 table th,
 table td {
-  padding: 10px;
+  padding: 9px 9px;
   text-align: left;
-  border-bottom: 1px solid #ddd;
-}
-
-table th {
-  background-color: #595757;
-  color: white;
+  border-bottom: 1px solid #eaeaea;
 }
 
 table tr:hover {
-  background-color: #f5f5f5;
+  background-color: #f5f7fa;
 }
 
-button {
-  background-color: #d9534f;
-  color: white;
-  border: none;
-  padding: 5px 10px;
-  border-radius: 5px;
-  cursor: pointer;
-}
+@media (max-width: 768px) {
+  .stats-container {
+    flex-direction: column;
+    align-items: center;
+  }
 
-button:hover {
-  background-color: #c9302c;
+  .stat-box {
+    width: 80%;
+  }
+
+  table th,
+  table td {
+    font-size: 14px;
+  }
 }
