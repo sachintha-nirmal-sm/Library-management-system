@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './Login.css';
 import { useNavigate } from 'react-router-dom';
+import { userAPI } from '../services/api';
 
 const Login = () => {
   const navigate = useNavigate();
@@ -30,9 +31,9 @@ const Login = () => {
   };
 
   // Handle form submission
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     const emailError = validateField('email', email);
     const passwordError = validateField('password', password);
 
@@ -44,8 +45,24 @@ const Login = () => {
       return;
     }
 
-    // If validation passes, navigate to home
-    navigate('/home');
+    try {
+      const response = await userAPI.login({ email, password });
+      const { token, role } = response.data;
+
+      // Store token and role in localStorage
+      localStorage.setItem('token', token);
+      localStorage.setItem('role', role);
+
+      // Navigate to home or admin page based on role
+      if (role === 'admin') {
+        navigate('/UserAdmin');
+      } else {
+        navigate('/home');
+      }
+    } catch (err) {
+      console.error('Login failed:', err);
+      alert('Invalid credentials');
+    }
   };
 
   // Real-time validation on input change

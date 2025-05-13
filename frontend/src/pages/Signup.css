@@ -178,6 +178,24 @@ h2 {
   transform: translateY(-1px);
 }
 
+.form-group input.readonly-field {
+  background-color: rgba(255, 255, 255, 0.8);
+  cursor: not-allowed;
+  font-family: monospace;
+  font-size: 1.1rem;
+  letter-spacing: 1px;
+  color: var(--dark-bg);
+  font-weight: 600;
+}
+
+.field-hint {
+  display: block;
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.7);
+  margin-top: 0.3rem;
+  font-style: italic;
+}
+
 .payment-method {
   display: flex;
   justify-content: center;

@@ -10,9 +10,16 @@ const api = axios.create({
     },
 });
 
-// Add token to requests if it exists
+// Add a function to get the user's role from localStorage
+export const getUserRole = () => localStorage.getItem('role');
+
+// Ensure token is stored in localStorage after login
 api.interceptors.request.use((config) => {
     const token = localStorage.getItem('token');
+    console.log('Token being sent in request:', token); // Debug log
+    if (!token) {
+        console.warn('No token found in localStorage');
+    }
     if (token) {
         config.headers.Authorization = `Bearer ${token}`;
     }
@@ -21,12 +28,15 @@ api.interceptors.request.use((config) => {
 
 // User API calls
 export const userAPI = {
-    register: (userData) => api.post('/users/register', userData),
-    login: (credentials) => api.post('/users/login', credentials),
-    getProfile: () => api.get('/users/profile'),
-    updateProfile: (userData) => api.patch('/users/profile', userData),
-    getAllUsers: () => api.get('/users'),
-    updateUser: (userId, userData) => api.patch(`/users/${userId}`, userData),
+    register: (userData) => api.post('/auth/register', userData),
+    login: (credentials) => api.post('/auth/login', credentials),
+    getProfile: () => api.get('/auth/me'),
+    updateProfile: (userData) => api.put('/auth/me', userData),
+    getAllUsers: () => api.get('/users/all'),
+    updateUser: (userId, userData) => api.put(`/users/${userId}`, userData).then(response => response).catch(error => {
+        console.error("Error in updateUser API call:", error);
+        throw error;
+    }),
     deleteUser: (userId) => api.delete(`/users/${userId}`),
 };
 
@@ -36,16 +46,16 @@ export const bookAPI = {
     getBookById: (id) => api.get(`/books/${id}`),
     searchBooks: (query) => api.get(`/books/search?query=${query}`),
     createBook: (bookData) => api.post('/books', bookData),
-    updateBook: (id, bookData) => api.patch(`/books/${id}`, bookData),
+    updateBook: (id, bookData) => api.put(`/books/${id}`, bookData),
     deleteBook: (id) => api.delete(`/books/${id}`),
 };
 
 // Borrowing API calls
 export const borrowingAPI = {
-    borrowBook: (bookId) => api.post('/borrowings/borrow', { bookId }),
-    returnBook: (borrowingId) => api.post(`/borrowings/return/${borrowingId}`),
-    getUserBorrowings: () => api.get('/borrowings/my-borrowings'),
-    getAllBorrowings: () => api.get('/borrowings/all'),
+    borrowBook: (bookId) => api.post('/borrowings', { bookId }),
+    returnBook: (borrowingId) => api.put(`/borrowings/${borrowingId}`, { status: 'returned' }),
+    getUserBorrowings: () => api.get('/borrowings/user'),
+    getAllBorrowings: () => api.get('/borrowings'),
 };
 
-export default api; 
+export default api;

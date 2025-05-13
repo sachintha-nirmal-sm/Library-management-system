@@ -60,6 +60,13 @@
     border-radius: 5px;
   }
   
+  .form-group input.readonly-field {
+    background-color: #f0f0f0;
+    color: #666;
+    cursor: not-allowed;
+    border: 1px solid #ddd;
+  }
+  
   .payment-method {
     display: flex;
     justify-content: space-around;

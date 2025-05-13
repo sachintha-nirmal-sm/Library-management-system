@@ -5,6 +5,7 @@ import { FiUpload, FiCheckCircle } from "react-icons/fi";
 import axios from 'axios';
 
 const Signup = () => {
+  const [userId, setUserId] = useState("");
   const [username, setUsername] = useState("");
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
@@ -93,10 +94,20 @@ const Signup = () => {
     };
   }, []);
 
+  useEffect(() => {
+    // Generate a random 6-digit number
+    const generateUserId = () => {
+      const min = 100000;
+      const max = 999999;
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    };
+    
+    setUserId(generateUserId().toString());
+  }, []);
+
   const validateForm = () => {
     const newErrors = {};
 
-    if (!username.trim()) newErrors.username = "Username is required";
     if (!name.trim()) newErrors.name = "Name is required";
     if (!phone.trim()) newErrors.phone = "Phone number is required";
     if (!email.trim()) newErrors.email = "Email is required";
@@ -107,6 +118,7 @@ const Signup = () => {
       newErrors.confirmPassword = "Passwords do not match";
     }
     if (!address.trim()) newErrors.address = "Address is required";
+    if (!paymentMethod) newErrors.paymentMethod = "Payment method is required";
 
     if (paymentMethod === "card") {
       if (!cardNumber.trim()) newErrors.cardNumber = "Card number is required";
@@ -120,10 +132,20 @@ const Signup = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
+    console.log("Preparing to submit...");
+    console.log("User ID state:", userId);
+  
+    if (!userId || userId.length !== 6) {
+      alert('User ID was not generated correctly. Please refresh the page and try again.');
+      console.error('Invalid User ID at submit:', userId);
+      return;
+    }
+  
     if (validateForm()) {
       try {
         const userData = {
+          userId,
           username,
           name,
           email,
@@ -131,31 +153,49 @@ const Signup = () => {
           phone,
           address,
           paymentMethod,
-          cardNumber: paymentMethod === 'card' ? cardNumber : undefined,
-          cvv: paymentMethod === 'card' ? cvv : undefined,
           profilePhoto
         };
-
-        const response = await axios.post('http://localhost:5001/api/users/register', userData);
-
+        
+        if (paymentMethod === 'card') {
+          userData.cardNumber = cardNumber;
+          userData.cvv = cvv;
+        }
+      
+        console.log('Submitting user data:', userData);
+  
+        const response = await axios.post('http://localhost:5001/api/auth/register', userData);
+  
+        console.log('Server response:', response.data);
+  
         if (response.data) {
           setShowSuccess(true);
-          // Store user data in localStorage
           localStorage.setItem('user', JSON.stringify({
             _id: response.data._id,
+            userId: response.data.userId,
             name: response.data.name,
             email: response.data.email,
             role: response.data.role
           }));
-          
           setTimeout(() => {
             navigate('/');
           }, 2000);
         }
       } catch (error) {
-        console.error('Registration error:', error.response?.data || error.message);
-        // Show more specific error messages
-        if (error.response?.data?.message) {
+        console.error('Error during registration:', error);
+  
+        if (
+          error.response &&
+          error.response.data &&
+          typeof error.response.data.message === 'string' &&
+          error.response.data.message.includes('userId_1 dup key')
+        ) {
+          const min = 100000;
+          const max = 999999;
+          const newUserId = Math.floor(Math.random() * (max - min + 1)) + min;
+          setUserId(newUserId.toString());
+          alert('User ID conflict occurred. A new User ID has been generated. Please try submitting again.');
+          console.warn('Duplicate User ID. Generated new one:', newUserId);
+        } else if (error.response?.data?.message) {
           alert(error.response.data.message);
         } else if (error.response?.status === 400) {
           alert('Invalid data. Please check your inputs.');
@@ -209,6 +249,18 @@ const Signup = () => {
       </div>
 
       <form onSubmit={handleSubmit}>
+        <div className="form-group">
+          <label htmlFor="userId">User ID</label>
+          <input
+            type="text"
+            id="userId"
+            value={userId}
+            readOnly
+            className="readonly-field"
+          />
+          <small className="field-hint">Automatically generated unique identifier</small>
+        </div>
+
         <div className={`form-group ${errors.username ? 'error' : ''}`}>
           <label htmlFor="username">Username</label>
           <input
