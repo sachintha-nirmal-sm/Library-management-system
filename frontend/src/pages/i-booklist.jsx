@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { QRCodeCanvas } from "qrcode.react";
+//import { QRCodeCanvas } from "qrcode.react";
 import jsPDF from "jspdf";
 import "./i-booklist.css";
 
@@ -223,7 +223,7 @@ const BookList = () => {
       {showQR && (
         <div className="qr-container">
           <h3>Generated QR Code</h3>
-          <QRCodeCanvas value={qrData} size={200} />
+          {/* <QRCodeCanvas value={qrData} size={200} /> */}
           <button
             className="btn btn-danger btn-sm mt-2"
             onClick={() => setShowQR(false)}
