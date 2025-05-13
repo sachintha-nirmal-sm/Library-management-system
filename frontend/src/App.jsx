@@ -77,9 +77,9 @@ function MainContent() {
 
       <Routes>
         {/* Home routes */}
-        <Route path="/" element={<Home />} />
-        <Route path="/home1" element={<Home1 />} />
-        <Route path="/home2" element={<Home1 />} />
+        <Route path="/" element={<Home1/>} />
+        <Route path="/home1" element={<Home />} />
+     
 
         {/* Auth and info */}
         <Route path="/login" element={<Login />} />
