@@ -4,47 +4,52 @@ import axios from "axios";
 import "./i-forme.css";
 
 const IForme = () => {
-  const [book, setBook] = useState({
-    isbn: "",
-    name: "",
-    author: "",
-    category: "Novel",
-    publishedDate: "",
-  });
-
   const navigate = useNavigate();
 
+  // Combined category list from both branches
   const categories = [
     "Novel",
+    "Horror",
+    "Adventure",
+    "Mystery & Thriller",
+    "Romance",
+    "Fantasy",
+    "Education",
     "Biography",
     "Fiction",
     "Poetry",
     "Children",
-    "Fantasy",
     "Science",
     "Travel",
   ];
 
-  // Auto-generate a 6-digit ISBN on mount or reset
+  // Helper: generate a random 6-digit ISBN string
+  const generateISBN = () =>
+    Math.floor(100000 + Math.random() * 900000).toString();
+
+  // Form state
+  const [book, setBook] = useState({
+    isbn: "",
+    name: "",
+    author: "",
+    category: categories[0],
+    publishedDate: "",
+  });
+
+  // On mount, generate initial ISBN
   useEffect(() => {
-    setBook((prev) => ({
-      ...prev,
-      isbn: generateISBN(),
-    }));
+    setBook((prev) => ({ ...prev, isbn: generateISBN() }));
   }, []);
 
-  const generateISBN = () => {
-    return Math.floor(100000 + Math.random() * 900000).toString(); // Random 6-digit number
-  };
-
+  // Handle input changes
   const handleChange = (e) => {
     const { name, value } = e.target;
     setBook((prev) => ({ ...prev, [name]: value }));
   };
 
+  // Submit to backend
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     const payload = {
       ISBN: book.isbn,
       BookName: book.name,
@@ -54,61 +59,86 @@ const IForme = () => {
     };
 
     try {
-      const response = await axios.post("http://localhost:5000/api/inventorys", payload);
-      alert(response.data.msg || "Book added successfully!");
+      const res = await axios.post(
+        "http://localhost:5000/api/inventorys",
+        payload
+      );
+      alert(res.data.msg || "Book added successfully!");
 
-      // Reset form with new ISBN
+      // Reset form (new ISBN + empty fields)
       setBook({
         isbn: generateISBN(),
         name: "",
         author: "",
-        category: "Novel",
+        category: categories[0],
         publishedDate: "",
       });
 
       navigate("/booklist");
-    } catch (error) {
-      console.error("Error adding book:", error);
-      alert("Failed to add book. Please check console for details.");
+    } catch (err) {
+      console.error("Error adding book:", err);
+      alert("Failed to add book. See console for details.");
     }
+  };
+
+  // Cancel resets the form
+  const handleCancel = () => {
+    setBook({
+      isbn: generateISBN(),
+      name: "",
+      author: "",
+      category: categories[0],
+      publishedDate: "",
+    });
   };
 
   return (
     <div className="Bcontainer">
       <h2>Add New Book</h2>
       <form onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="isbn">ISBN </label>
+        <div className="form-group">
+          <label>ISBN:</label>
           <input
             type="text"
             name="isbn"
             value={book.isbn}
             readOnly
+            className="form-control"
           />
         </div>
-        <div>
-          <label htmlFor="name">Book Name:</label>
+
+        <div className="form-group">
+          <label>Book Name:</label>
           <input
             type="text"
             name="name"
             value={book.name}
             onChange={handleChange}
             required
+            className="form-control"
           />
         </div>
-        <div>
-          <label htmlFor="author">Author:</label>
+
+        <div className="form-group">
+          <label>Author:</label>
           <input
             type="text"
             name="author"
             value={book.author}
             onChange={handleChange}
             required
+            className="form-control"
           />
         </div>
-        <div>
-          <label htmlFor="category">Category:</label>
-          <select name="category" value={book.category} onChange={handleChange}>
+
+        <div className="form-group">
+          <label>Category:</label>
+          <select
+            name="category"
+            value={book.category}
+            onChange={handleChange}
+            className="form-control"
+          >
             {categories.map((c) => (
               <option key={c} value={c}>
                 {c}
@@ -116,14 +146,16 @@ const IForme = () => {
             ))}
           </select>
         </div>
-        <div>
-          <label htmlFor="publishedDate">Published Date:</label>
+
+        <div className="form-group">
+          <label>Published Date:</label>
           <input
             type="date"
             name="publishedDate"
             value={book.publishedDate}
             onChange={handleChange}
             required
+            className="form-control"
           />
         </div>
 
@@ -134,15 +166,7 @@ const IForme = () => {
           <button
             type="button"
             className="custom-btn cancel-btn"
-            onClick={() =>
-              setBook({
-                isbn: generateISBN(),
-                name: "",
-                author: "",
-                category: "Novel",
-                publishedDate: "",
-              })
-            }
+            onClick={handleCancel}
           >
             Cancel
           </button>

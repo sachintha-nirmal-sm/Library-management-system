@@ -19,16 +19,21 @@ const CardPayment = () => {
       alert("Please enter a valid 12-digit Card Number and 3-digit CVV.");
       return;
     }
+    if (!phoneNumber) {
+      alert("Please enter your phone number.");
+      return;
+    }
 
     try {
       const res = await axios.post("http://localhost:5000/api/send-otp", {
         phoneNumber,
       });
-      setGeneratedOtp(res.data.otp); // Simulated OTP
+      setGeneratedOtp(res.data.otp); // Simulated OTP returned by backend
       setOtpSent(true);
       alert("OTP has been sent to your phone (simulated).");
     } catch (err) {
-      alert("Failed to send OTP.");
+      console.error("OTP send error:", err);
+      alert("Failed to send OTP. Please try again.");
     }
   };
 
