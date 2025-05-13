@@ -5,6 +5,7 @@ const dotenv = require('dotenv');
 const path = require('path');
 const fs = require('fs');
 const upload = require('./middleware/upload');
+const connectDB = require('./config/db');
 
 // Load environment variables
 dotenv.config();
@@ -45,19 +46,7 @@ app.use(express.static(path.join(__dirname, '../frontend/build')));
 // Serve uploaded files
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// Database connection with improved error handling
-const connectDB = async () => {
-  try {
-    const conn = await mongoose.connect(process.env.MONGODB_URI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
-    console.log(`MongoDB Connected: ${conn.connection.host}`);
-  } catch (error) {
-    console.error('MongoDB connection error:', error);
-    process.exit(1);
-  }
-};
+// Database connection is now imported from config/db.js
 
 // Routes
 const bookRoutes = require('./routes/bookRoutes');
