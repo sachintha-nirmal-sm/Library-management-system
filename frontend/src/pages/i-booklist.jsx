@@ -14,7 +14,7 @@ const BookList = () => {
   const [bookToDelete, setBookToDelete] = useState(null);
   const navigate = useNavigate();
 
-  // Fetch books from MongoDB
+  // Load books from backend
   const loadBooks = async () => {
     try {
       const res = await axios.get("http://localhost:5000/api/inventorys");
@@ -28,18 +28,21 @@ const BookList = () => {
     loadBooks();
   }, []);
 
+  // Generate PDF of the list
   const generatePDF = () => {
     const doc = new jsPDF();
     doc.setFontSize(22).text("Book Haven", 14, 20);
     doc.setFontSize(12).text(`Generated on: ${new Date().toLocaleString()}`, 14, 30);
 
-    // header row
+    // table header
     const cols = ["ISBN", "Book Name", "Author", "Category", "Published Date"];
     const widths = [35, 50, 35, 35, 35];
     let x = 14;
     cols.forEach((h, i) => {
-      doc.setFont("helvetica", "bold").setTextColor(255, 255, 255);
-      doc.setFillColor(0, 123, 255).rect(x, 40, widths[i], 10, "F");
+      doc.setFont("helvetica", "bold")
+         .setTextColor(255, 255, 255)
+         .setFillColor(0, 123, 255)
+         .rect(x, 40, widths[i], 10, "F");
       doc.text(h, x + 5, 48);
       x += widths[i];
     });
@@ -58,6 +61,7 @@ const BookList = () => {
     doc.save("BookList.pdf");
   };
 
+  // Category counts
   const getCategoryCounts = () =>
     books.reduce((acc, b) => {
       const cat = b.Category || "Unknown";
@@ -65,9 +69,10 @@ const BookList = () => {
       return acc;
     }, {});
 
-  const handleDelete = (b) => {
+  // Delete flow
+  const handleDelete = (book) => {
     setShowDeleteConfirm(true);
-    setBookToDelete(b);
+    setBookToDelete(book);
   };
 
   const confirmDelete = async () => {
@@ -86,6 +91,7 @@ const BookList = () => {
     setBookToDelete(null);
   };
 
+  // QR code
   const handleGenerateQR = (b) => {
     setQrData(
       `ISBN: ${b.ISBN}\nBook Name: ${b.BookName}\nAuthor: ${b.Author}\nCategory: ${b.Category}\nPublished Date: ${b.PublishedDate}`
@@ -93,12 +99,13 @@ const BookList = () => {
     setShowQR(true);
   };
 
+  // Edit navigation
   const handleEdit = (b) => {
     navigate("/update-book", { state: { book: b } });
   };
 
-  // **Guard against undefined ISBN**
-  const filtered = books.filter((b) =>
+  // Filter by ISBN
+  const filteredBooks = books.filter((b) =>
     (b.ISBN || "").toLowerCase().includes(searchQuery.toLowerCase())
   );
 
@@ -106,6 +113,7 @@ const BookList = () => {
     <div className="container mt-4">
       <h2>Book List</h2>
 
+      {/* Category counts */}
       <div className="row category-count-container mb-3">
         {Object.entries(getCategoryCounts()).map(([cat, cnt]) => (
           <div key={cat} className="col-md-3 col-sm-6 mb-3">
@@ -117,6 +125,7 @@ const BookList = () => {
         ))}
       </div>
 
+      {/* Search & PDF */}
       <div className="d-flex mb-3">
         <input
           type="text"
@@ -130,6 +139,7 @@ const BookList = () => {
         </button>
       </div>
 
+      {/* Book table */}
       <table className="table table-bordered">
         <thead>
           <tr>
@@ -142,8 +152,8 @@ const BookList = () => {
           </tr>
         </thead>
         <tbody>
-          {filtered.length > 0 ? (
-            filtered.map((b) => (
+          {filteredBooks.length > 0 ? (
+            filteredBooks.map((b) => (
               <tr key={b._id}>
                 <td>{b.ISBN || ""}</td>
                 <td>{b.BookName || ""}</td>
@@ -182,6 +192,7 @@ const BookList = () => {
         </tbody>
       </table>
 
+      {/* Delete confirmation */}
       {showDeleteConfirm && (
         <div className="modal" style={{ display: "block" }}>
           <div className="modal-dialog">
@@ -208,6 +219,7 @@ const BookList = () => {
         </div>
       )}
 
+      {/* QR code display */}
       {showQR && (
         <div className="qr-container">
           <h3>Generated QR Code</h3>
