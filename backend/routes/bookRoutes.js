@@ -1,27 +1,23 @@
 const express = require('express');
 const router = express.Router();
-const { protect, admin } = require('../middleware/auth');
+const { protect, authorize } = require('../middleware/auth');
+const {
+    getAllBooks,
+    getBookById,
+    createBook,
+    updateBook,
+    deleteBook,
+    searchBooks
+} = require('../controllers/bookController');
 
-// Placeholder routes - we'll implement these later
-router.get('/', (req, res) => {
-    res.json({ message: 'Get all books' });
-    
-});
+// Public routes
+router.get('/', getAllBooks);
+router.get('/search', searchBooks);
+router.get('/:id', getBookById);
 
-router.get('/mood/:mood', (req, res) => {
-    res.json({ message: 'Get books by mood' });
-});
-
-router.post('/', protect, admin, (req, res) => {
-    res.json({ message: 'Create a book' });
-});
-
-router.put('/:id', protect, admin, (req, res) => {
-    res.json({ message: 'Update a book' });
-});
-
-router.delete('/:id', protect, admin, (req, res) => {
-    res.json({ message: 'Delete a book' });
-});
+// Protected routes - only admin can access
+router.post('/', protect, authorize('admin'), createBook);
+router.put('/:id', protect, authorize('admin'), updateBook);
+router.delete('/:id', protect, authorize('admin'), deleteBook);
 
 module.exports = router; 
