@@ -1,18 +1,51 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./UserAccount.css";
 import { useNavigate } from "react-router-dom";
+import { userAPI } from "../services/api";
 
 const UserAccount = () => {
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [userId, setUserId] = useState("");
   const [profilePhoto, setProfilePhoto] = useState("");
-  const [name, setName] = useState("John Doe");
-  const [email, setEmail] = useState("johndoe@example.com");
-  const [phone, setPhone] = useState("1234567890");
-  const [address, setAddress] = useState("Sample Address");
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [address, setAddress] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("cash");
-  const [cardNumber, setCardNumber] = useState("1234 5678 9012 3456");
-  const [cvv, setCvv] = useState("123");
+  const [cardNumber, setCardNumber] = useState("");
+  const [cvv, setCvv] = useState("");
   const [isEditing, setIsEditing] = useState(false);
+
+  useEffect(() => {
+    fetchUserProfile();
+  }, []);
+
+  const fetchUserProfile = async () => {
+    try {
+      setLoading(true);
+      const response = await userAPI.getProfile();
+      const userData = response.data;
+      
+      setUserId(userData.userId || "");
+      setName(userData.name || "");
+      setEmail(userData.email || "");
+      setPhone(userData.phone || "");
+      setAddress(userData.address || "");
+      setPaymentMethod(userData.paymentMethod || "cash");
+      setCardNumber(userData.cardNumber || "");
+      setCvv(userData.cvv || "");
+      setProfilePhoto(userData.profilePhoto || "");
+      
+      setError(null);
+    } catch (err) {
+      setError(err.response?.data?.message || "Failed to load user profile");
+      console.error("Error fetching user profile:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handlePhotoUpload = (e) => {
     const file = e.target.files[0];
@@ -26,14 +59,41 @@ const UserAccount = () => {
   };
 
   const handleUpdate = () => {
-    console.log("Editing Enabled");
     setIsEditing(true);
   };
 
-  const handleDone = () => {
-    console.log("Saved Details:", { name, email, phone, address, paymentMethod });
-    setIsEditing(false);
+  const handleDone = async () => {
+    try {
+      const userData = {
+        name,
+        email,
+        phone,
+        address,
+        paymentMethod,
+        profilePhoto
+      };
+
+      if (paymentMethod === "card") {
+        userData.cardNumber = cardNumber;
+        userData.cvv = cvv;
+      }
+
+      await userAPI.updateProfile(userData);
+      setIsEditing(false);
+      setError(null);
+    } catch (err) {
+      setError(err.response?.data?.message || "Failed to update profile");
+      console.error("Error updating profile:", err);
+    }
   };
+
+  if (loading) {
+    return <div className="loading">Loading profile...</div>;
+  }
+
+  if (error) {
+    return <div className="error">{error}</div>;
+  }
 
   return (
     <div className="user-account-container">
@@ -53,6 +113,17 @@ const UserAccount = () => {
             <div className="placeholder">Upload Photo</div>
           )}
         </label>
+      </div>
+
+      <div className="form-group">
+        <label htmlFor="userId">User ID</label>
+        <input
+          type="text"
+          id="userId"
+          value={userId}
+          disabled={true}
+          className="readonly-field"
+        />
       </div>
 
       <div className="form-group">

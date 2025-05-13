@@ -6,14 +6,34 @@
     background: #e5dfb0;
     border-radius: 10px;
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-  }
-  
-  h2 {
+    overflow: scroll;
+    max-width: 1200px;
+}
+
+h2 {
     text-align: center;
     color: #333;
-  }
-  
-  .add-user-button {
+    margin-bottom: 30px;
+}
+
+.loading {
+    text-align: center;
+    padding: 20px;
+    font-size: 1.2em;
+    color: #666;
+}
+
+.no-users {
+    text-align: center;
+    padding: 20px;
+    font-size: 1.2em;
+    color: #666;
+    background: white;
+    border-radius: 8px;
+    margin-top: 20px;
+}
+
+.add-user-button {
     display: block;
     margin: 10px auto;
     padding: 10px 15px;
@@ -22,72 +42,205 @@
     border: none;
     border-radius: 5px;
     cursor: pointer;
-  }
-  
-  table {
+}
+
+.users-table {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 10px;
-  }
-  
-  th, td {
-    padding: 10px;
-    text-align: center;
+    margin-top: 20px;
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+th, td {
+    padding: 15px;
+    text-align: left;
     border-bottom: 1px solid #ddd;
-  }
-  
-  th {
+}
+
+th {
     background: #007bff;
     color: white;
-  }
-  
-  input {
-    width: 90%;
-    padding: 5px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-  }
-  
-  .profile-upload input {
-    display: none;
-  }
-  
-  .profile-upload .placeholder {
-    width: 50px;
-    height: 50px;
-    background: #eee;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-  }
-  
-  .profile-upload img {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-  }
-  
-  .update-button, .done-button, .delete-button {
-    margin: 5px;
-    padding: 8px 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.9em;
+}
+
+tr:hover {
+    background-color: #f5f5f5;
+}
+
+.edit-input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 0.9em;
+    transition: border-color 0.3s ease;
+}
+
+.edit-input:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+
+.update-button, .delete-button, .save-button, .cancel-button {
+    padding: 8px 15px;
     border: none;
-    border-radius: 5px;
+    border-radius: 4px;
     cursor: pointer;
-  }
-  
-  .update-button {
-    background: #0656ac;
-    color: white;
-  }
-  
-  .done-button {
+    font-size: 0.9em;
+    margin: 0 5px;
+    transition: all 0.3s ease;
+}
+
+.update-button {
     background: #28a745;
     color: white;
-  }
-  
-  .delete-button {
+}
+
+.update-button:hover {
+    background: #218838;
+    transform: translateY(-2px);
+}
+
+.delete-button {
     background: #dc3545;
     color: white;
-  }
-  
+}
+
+.delete-button:hover {
+    background: #c82333;
+    transform: translateY(-2px);
+}
+
+.save-button {
+    background: #28a745;
+    color: white;
+}
+
+.save-button:hover {
+    background: #218838;
+    transform: translateY(-2px);
+}
+
+.cancel-button {
+    background: #6c757d;
+    color: white;
+}
+
+.cancel-button:hover {
+    background: #5a6268;
+    transform: translateY(-2px);
+}
+
+.error {
+    color: #dc3545;
+    text-align: center;
+    padding: 10px;
+    margin: 10px 0;
+    background: #f8d7da;
+    border-radius: 4px;
+}
+
+.unauthorized {
+    text-align: center;
+    padding: 20px;
+    font-size: 1.2em;
+    color: #dc3545;
+    background: #f8d7da;
+    border-radius: 8px;
+    margin-top: 20px;
+}
+
+.search-container {
+    margin-bottom: 20px;
+}
+
+.search-input {
+    width: 100%;
+    padding: 10px 15px;
+    font-size: 16px;
+    border: 2px solid #ddd;
+    border-radius: 5px;
+    transition: border-color 0.3s ease;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+}
+
+.search-input::placeholder {
+    color: #999;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .user-admin-container {
+        width: 95%;
+        padding: 10px;
+    }
+
+    th, td {
+        padding: 10px;
+        font-size: 0.9em;
+    }
+
+    .update-button, .delete-button, .save-button, .cancel-button {
+        padding: 6px 12px;
+        font-size: 0.8em;
+    }
+
+    .edit-input {
+        padding: 6px;
+        font-size: 0.8em;
+    }
+}
+
+.admin-row {
+    background-color: rgba(0, 123, 255, 0.05);
+}
+
+.admin-row:hover {
+    background-color: rgba(0, 123, 255, 0.1);
+}
+
+.role-badge {
+    padding: 5px 10px;
+    border-radius: 15px;
+    font-size: 0.85em;
+    font-weight: 600;
+    text-transform: uppercase;
+    display: inline-block;
+}
+
+.role-badge.admin {
+    background-color: #007bff;
+    color: white;
+}
+
+.role-badge.user {
+    background-color: #6c757d;
+    color: white;
+}
+
+select.edit-input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 0.9em;
+    background-color: white;
+    cursor: pointer;
+}
+
+select.edit-input:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
