@@ -1,5 +1,6 @@
 import React from "react";
-import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, useLocation, Navigate } from "react-router-dom";
+import { getUserRole } from './services/api';
 
 // import Navbar from "./components/Navbar";
 import Login from "./pages/Login";
@@ -21,7 +22,17 @@ import MoodBasedBookRecommendation from "./pages/MoodBasedBookRecommendation"; /
 import UserAccount from "./pages/UserAccount";  // Match the casing of the actual file
 import UserAdmin from "./pages/UserAdmin";
 
+// Create a ProtectedRoute component for admin-only access
+const AdminRoute = ({ children }) => {
+  const token = localStorage.getItem('token');
+  const role = getUserRole();
 
+  if (!token || role !== 'admin') {
+    return <Navigate to="/login" replace />;
+  }
+
+  return children;
+};
 
 function App() {
   console.log("App component is rendering!");
@@ -62,7 +73,7 @@ function MainContent() {
         <Route path="/MoodBasedBookRecommendation" element={<MoodBasedBookRecommendation />} /> {/* Updated route */}
         
         <Route path="/UserAccount" element={<UserAccount />} /> {/* Updated route */}
-        <Route path="/UserAdmin" element={<UserAdmin />} /> 
+        <Route path="/UserAdmin" element={<AdminRoute><UserAdmin /></AdminRoute>} /> 
         
         
 
