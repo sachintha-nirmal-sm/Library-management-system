@@ -1,28 +1,43 @@
 const express = require('express');
-const dbconnection = require('./config/db');
-const inventorysroutes = require("./routes/inventorys");
-const paymentsroutes = require("./routes/payments");
-const notificationsroutes = require("./routes/notifications");
-const otpRoutes = require("./routes/otp");
+require('dotenv').config();               // Load environment variables
+const dbConnection = require('./config/db'); // Unified DB connection import
+
+// Route imports
+const borrowRoutes = require('./routes/borrowbooks');
+const returnRoutes = require('./routes/returnbooks');
+const inventoryRoutes = require('./routes/inventorys');
+const paymentsRoutes = require('./routes/payments');
+const notificationsRoutes = require('./routes/notifications');
+const otpRoutes = require('./routes/otp');
+
 const bodyParser = require('body-parser');
 const cors = require('cors');
 
-
 const app = express();
-app.use(cors({origin:true, credentials:true}));
+const PORT = process.env.PORT || 5000;
 
-//DB Connection
-dbconnection();
-
+// Middleware
+app.use(cors({ origin: true, credentials: true }));
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended:true}));
-app.get('/', (req, res) => res.send('Hello World!')); 
-app.use("/api/inventorys",inventorysroutes);
-app.use("/api/payments",paymentsroutes);
-app.use("/api/notifications",notificationsroutes);
-app.use("/api/send-otp", otpRoutes);
+app.use(bodyParser.urlencoded({ extended: true }));
 
+// DB Connection
+dbConnection();
 
-    const PORT = 5000;
+// Health check / root
+app.get('/', (req, res) => res.send('Hello World!'));
 
-app.listen(PORT, () => {console.log(`Server is running on port ${PORT}`);});
+// Borrow/Return Book APIs
+app.use('/api/borrowbooks', borrowRoutes);
+app.use('/api/returnbooks', returnRoutes);
+
+// Inventory, Payments, Notifications, OTP APIs
+app.use('/api/inventorys', inventoryRoutes);
+app.use('/api/payments', paymentsRoutes);
+app.use('/api/notifications', notificationsRoutes);
+app.use('/api/send-otp', otpRoutes);
+
+// Start server
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+});

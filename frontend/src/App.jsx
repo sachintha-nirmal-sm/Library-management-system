@@ -6,6 +6,7 @@ import {
   useLocation
 } from "react-router-dom";
 
+// import Navbar from "./components/Navbar";
 // Components
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
@@ -18,6 +19,7 @@ import Sidebar from "./components/Sidebar";
 // Pages
 import Home from "./pages/Home";
 import Home1 from "./pages/Home1";
+
 import Login from "./pages/Login";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
@@ -39,6 +41,11 @@ import NotificationForm from "./pages/notification";
 import LibraryManagement from "./pages/dashboard";
 import BorrowBooksForm from "./pages/BorrowBooksForm";
 import ReturnBooksForm from "./pages/ReturnBooksForm";
+
+import Transactions from "./pages/transactions";
+import UpdateBorrowedBookForm from"./pages/BorrowUpdate";
+import Analyze from "./pages/Analyze";
+
 import UpdateBorrowedBookForm from "./pages/BorrowUpdate";
 
 import { Cloudinary } from "@cloudinary/url-gen";
@@ -73,6 +80,7 @@ function MainContent() {
 
   return (
     <>
+      {/* {!hideNavbarAndFooter && <Navbar />} */}
       {!hideNavbarAndFooter && <Navbar />}
 
       <Routes>
@@ -116,8 +124,14 @@ function MainContent() {
         <Route path="/dashboard" element={<LibraryManagement />} />
         <Route path="/borrow" element={<BorrowBooksForm />} />
         <Route path="/returns" element={<ReturnBooksForm />} />
+
+          <Route path="/transactions" element={<Transactions />} />
+        <Route path="/Borrowerupdate"element={<UpdateBorrowedBookForm/>}/>
+        <Route path="/banalyze" element={<Analyze/>}/>
+        
         <Route path="/borrowerupdate" element={<UpdateBorrowedBookForm />} />
-      </Routes>
+
+          </Routes>
 
       {isModalOpen && selectedBook && (
         <BookModal book={selectedBook} onClose={handleCloseModal} />

@@ -1,5 +1,5 @@
 .return-books-form {
-    max-width: 1200px; /* Increased max-width to accommodate side-by-side forms */
+    max-width: 800px; /* Increased max-width to accommodate side-by-side forms */
     margin: 0 auto;
     padding: 20px;
     background-color: #f9f9f9;
@@ -61,9 +61,71 @@
   }
   
   .button-container button[type='button'] {
-    background-color: #df9a0f; /* Red color for Cancel button */
+    background-color: #c50303; /* Red color for Cancel button */
   }
   
   .button-container button:hover {
     opacity: 0.9; /* Add hover effect */
+  }
+
+  .qr-scanner-container {
+    margin-bottom: 20px;
+    text-align: center;
+  }
+
+  .scan-button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-bottom: 10px;
+  }
+
+  .scan-button:hover {
+    background-color: #45a049;
+  }
+
+  .qr-reader {
+    width: 100%;
+    max-width: 400px;
+    height: 300px;
+    margin: 0 auto;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+    background-color: #000;
+    object-fit: cover;
+  }
+
+  /* Style the html5-qrcode scanner elements */
+  #reader {
+    width: 100% !important;
+  }
+
+  #reader video {
+    width: 100% !important;
+  }
+
+  #reader select {
+    margin: 10px auto;
+    padding: 5px;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+  }
+
+  #reader button {
+    margin: 5px;
+    padding: 8px 16px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+
+  #reader button:hover {
+    background-color: #45a049;
   }

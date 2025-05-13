@@ -6,13 +6,13 @@ const UpdateBorrowedBookForm = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // Retrieve the book data and index from location state
-  const { book, index } = location.state || {};
+  // Retrieve the book data from location state
+  const { book } = location.state || {};
   const [isbn, setIsbn] = useState(book?.isbn || '');
   const [bookName, setBookName] = useState(book?.bookName || '');
   const [category, setCategory] = useState(book?.category || '');
   const [borrowerName, setBorrowerName] = useState(book?.borrowerName || '');
-  const [borrowDate] = useState(book?.borrowDate || ''); // borrowDate should not be updated
+  const [borrowDate] = useState(book?.borrowDate || ''); // readonly
 
   useEffect(() => {
     if (!book) {
@@ -20,23 +20,35 @@ const UpdateBorrowedBookForm = () => {
     }
   }, [book, navigate]);
 
-  const handleUpdate = () => {
-    // Update the book in the parent component (using localStorage for simplicity here)
+  const handleUpdate = async () => {
     const updatedBook = {
-      ...book,
       isbn,
       bookName,
       category,
       borrowerName,
+      borrowDate, // send unchanged borrowDate as well
     };
 
-    const storedBooks = JSON.parse(localStorage.getItem('borrowedBooks')) || [];
-    storedBooks[index] = updatedBook;
+    try {
+      const response = await fetch(`http://localhost:5000/api/borrowbooks/${book._id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updatedBook),
+      });
 
-    // Save the updated list back to localStorage
-    localStorage.setItem('borrowedBooks', JSON.stringify(storedBooks));
+      if (response.ok) {
+        alert('Book updated successfully!');
+        navigate('/transactions');
+      } else {
+        alert('Failed to update the book.');
+      }
+    } catch (err) {
+      console.error('Update error:', err);
+      alert('An error occurred while updating.');
+    }
+  };
 
-    // Redirect to the transactions page
+  const handleCancel = () => {
     navigate('/transactions');
   };
 
@@ -75,7 +87,14 @@ const UpdateBorrowedBookForm = () => {
         <label>Borrow Date:</label>
         <input type="text" value={borrowDate} disabled />
 
-        <button onClick={handleUpdate}>Update</button>
+        <div className="button-group">
+          <button className="update-btn" type="button" onClick={handleUpdate}>
+            Update
+          </button>
+          <button className="cancel-btn" type="button" onClick={handleCancel}>
+            Cancel
+          </button>
+        </div>
       </form>
     </div>
   );
