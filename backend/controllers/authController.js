@@ -13,18 +13,24 @@ const generateToken = (id) => {
 // @access  Public
 exports.registerUser = async (req, res) => {
     try {
-        const { username, name, email, password, phone, address, paymentMethod, cardNumber, cvv, profilePhoto } = req.body;
+        const { userId, username, name, email, password, phone, address, paymentMethod, cardNumber, cvv, profilePhoto } = req.body;
+
+        console.log('Checking for existing user with email:', email);
 
         // Check if user exists
-        const userExists = await User.findOne({ $or: [{ email }, { username }] });
+        const userExists = await User.findOne({ email });
+        console.log('User exists check result:', userExists);
+
         if (userExists) {
+            console.log('Email already exists:', email);
             return res.status(400).json({ 
-                message: userExists.email === email ? 'Email already exists' : 'Username already exists' 
+                message: 'Email already exists'
             });
         }
 
         // Create user
         const user = await User.create({
+            userId,
             username,
             name,
             email,
@@ -37,9 +43,12 @@ exports.registerUser = async (req, res) => {
             profilePhoto
         });
 
+        console.log('New user created successfully:', user.email);
+
         if (user) {
             res.status(201).json({
                 _id: user._id,
+                userId: user.userId,
                 username: user.username,
                 name: user.name,
                 email: user.email,
@@ -51,6 +60,7 @@ exports.registerUser = async (req, res) => {
             });
         }
     } catch (error) {
+        console.error('Registration error:', error);
         res.status(400).json({ message: error.message });
     }
 };
@@ -61,21 +71,17 @@ exports.registerUser = async (req, res) => {
 exports.loginUser = async (req, res) => {
     try {
         const { email, password } = req.body;
-
-        // Check for user email
         const user = await User.findOne({ email }).select('+password');
         if (!user) {
             return res.status(401).json({ message: 'Invalid credentials' });
         }
-
-        // Check if password matches
         const isMatch = await user.matchPassword(password);
         if (!isMatch) {
             return res.status(401).json({ message: 'Invalid credentials' });
         }
-
         res.json({
             _id: user._id,
+            userId: user.userId,
             name: user.name,
             email: user.email,
             role: user.role,
