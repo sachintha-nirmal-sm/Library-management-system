@@ -1,0 +1,123 @@
+/* General body styles */
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f4;
+  margin: 0;
+  padding: 20px;
+}
+
+/* Form container styles */
+.Fcontainer {
+  max-width: 500px;
+  margin: auto;
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Heading styles */
+h2 {
+  text-align: center;
+  color: #333;
+  font-size: 18px;
+}
+
+/* Form group styling */
+.form-group {
+  margin-bottom: 15px;
+}
+
+/* Label styles */
+label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+  color: #555;
+}
+
+/* Default input styling (all fields except dates) */
+input[type="text"],
+input[type="date"] {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  font-size: 14px;
+  color: black; /* Set text color to black */
+}
+
+/* Specific styling for the borrow and return date inputs */
+input[type="date"] {
+  background-color: white; /* Keep background white for date fields */
+}
+
+/* Readonly input styling */
+input[readonly] {
+  background-color: #e9ecef;
+}
+
+/* Submit button styles */
+.custom-btn-submit {
+  width: 100%;
+  padding: 10px;
+  background-color: #4ea728; /* Green */
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.custom-btn-submit:hover {
+  background-color:  #4ea728; /* Darker green */
+}
+
+/* Card button (light blue) */
+.custom-btn-card {
+  padding: 10px 20px;
+  background-color: #2a71cd; /* Light blue */
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.custom-btn-card:hover {
+  background-color: #2a71cd; /* Slightly darker light blue */
+}
+
+/* Cash button (medium blue) */
+.custom-btn-cash {
+  padding: 10px 20px;
+  background-color: #05274b; /* Medium blue */
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.custom-btn-cash:hover {
+  background-color: #05274b; /* Darker medium blue */
+}
+
+/* Responsive styling */
+@media (max-width: 600px) {
+  .Fcontainer {
+    padding: 15px;
+  }
+
+  .custom-btn-submit {
+    font-size: 14px;
+  }
+
+  .custom-btn-card, .custom-btn-cash {
+    font-size: 14px;
+  }
+}

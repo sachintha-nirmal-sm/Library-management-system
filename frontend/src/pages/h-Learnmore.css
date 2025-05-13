@@ -1,0 +1,296 @@
+/* h-Learnmore.css - Professional Version */
+:root {
+  --primary-gradient: linear-gradient(135deg, #2A6BCC 0%, #1A4D8F 100%);
+  --secondary-gradient: linear-gradient(45deg, #E8F1FD 0%, #FFFFFF 100%);
+  --glass-bg: rgba(255, 255, 255, 0.9);
+  --glass-border: rgba(255, 255, 255, 0.2);
+  --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+  --transition-smooth: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  --section-spacing: clamp(3rem, 5vw, 6rem) 1.5rem;
+}
+
+.hl-learnmore-container {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: var(--section-spacing);
+  color: #2D3748;
+}
+
+/* Header Section */
+.hl-learnmore-header {
+  text-align: center;
+  margin-bottom: clamp(3rem, 6vw, 6rem);
+  perspective: 1000px;
+}
+
+.hl-learnmore-header h2 {
+  font-size: clamp(2rem, 4vw, 3.5rem);
+  font-weight: 800;
+  line-height: 1.1;
+  margin-bottom: 1.5rem;
+  background: var(--primary-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  opacity: 0;
+  transform: translateY(30px);
+  animation: textReveal 0.8s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+}
+
+.hl-learnmore-header p {
+  font-size: clamp(1rem, 1.25vw, 1.25rem);
+  color: #4A5568;
+  max-width: 680px;
+  margin: 0 auto;
+  line-height: 1.6;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: textReveal 0.8s 0.2s forwards;
+}
+
+/* Features Grid */
+.hl-features {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+  margin-bottom: clamp(4rem, 6vw, 8rem);
+}
+
+.hl-feature-card {
+  background: var(--glass-bg);
+  padding: 2.5rem 2rem;
+  border-radius: 1.5rem;
+  text-align: center;
+  transition: var(--transition-smooth);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-sm);
+  transform-style: preserve-3d;
+}
+
+.hl-feature-card:hover {
+  transform: translateY(-8px) rotateX(5deg) rotateY(-2deg);
+  box-shadow: var(--shadow-lg);
+}
+
+.hl-feature-icon {
+  width: 80px;
+  height: 80px;
+  background: var(--secondary-gradient);
+  border-radius: 1rem;
+  margin: 0 auto 2rem;
+  display: grid;
+  place-items: center;
+  font-size: 2rem;
+  color: #2A6BCC;
+  transition: var(--transition-smooth);
+  position: relative;
+  overflow: hidden;
+}
+
+.hl-feature-icon::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--primary-gradient);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.hl-feature-card:hover .hl-feature-icon {
+  color: white;
+}
+
+.hl-feature-card:hover .hl-feature-icon::before {
+  opacity: 1;
+}
+
+.hl-feature-card h3 {
+  font-size: clamp(1.25rem, 1.5vw, 1.5rem);
+  font-weight: 700;
+  margin-bottom: 1rem;
+  background: var(--primary-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.hl-feature-card p {
+  color: #4A5568;
+  font-size: clamp(0.9rem, 1.1vw, 1.1rem);
+  line-height: 1.6;
+}
+
+/* How It Works Section */
+.hl-how-it-works {
+  margin-bottom: clamp(4rem, 6vw, 8rem);
+}
+
+.hl-how-it-works h2 {
+  text-align: center;
+  font-size: clamp(1.75rem, 3vw, 2.5rem);
+  margin-bottom: clamp(2rem, 4vw, 4rem);
+  opacity: 0;
+  transform: translateY(20px);
+  animation: textReveal 0.8s 0.4s forwards;
+}
+
+.hl-steps {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 4rem;
+  position: relative;
+}
+
+.hl-step {
+  text-align: center;
+  position: relative;
+  padding: 2rem;
+  background: var(--glass-bg);
+  border-radius: 1.5rem;
+  backdrop-filter: blur(10px);
+  transition: var(--transition-smooth);
+}
+
+.hl-step span {
+  width: 60px;
+  height: 60px;
+  background: var(--primary-gradient);
+  color: white;
+  border-radius: 1rem;
+  font-weight: 700;
+  font-size: 1.25rem;
+  margin-bottom: 1.5rem;
+  display: grid;
+  place-items: center;
+  position: relative;
+  transition: var(--transition-smooth);
+}
+
+.hl-step:hover span {
+  transform: scale(1.1) rotate(15deg);
+}
+
+.hl-step p {
+  font-size: clamp(0.9rem, 1.1vw, 1.1rem);
+  line-height: 1.6;
+  max-width: 280px;
+}
+
+/* Call to Action Section */
+.hl-call-to-action {
+  background: var(--primary-gradient);
+  padding: clamp(3rem, 5vw, 5rem) 2rem;
+  border-radius: 2rem;
+  text-align: center;
+  color: white;
+  position: relative;
+  overflow: hidden;
+}
+
+.hl-call-to-action::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    45deg,
+    transparent 45%,
+    rgba(255, 255, 255, 0.1) 50%,
+    transparent 55%
+  );
+  animation: sectionGlow 20s linear infinite;
+}
+
+.hl-call-to-action h2 {
+  font-size: clamp(1.75rem, 3vw, 2.5rem);
+  margin-bottom: 1.5rem;
+  position: relative;
+}
+
+.hl-call-to-action p {
+  margin-bottom: 2rem;
+  opacity: 0.9;
+  position: relative;
+}
+
+.hl-cta-button {
+  background: var(--glass-bg);
+  color: #2A6BCC;
+  padding: 1rem 3rem;
+  border-radius: 1rem;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+  position: relative;
+  overflow: hidden;
+  backdrop-filter: blur(10px);
+}
+
+.hl-cta-button::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(45deg, rgba(255, 255, 255, 0.2), transparent);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.hl-cta-button:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
+}
+
+.hl-cta-button:hover::before {
+  opacity: 1;
+}
+
+/* Animations */
+@keyframes textReveal {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes sectionGlow {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .hl-feature-card {
+    padding: 2rem 1.5rem;
+  }
+
+  .hl-step {
+    padding: 1.5rem;
+  }
+
+  .hl-cta-button {
+    width: 100%;
+    max-width: 300px;
+  }
+}
+
+/* Accessibility */
+.hl-cta-button:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 3px;
+}
+
+.hl-feature-card:focus-within {
+  box-shadow: 0 0 0 3px rgba(42, 107, 204, 0.2);
+}

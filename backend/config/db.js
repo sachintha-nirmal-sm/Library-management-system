@@ -1,18 +1,18 @@
 const mongoose = require('mongoose');
 
-const dburl = process.env.DB_URL; // Use environment variable for database URL
-
-mongoose.set("strrictQuery", true, "userNewUrlParser", true);
 
 const connection = async () => {
-   try{
-    await mongoose.connect(dburl);
-    console.log("MongoDB connected successfully");
-   }catch (e){
-    console.error(e.message);
-    process.exit();
-   }
-
+  try {
+    const conn = await mongoose.connect(process.env.MONGODB_URI, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
+    console.log(`MongoDB Connected: ${conn.connection.host}`);
+    return conn;
+  } catch (error) {
+    console.error('MongoDB connection error:', error);
+    process.exit(1);
+  }
 };
 
-module .exports = connection;
+module.exports = connection;
