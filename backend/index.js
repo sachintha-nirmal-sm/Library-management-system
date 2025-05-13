@@ -1,30 +1,51 @@
 const express = require('express');
-const dotenv = require('dotenv');
+const mongoose = require('mongoose');
 const cors = require('cors');
-const connectDB = require('./config/db');
+const dotenv = require('dotenv');
 
 // Load env vars
 dotenv.config();
 
-// Connect to database
-connectDB();
+// Route files
+const authRoutes = require('./routes/authRoutes');
+const userRoutes = require('./routes/userRoutes');
+const bookRoutes = require('./routes/bookRoutes');
+const borrowingRoutes = require('./routes/borrowingRoutes');
 
 const app = express();
 
-// Increase payload size limit
-app.use(express.json({ limit: '50mb' }));
-app.use(express.urlencoded({ limit: '50mb', extended: true }));
+// Body parser
+app.use(express.json());
 
 // Enable CORS
 app.use(cors());
 
-// Routes
-app.use('/api/auth', require('./routes/authRoutes'));
-app.use('/api/users', require('./routes/userRoutes'));
-app.use('/api/books', require('./routes/bookRoutes'));
+// Mount routers
+app.use('/api/auth', authRoutes);
+app.use('/api/users', userRoutes);
+app.use('/api/books', bookRoutes);
+app.use('/api/borrowings', borrowingRoutes);
 
-const PORT = process.env.PORT || 5001;
+// Connect to MongoDB
+mongoose.connect(process.env.MONGO_URI)
+    .then(() => {
+        console.log('MongoDB Connected...');
+        // Start server
+        const PORT = process.env.PORT || 5001;
+        app.listen(PORT, () => {
+            console.log(`Server is running on port ${PORT}`);
+        });
+    })
+    .catch(err => {
+        console.error('MongoDB connection error:', err);
+        process.exit(1);
+    });
 
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
+// Error handling middleware
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(err.statusCode || 500).json({
+        success: false,
+        error: err.message || 'Server Error'
+    });
 });
