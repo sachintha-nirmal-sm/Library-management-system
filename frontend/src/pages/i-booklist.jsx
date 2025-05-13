@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import { QRCodeCanvas } from "qrcode.react";
 import jsPDF from "jspdf";
 import "./i-booklist.css";
@@ -13,87 +14,75 @@ const BookList = () => {
   const [bookToDelete, setBookToDelete] = useState(null);
   const navigate = useNavigate();
 
+  // Load books from backend
+  const loadBooks = async () => {
+    try {
+      const res = await axios.get("http://localhost:5000/api/inventorys");
+      setBooks(res.data);
+    } catch (err) {
+      console.error("Fetch error:", err);
+    }
+  };
+
   useEffect(() => {
-    const storedBooks = JSON.parse(localStorage.getItem("books")) || [];
-    setBooks(storedBooks);
+    loadBooks();
   }, []);
 
+  // Generate PDF of the list
   const generatePDF = () => {
     const doc = new jsPDF();
-    const title = "Book Haven";
-    const dateTime = new Date().toLocaleString();
-    doc.setFontSize(22);
-    doc.setFont("helvetica", "bold");
-    doc.text(title, 14, 20);
+    doc.setFontSize(22).text("Book Haven", 14, 20);
+    doc.setFontSize(12).text(`Generated on: ${new Date().toLocaleString()}`, 14, 30);
 
-    doc.setFontSize(12);
-    doc.setFont("helvetica", "normal");
-    doc.text(`Generated on: ${dateTime}`, 14, 30);
-
-    doc.setFont("helvetica", "bold");
-    doc.setTextColor(255, 255, 255);
-    doc.setFillColor(0, 123, 255);
-
-    const headerHeight = 10;
-    const cellHeight = 8;
-    doc.rect(14, 40, 35, headerHeight, "F");
-    doc.rect(49, 40, 50, headerHeight, "F");
-    doc.rect(99, 40, 35, headerHeight, "F");
-    doc.rect(134, 40, 35, headerHeight, "F");
-    doc.rect(169, 40, 35, headerHeight, "F");
-
-    doc.setTextColor(255, 255, 255);
-    doc.text("ISBN", 14 + 5, 45);
-    doc.text("Book Name", 49 + 5, 45);
-    doc.text("Author", 99 + 5, 45);
-    doc.text("Category", 134 + 5, 45);
-    doc.text("Published Date", 169 + 5, 45);
-
-    doc.setFont("helvetica", "normal");
-    doc.setTextColor(0, 0, 0);
-
-    const rowHeight = 8;
-
-    books.forEach((book, index) => {
-      const yPosition = 50 + index * rowHeight;
-      doc.text(book.isbn, 14 + 5, yPosition + 5);
-      doc.text(book.name, 49 + 5, yPosition + 5);
-      doc.text(book.author, 99 + 5, yPosition + 5);
-      doc.text(book.category, 134 + 5, yPosition + 5);
-      doc.text(book.publishedDate, 169 + 5, yPosition + 5);
-      doc.line(14, yPosition + rowHeight, 204, yPosition + rowHeight);
+    // table header
+    const cols = ["ISBN", "Book Name", "Author", "Category", "Published Date"];
+    const widths = [35, 50, 35, 35, 35];
+    let x = 14;
+    cols.forEach((h, i) => {
+      doc.setFont("helvetica", "bold")
+         .setTextColor(255, 255, 255)
+         .setFillColor(0, 123, 255)
+         .rect(x, 40, widths[i], 10, "F");
+      doc.text(h, x + 5, 48);
+      x += widths[i];
     });
 
-    doc.line(49, 40, 49, 50 + books.length * rowHeight);
-    doc.line(99, 40, 99, 50 + books.length * rowHeight);
-    doc.line(134, 40, 134, 50 + books.length * rowHeight);
-    doc.line(169, 40, 169, 50 + books.length * rowHeight);
-
-    doc.setLineWidth(0.5);
-    doc.rect(14, 40, 190, books.length * rowHeight + headerHeight);
+    // data rows
+    doc.setFont("helvetica", "normal").setTextColor(0);
+    books.forEach((b, idx) => {
+      const y = 50 + idx * 8;
+      let cx = 14;
+      [b.ISBN, b.BookName, b.Author, b.Category, b.PublishedDate].forEach((val, j) => {
+        doc.text(String(val || ""), cx + 5, y + 5);
+        cx += widths[j];
+      });
+    });
 
     doc.save("BookList.pdf");
   };
 
-  const getCategoryCounts = () => {
-    const categoryCounts = {};
-    books.forEach((book) => {
-      categoryCounts[book.category] = (categoryCounts[book.category] || 0) + 1;
-    });
-    return categoryCounts;
-  };
+  // Category counts
+  const getCategoryCounts = () =>
+    books.reduce((acc, b) => {
+      const cat = b.Category || "Unknown";
+      acc[cat] = (acc[cat] || 0) + 1;
+      return acc;
+    }, {});
 
-  const handleDelete = (index) => {
+  // Delete flow
+  const handleDelete = (book) => {
     setShowDeleteConfirm(true);
-    setBookToDelete(index);
+    setBookToDelete(book);
   };
 
-  const confirmDelete = () => {
-    if (bookToDelete !== null) {
-      const updatedBooks = books.filter((_, i) => i !== bookToDelete);
-      setBooks(updatedBooks);
-      localStorage.setItem("books", JSON.stringify(updatedBooks));
+  const confirmDelete = async () => {
+    try {
+      await axios.delete(`http://localhost:5000/api/inventorys/${bookToDelete._id}`);
       setShowDeleteConfirm(false);
+      setBookToDelete(null);
+      loadBooks();
+    } catch (err) {
+      console.error("Delete error:", err);
     }
   };
 
@@ -102,54 +91,55 @@ const BookList = () => {
     setBookToDelete(null);
   };
 
-  const handleGenerateQR = (book) => {
-    const bookDetails = `ISBN: ${book.isbn}\nBook Name: ${book.name}\nAuthor: ${book.author}\nCategory: ${book.category}\nPublished Date: ${book.publishedDate}`;
-    setQrData(bookDetails);
+  // QR code
+  const handleGenerateQR = (b) => {
+    setQrData(
+      `ISBN: ${b.ISBN}\nBook Name: ${b.BookName}\nAuthor: ${b.Author}\nCategory: ${b.Category}\nPublished Date: ${b.PublishedDate}`
+    );
     setShowQR(true);
   };
 
-  const handleEdit = (book) => {
-    navigate("/update-book", { state: { book } });
+  // Edit navigation
+  const handleEdit = (b) => {
+    navigate("/update-book", { state: { book: b } });
   };
 
-  const handleSearch = (event) => {
-    setSearchQuery(event.target.value);
-  };
-
-  const filteredBooks = books.filter((book) =>
-    book.isbn.toLowerCase().includes(searchQuery.toLowerCase())
+  // Filter by ISBN
+  const filteredBooks = books.filter((b) =>
+    (b.ISBN || "").toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
     <div className="container mt-4">
       <h2>Book List</h2>
 
-      {/* Category Counts in Squares */}
-      <div className="row category-count-container">
-        {Object.entries(getCategoryCounts()).map(([category, count]) => (
-          <div key={category} className="col-md-3 col-sm-6 mb-3">
+      {/* Category counts */}
+      <div className="row category-count-container mb-3">
+        {Object.entries(getCategoryCounts()).map(([cat, cnt]) => (
+          <div key={cat} className="col-md-3 col-sm-6 mb-3">
             <div className="category-box text-center p-3">
-              <h5>{category}</h5>
-              <p>{count} Books</p>
+              <h5>{cat}</h5>
+              <p>{cnt} Books</p>
             </div>
           </div>
         ))}
       </div>
 
-      <div className="search-bar mb-3">
+      {/* Search & PDF */}
+      <div className="d-flex mb-3">
         <input
           type="text"
-          className="form-control"
+          className="form-control me-2"
           placeholder="Search by ISBN"
           value={searchQuery}
-          onChange={handleSearch}
+          onChange={(e) => setSearchQuery(e.target.value)}
         />
+        <button className="Qbtn-dark-blue" onClick={generatePDF}>
+          Generate PDF
+        </button>
       </div>
 
-      <button className="Qbtn-dark-blue mb-3" onClick={generatePDF}>
-        Generate PDF
-      </button>
-
+      {/* Book table */}
       <table className="table table-bordered">
         <thead>
           <tr>
@@ -163,21 +153,30 @@ const BookList = () => {
         </thead>
         <tbody>
           {filteredBooks.length > 0 ? (
-            filteredBooks.map((book, index) => (
-              <tr key={index}>
-                <td>{book.isbn}</td>
-                <td>{book.name}</td>
-                <td>{book.author}</td>
-                <td>{book.category}</td>
-                <td>{book.publishedDate}</td>
+            filteredBooks.map((b) => (
+              <tr key={b._id}>
+                <td>{b.ISBN || ""}</td>
+                <td>{b.BookName || ""}</td>
+                <td>{b.Author || ""}</td>
+                <td>{b.Category || ""}</td>
+                <td>{b.PublishedDate || ""}</td>
                 <td>
-                  <button className="Qbtn-dark-blue btn-sm me-1" onClick={() => handleGenerateQR(book)}>
+                  <button
+                    className="Qbtn-dark-blue btn-sm me-1"
+                    onClick={() => handleGenerateQR(b)}
+                  >
                     QR Code
                   </button>
-                  <button className="Ebtn-light-blue btn-sm me-1" onClick={() => handleEdit(book)}>
+                  <button
+                    className="Ebtn-light-blue btn-sm me-1"
+                    onClick={() => handleEdit(b)}
+                  >
                     Edit
                   </button>
-                  <button className="Dbtn-danger btn-sm" onClick={() => handleDelete(index)}>
+                  <button
+                    className="Dbtn-danger btn-sm"
+                    onClick={() => handleDelete(b)}
+                  >
                     Delete
                   </button>
                 </td>
@@ -193,6 +192,7 @@ const BookList = () => {
         </tbody>
       </table>
 
+      {/* Delete confirmation */}
       {showDeleteConfirm && (
         <div className="modal" style={{ display: "block" }}>
           <div className="modal-dialog">
@@ -219,11 +219,15 @@ const BookList = () => {
         </div>
       )}
 
-      {showQR && qrData && (
+      {/* QR code display */}
+      {showQR && (
         <div className="qr-container">
           <h3>Generated QR Code</h3>
           <QRCodeCanvas value={qrData} size={200} />
-          <button className="btn btn-danger btn-sm" onClick={() => setShowQR(false)}>
+          <button
+            className="btn btn-danger btn-sm mt-2"
+            onClick={() => setShowQR(false)}
+          >
             Close
           </button>
         </div>

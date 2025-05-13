@@ -1,14 +1,15 @@
 /* General Styles */
 body {
-  font-family: 'Poppins', sans-serif;
+  font-family: 'Poppins', sans‐serif;
   background-color: #f4f7f6;
+  margin: 0;
   color: #333;
 }
 
 .container.mt-4 {
   max-width: 90%;
   margin: auto;
-  background: #fff;
+  background: #ffffff;
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
@@ -78,6 +79,8 @@ h2 {
   text-align: center;
   vertical-align: middle;
   padding: 12px;
+  background-color: #f8f9fa;
+  color: #2c3e50;
 }
 
 .table-bordered {
@@ -160,7 +163,7 @@ button.custom-btn:hover {
   top: 0;
   left: 0;
   width: 25%;
-  height:25%;
+  height: 25%;
 }
 
 .modal-content {
