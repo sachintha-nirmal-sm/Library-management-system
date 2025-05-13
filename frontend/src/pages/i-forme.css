@@ -1,9 +1,11 @@
+
 /* Container for the form */
 .Bcontainer {
   max-width: 500px;
   margin: 50px auto;
   padding: 20px;
-  background: #fff;
+
+  background: #ffffff;
   border-radius: 8px;
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
   text-align: center;

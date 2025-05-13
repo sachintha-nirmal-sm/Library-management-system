@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./i-pform.css";
 
 const OverdueForm = () => {
   const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     ISBN: "",
     BookName: "",
@@ -11,76 +12,99 @@ const OverdueForm = () => {
     BorrowDate: "",
     ReturnDate: "",
     OverdueDays: 0,
-    TotalFine: 0, // This will hold the total fine calculated value
+    TotalFine: 0,
   });
 
-  // Function to calculate overdue days based on borrow date and return date
+  // Calculate days overdue from two dates
   const calculateOverdueDays = (borrowDate, returnDate) => {
-    if (!borrowDate || !returnDate) return 0; // If either date is missing, return 0 overdue days
-    const borrowDateObj = new Date(borrowDate);
-    const returnDateObj = new Date(returnDate);
-    const timeDiff = returnDateObj - borrowDateObj;
-    const daysOverdue = Math.floor(timeDiff / (1000 * 3600 * 24)); // Convert milliseconds to days
-    return daysOverdue > 0 ? daysOverdue : 0; // If overdue days is negative, set to 0
+    if (!borrowDate || !returnDate) return 0;
+    const diff = new Date(returnDate) - new Date(borrowDate);
+    const days = Math.floor(diff / (1000 * 3600 * 24));
+    return days > 0 ? days : 0;
   };
 
-  // Function to calculate fine based on overdue days
-  const calculateFine = (overdueDays) => overdueDays * 25;
+  // Fine is ₹25 per overdue day
+  const calculateFine = (days) => days * 25;
 
-  // Handle changes in form fields
+  // Update form state and recalc when dates change
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prevData) => {
-      const updatedData = { ...prevData, [name]: value };
-
-      // Recalculate overdue days and total fine when either BorrowDate or ReturnDate changes
+    setFormData((prev) => {
+      const updated = { ...prev, [name]: value };
       if (name === "BorrowDate" || name === "ReturnDate") {
-        const overdueDays = calculateOverdueDays(updatedData.BorrowDate, updatedData.ReturnDate);
-        updatedData.OverdueDays = overdueDays;
-        updatedData.TotalFine = calculateFine(overdueDays);
+        const days = calculateOverdueDays(
+          updated.BorrowDate,
+          updated.ReturnDate
+        );
+        updated.OverdueDays = days;
+        updated.TotalFine = calculateFine(days);
       }
-
-      return updatedData;
+      return updated;
     });
   };
 
-  // Handle form submission
-  const handleSubmit = (e) => {
+  // Submit to backend then navigate
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    navigate("/payment-table", { state: formData });
+    try {
+      const res = await fetch("http://localhost:5000/api/payments", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        alert("Payment added successfully!");
+        navigate("/payment-table", { state: formData });
+      } else {
+        alert("Failed to add payment: " + (data.msg || res.statusText));
+      }
+    } catch (err) {
+      console.error("Error submitting payment:", err);
+      alert("An error occurred. Check console for details.");
+    }
   };
 
   return (
     <div className="Fcontainer">
       <h2>Overdue Fine Form</h2>
       <form onSubmit={handleSubmit}>
-        {/* Render all form fields except for TotalFine */}
         {Object.keys(formData).map((key) => {
-          if (key === "TotalFine") return null; // Skip TotalFine from the form
+          if (key === "TotalFine") return null;
           return (
             <div className="form-group" key={key}>
-              <label>{key.replace(/([A-Z])/g, ' $1').trim()}:</label>
+              <label>
+                {key
+                  .replace(/([A-Z])/g, " $1")
+                  .trim()
+                  .replace("ISBN", "ISBN")
+                  .replace("Book Name", "Book Name")}
+                :
+              </label>
               <input
                 type={key.includes("Date") ? "date" : "text"}
                 name={key}
                 value={formData[key]}
                 onChange={handleChange}
-                readOnly={key === "OverdueDays" || key === "TotalFine"}
+                readOnly={key === "OverdueDays"}
                 required
               />
             </div>
           );
         })}
-        {/* Display the calculated fine in the table */}
+
         <div className="form-group">
           <label>Total Fine:</label>
           <input
             type="text"
-            value={`$${formData.TotalFine}`}
+            value={`₹${formData.TotalFine}`}
             readOnly
           />
         </div>
-        <button type="submit" className="custom-btn-submit">OK</button>
+
+        <button type="submit" className="custom-btn-submit">
+          OK
+        </button>
       </form>
     </div>
   );
