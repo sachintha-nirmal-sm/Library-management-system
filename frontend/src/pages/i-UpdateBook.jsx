@@ -11,13 +11,16 @@ const UpdateBook = () => {
   const navigate = useNavigate();
 
   const categories = [
-    "Novel",
-    "Horror",
-    "Adventure",
-    "Mystery & Thriller",
-    "Romance",
+   "Novel",
+    "Biography",
+    "Fiction",
+    "Poetry",
+    "Children",
     "Fantasy",
-    "Education",
+    "Science",
+    "Travel",
+    "Adventure",
+    "Mystry&Thriller",
   ];
 
   const handleChange = (e) => {
