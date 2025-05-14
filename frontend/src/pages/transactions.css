@@ -18,8 +18,7 @@
   border: none;
   cursor: pointer;
   font-size: 16px;
-  border-radius: 5px;
-  margin-right: 2000px; /* Adds spacing between button and heading */
+  border-radius: 5px; /* Adds spacing between button and heading */
 }
 
 .dashboard-btn:hover {
