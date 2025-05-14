@@ -23,6 +23,8 @@ const IForme = () => {
     "Fantasy",
     "Science",
     "Travel",
+    "Adventure",
+    "Mystry&Thriller",
   ];
 
   // Auto-generate a 6-digit ISBN on mount or reset
