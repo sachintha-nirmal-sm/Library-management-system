@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const inventorys = require('../models/inventoy');
+const inventorys = require('../models/inventory');
 
 router.get("/test", (req, res) =>res.send("inventory routes working"));
 

@@ -1,11 +1,13 @@
 .footer {
-  background-color: var(--primary-color);
+  background-color: #0d5b88;
   color: white;
   text-align: center;
   padding: 20px 0;
 
   /* Positioning fixed for a sticky footer */
-  position: fixed;
+
+  position: relative; 
+
   bottom: 0;
   width: 100%;
   left: 0; /* Ensure it stretches across the full width */

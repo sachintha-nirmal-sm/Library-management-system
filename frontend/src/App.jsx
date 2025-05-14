@@ -5,8 +5,10 @@ import { auto } from "@cloudinary/url-gen/actions/resize";
 import { autoGravity } from "@cloudinary/url-gen/qualifiers/gravity";
 import { getUserRole, userAPI } from './services/api';
 
-// Components
 import Navbar from "./components/Navbar";
+
+// Components
+
 import Footer from "./components/Footer";
 import BookList from "./components/BookList";
 import BookModal from "./components/BookModal";
@@ -52,6 +54,7 @@ import CashPayment from "./pages/i-cash";
 import CardPayment from "./pages/i-card";
 import NotificationForm from "./pages/notification";
 
+
 // Protected Route Component
 const AdminRoute = ({ children }) => {
   const token = localStorage.getItem('token');
@@ -62,6 +65,27 @@ const AdminRoute = ({ children }) => {
   }
   return children;
 };
+
+// import EmyLibrary from "./pages/EmyLibrary";
+import Home1 from "./pages/Home1"; 
+// Home1 page
+import BookModal from "./components/BookModal"; // BookModal component
+// import BookForm from "./components/BookForm"; // BookForm component
+import Sidebar from "./components/Sidebar";
+
+import LibraryManagement from "./pages/dashboard";
+import BorrowBooksForm from "./pages/BorrowBooksForm";
+import ReturnBooksForm from "./pages/ReturnBooksForm";
+import NewDashboard from "./pages/newdashboard";
+import Transactions from "./pages/transactions";
+import UpdateBorrowedBookForm from"./pages/BorrowUpdate";
+import Analyze from "./pages/Analyze";
+
+
+import { Cloudinary } from "@cloudinary/url-gen";
+import { auto } from "@cloudinary/url-gen/actions/resize";
+import { autoGravity } from "@cloudinary/url-gen/qualifiers/gravity";
+
 
 // App content component to manage conditional layout and modals
 function MainContent() {
@@ -79,7 +103,7 @@ function MainContent() {
     setSelectedBook(null);
   };
 
-  const hideNavbarAndFooter = location.pathname === "/get-started";
+  const hideFooter = location.pathname === "/get-started";
 
   // Optional Cloudinary image transformation (example use case)
   const cld = new Cloudinary({ cloud: { cloudName: "dq0zuo86p" } });
@@ -90,13 +114,13 @@ function MainContent() {
     .resize(auto().gravity(autoGravity()).width(500).height(500));
   return (
     <>
-      {!hideNavbarAndFooter && <Navbar />}
+
       <Routes>
         {/* Home routes */}
-        <Route path="/" element={<Home1 />} />
+        <Route path="/" element={<Home1/>} />
         <Route path="/home1" element={<Home />} />
 
-
+     
         {/* Auth and info */}
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
@@ -118,7 +142,7 @@ function MainContent() {
         <Route path="/a-updatebook/:isbn" element={<UpdateBook />} />
         <Route path="/a-booklist" element={<BookList onBookClick={handleBookClick} />} />
 
-        {/* Inventory and Payment routes */}
+
         <Route path="/bookform" element={<IForme />} />
         <Route path="/booklist" element={<IBookList />} />
         <Route path="/update-book" element={<IUpdateBook />} />
@@ -126,10 +150,16 @@ function MainContent() {
         <Route path="/payment-table" element={<IPaymentTable />} />
         <Route path="/cash-payment/:id/:total" element={<CashPayment />} />
         <Route path="/card-payment/:id/:total" element={<CardPayment />} />
-        <Route path="/notification" element={<NotificationForm />} />
+
+          <Route path="/notification" element={<NotificationForm />} /> {/* Library management routes */}
+         {/* <Route path="/mylibrary" element={<EmyLibrary />} /> */}
+        <Route path="/bookmodel" element={<BookModal />} />
+        {/* <Route path="/bookform" element={<BookForm />} /> */}
 
         {/* Admin/Dashboard features */}
-        <Route path="/sidebar" element={<Sidebar />} />
+        <Route path="/newdashboard" element={<NewDashboard />} />
+
+          <Route path="/sidebar" element={<Sidebar />} />
         <Route path="/dashboard" element={<LibraryManagement />} />
         <Route path="/borrow" element={<BorrowBooksForm />} />
         <Route path="/returns" element={<ReturnBooksForm />} />
@@ -141,13 +171,15 @@ function MainContent() {
         <Route path="/MoodBasedBookRecommendation" element={<MoodBasedBookRecommendation />} />
         <Route path="/UserAccount" element={<UserAccount />} />
         <Route path="/userAdmin" element={<AdminRoute><UserAdmin /></AdminRoute>} />
+
+
       </Routes>
 
       {isModalOpen && selectedBook && (
         <BookModal book={selectedBook} onClose={handleCloseModal} />
       )}
 
-      {!hideNavbarAndFooter && <Footer />}
+      {!hideFooter && <Footer />}
     </>
   );
 }
