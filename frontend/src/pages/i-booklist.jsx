@@ -29,34 +29,90 @@ const BookList = () => {
   }, []);
 
   const generatePDF = () => {
-    const doc = new jsPDF();
-    doc.setFontSize(22).text("Book Haven", 14, 20);
-    doc.setFontSize(12).text(`Generated on: ${new Date().toLocaleString()}`, 14, 30);
+  const doc = new jsPDF("p", "mm", "a4");
+  const pageWidth = doc.internal.pageSize.getWidth();
 
-    // header row
-    const cols = ["ISBN", "Book Name", "Author", "Category", "Published Date"];
-    const widths = [35, 50, 35, 35, 35];
-    let x = 14;
-    cols.forEach((h, i) => {
-      doc.setFont("helvetica", "bold").setTextColor(255, 255, 255);
-      doc.setFillColor(0, 123, 255).rect(x, 40, widths[i], 10, "F");
-      doc.text(h, x + 5, 48);
-      x += widths[i];
+  // Header
+  const title = "NOVELNest - Monthly Book Inventory Report";
+  const generatedOn = `Generated on: ${new Date().toLocaleString()}`;
+  doc.setFont("helvetica", "bold").setFontSize(18);
+  doc.text(title, pageWidth / 2, 20, { align: "center" });
+
+  doc.setFont("helvetica", "normal").setFontSize(11);
+  doc.text(generatedOn, 14, 30);
+
+  // Table headers
+  const headers = ["ISBN", "Book Name", "Author", "Category", "Published Date"];
+  const colWidths = [35, 50, 35, 35, 35];
+  const startX = 14;
+  let startY = 40;
+  const rowHeight = 10;
+
+  // Draw header row
+  doc.setFillColor(41, 128, 185); // Dark blue
+  doc.setTextColor(255); // White text
+  doc.setFont("helvetica", "bold").setFontSize(11);
+
+  let x = startX;
+  headers.forEach((header, i) => {
+    doc.rect(x, startY, colWidths[i], rowHeight, "F");
+    doc.text(header, x + 2, startY + 7);
+    x += colWidths[i];
+  });
+
+  // Reset for body rows
+  doc.setFont("helvetica", "normal").setFontSize(10);
+  doc.setTextColor(0);
+  startY += rowHeight;
+
+  books.forEach((b, idx) => {
+    const row = [
+      b.ISBN || "",
+      b.BookName || "",
+      b.Author || "",
+      b.Category || "",
+      b.PublishedDate || "",
+    ];
+
+    // Light gray background for even rows
+    if (idx % 2 === 0) {
+      doc.setFillColor(245, 245, 245); // light gray
+      doc.rect(startX, startY, colWidths.reduce((a, b) => a + b), rowHeight, "F");
+    }
+
+    let colX = startX;
+    row.forEach((text, colIdx) => {
+      doc.text(String(text), colX + 2, startY + 7);
+      colX += colWidths[colIdx];
     });
 
-    // data rows
-    doc.setFont("helvetica", "normal").setTextColor(0);
-    books.forEach((b, idx) => {
-      const y = 50 + idx * 8;
-      let cx = 14;
-      [b.ISBN, b.BookName, b.Author, b.Category, b.PublishedDate].forEach((val, j) => {
-        doc.text(String(val || ""), cx + 5, y + 5);
-        cx += widths[j];
+    startY += rowHeight;
+
+    // Pagination if out of space
+    if (startY > 280) {
+      doc.addPage();
+      startY = 20;
+
+      // Redraw headers
+      x = startX;
+      doc.setFillColor(41, 128, 185);
+      doc.setTextColor(255);
+      doc.setFont("helvetica", "bold").setFontSize(11);
+      headers.forEach((header, i) => {
+        doc.rect(x, startY, colWidths[i], rowHeight, "F");
+        doc.text(header, x + 2, startY + 7);
+        x += colWidths[i];
       });
-    });
 
-    doc.save("BookList.pdf");
-  };
+      doc.setTextColor(0);
+      doc.setFont("helvetica", "normal").setFontSize(10);
+      startY += rowHeight;
+    }
+  });
+
+  doc.save("Book_Inventory_Report.pdf");
+};
+
 
   const getCategoryCounts = () =>
     books.reduce((acc, b) => {
@@ -100,7 +156,13 @@ const BookList = () => {
   // **Guard against undefined ISBN**
   const filtered = books.filter((b) =>
     (b.ISBN || "").toLowerCase().includes(searchQuery.toLowerCase())
+    || (b.Author || "").toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  // Add a function to navigate to the book form page
+  const handleAddBook = () => {
+    navigate("/bookform");
+  };
 
   return (
     <div className="container mt-4">
@@ -121,13 +183,19 @@ const BookList = () => {
         <input
           type="text"
           className="form-control me-2"
-          placeholder="Search by ISBN"
+          placeholder="Search by ISBN, Author"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
         />
-        <button className="Qbtn-dark-blue" onClick={generatePDF}>
-          Generate PDF
-        </button>
+
+        <div className="button-group">
+          <button className="Qbtn-dark-blue me-2" onClick={generatePDF}>
+            Generate PDF
+          </button>
+          <button className="Abtn-green" onClick={handleAddBook}>
+            Add Book
+          </button>
+        </div>
       </div>
 
       <table className="table table-bordered">
