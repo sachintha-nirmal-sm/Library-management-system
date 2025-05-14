@@ -134,7 +134,7 @@ const Transactions = () => {
     });
   };
   
-  const handleAddFine = book => navigate("/add-fine", { state: { book } });
+  const handleAddFine = book => navigate("/overdue-form", { state: { book } });
 
   const filteredBorrowedBooks = borrowedBooks.filter(b =>
     [b.isbn, b.bookName, b.category, b.borrowerName, b.borrowDate]
