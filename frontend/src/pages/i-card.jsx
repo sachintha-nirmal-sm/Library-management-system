@@ -4,8 +4,8 @@ import axios from "axios";
 import "./i-card.css";
 
 const CardPayment = () => {
-  const { isbn, total } = useParams();
-  console.log("ISBN:", isbn, "Total:", total);
+  const { id, total } = useParams();
+  const isbn = id;
   const navigate = useNavigate();
 
   const [cardNumber, setCardNumber] = useState("");
@@ -16,14 +16,14 @@ const CardPayment = () => {
 
   useEffect(() => {
     // Debugging: Log the retrieved parameters
-    console.log("ISBN:", isbn, "Total:", total);
+    console.log("ISBN/ID:", id, "Total:", total);
 
-    // Validate the presence of isbn and total
-    if (!isbn || !total) {
+    // Validate the presence of id and total
+    if (!id || !total) {
       alert("Invalid payment details. Redirecting to the payment table.");
       navigate("/payment-table");
     }
-  }, [isbn, total, navigate]);
+  }, [id, total, navigate]);
 
   const handleConfirmPayment = () => {
     // Validate card details
@@ -40,19 +40,33 @@ const CardPayment = () => {
 
     // Prepare payment data
     const paymentData = {
-      status: "Paid",
+      Status: "Paid",
       paymentDate: new Date().toISOString(),
+      paymentMethod: "Card",
       cardType,
       phoneNumber,
     };
 
     // Update the payment status in the backend
-    axios
-      .put(`http://localhost:5000/api/payments/${isbn}`, paymentData)
-      .then(() => {
-        alert(`Payment successful for ISBN: ${isbn}`);
-        sessionStorage.setItem("paymentSuccessMessage", "Paid");
-        navigate("/payment-table");
+    // First, find the payment by ISBN
+    axios.get("http://localhost:5000/api/payments")
+      .then((response) => {
+        const paymentToUpdate = response.data.find((p) => p.ISBN === id);
+        
+        if (!paymentToUpdate) {
+          console.error("Payment not found with ISBN:", id);
+          alert("Payment not found. Please try again.");
+          return;
+        }
+        
+        // Now update using the document's _id
+        return axios.put(`http://localhost:5000/api/payments/${paymentToUpdate._id}`, paymentData);
+      })
+      .then((response) => {
+        if (response) { // Check if response exists (might not if payment not found)
+          sessionStorage.setItem("paymentSuccessMessage", "Payment marked as Paid ✅");
+          navigate("/payment-table");
+        }
       })
       .catch((err) => {
         console.error("Payment update failed:", err);
@@ -64,8 +78,8 @@ const CardPayment = () => {
     <div className="card-payment-container">
       <h2>Card Payment</h2>
       <div className="payment-details">
-        <p><strong>ISBN:</strong> {isbn}</p>
-        <p><strong>Total Fine:</strong> ₹{total}</p>
+        <p><strong>ISBN:</strong> {id}</p>
+        <p><strong>Total Fine:</strong> ${total}</p>
       </div>
 
       {/* Card Type Selection */}
