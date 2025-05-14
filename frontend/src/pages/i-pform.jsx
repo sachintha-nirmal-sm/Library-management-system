@@ -15,55 +15,53 @@ const OverdueForm = () => {
     TotalFine: 0,
   });
 
+  // Calculate days overdue from two dates
   const calculateOverdueDays = (borrowDate, returnDate) => {
     if (!borrowDate || !returnDate) return 0;
-    const borrowDateObj = new Date(borrowDate);
-    const returnDateObj = new Date(returnDate);
-    const timeDiff = returnDateObj - borrowDateObj;
-    const daysOverdue = Math.floor(timeDiff / (1000 * 3600 * 24));
-    return daysOverdue > 0 ? daysOverdue : 0;
+    const diff = new Date(returnDate) - new Date(borrowDate);
+    const days = Math.floor(diff / (1000 * 3600 * 24));
+    return days > 0 ? days : 0;
   };
 
-  const calculateFine = (overdueDays) => overdueDays * 25;
+  // Fine is ₹25 per overdue day
+  const calculateFine = (days) => days * 25;
 
+  // Update form state and recalc when dates change
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prevData) => {
-      const updatedData = { ...prevData, [name]: value };
-
+    setFormData((prev) => {
+      const updated = { ...prev, [name]: value };
       if (name === "BorrowDate" || name === "ReturnDate") {
-        const overdueDays = calculateOverdueDays(updatedData.BorrowDate, updatedData.ReturnDate);
-        updatedData.OverdueDays = overdueDays;
-        updatedData.TotalFine = calculateFine(overdueDays);
+        const days = calculateOverdueDays(
+          updated.BorrowDate,
+          updated.ReturnDate
+        );
+        updated.OverdueDays = days;
+        updated.TotalFine = calculateFine(days);
       }
-
-      return updatedData;
+      return updated;
     });
   };
 
+  // Submit to backend then navigate
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     try {
-      const response = await fetch("http://localhost:5000/api/payments", {
+      const res = await fetch("http://localhost:5000/api/payments", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(formData)
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
       });
-
-      const data = await response.json();
-
-      if (response.ok) {
+      const data = await res.json();
+      if (res.ok) {
         alert("Payment added successfully!");
         navigate("/payment-table", { state: formData });
       } else {
-        alert("Failed to add payment: " + data.msg);
+        alert("Failed to add payment: " + (data.msg || res.statusText));
       }
-    } catch (error) {
-      console.error("Error submitting payment:", error);
-      alert("An error occurred.");
+    } catch (err) {
+      console.error("Error submitting payment:", err);
+      alert("An error occurred. Check console for details.");
     }
   };
 
@@ -75,7 +73,14 @@ const OverdueForm = () => {
           if (key === "TotalFine") return null;
           return (
             <div className="form-group" key={key}>
-              <label>{key.replace(/([A-Z])/g, ' $1').trim()}:</label>
+              <label>
+                {key
+                  .replace(/([A-Z])/g, " $1")
+                  .trim()
+                  .replace("ISBN", "ISBN")
+                  .replace("Book Name", "Book Name")}
+                :
+              </label>
               <input
                 type={key.includes("Date") ? "date" : "text"}
                 name={key}
@@ -90,10 +95,16 @@ const OverdueForm = () => {
 
         <div className="form-group">
           <label>Total Fine:</label>
-          <input type="text" value={`$${formData.TotalFine}`} readOnly />
+          <input
+            type="text"
+            value={`₹${formData.TotalFine}`}
+            readOnly
+          />
         </div>
 
-        <button type="submit" className="custom-btn-submit">OK</button>
+        <button type="submit" className="custom-btn-submit">
+          OK
+        </button>
       </form>
     </div>
   );
