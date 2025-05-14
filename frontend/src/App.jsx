@@ -6,7 +6,9 @@ import {
   useLocation
 } from "react-router-dom";
 
+import Navbar from "./components/Navbar";
 // Components
+
 import Footer from "./components/Footer";
 import BookList from "./components/BookList";
 import BookModal from "./components/BookModal";
@@ -36,6 +38,13 @@ import IPaymentTable from "./pages/i-payment";
 import CashPayment from "./pages/i-cash";
 import CardPayment from "./pages/i-card";
 import NotificationForm from "./pages/notification";
+// import EmyLibrary from "./pages/EmyLibrary";
+import Home1 from "./pages/Home1"; 
+// Home1 page
+import BookModal from "./components/BookModal"; // BookModal component
+// import BookForm from "./components/BookForm"; // BookForm component
+import Sidebar from "./components/Sidebar";
+
 import LibraryManagement from "./pages/dashboard";
 import BorrowBooksForm from "./pages/BorrowBooksForm";
 import ReturnBooksForm from "./pages/ReturnBooksForm";
@@ -77,6 +86,7 @@ function MainContent() {
 
   return (
     <>
+
       <Routes>
         {/* Home routes */}
         <Route path="/" element={<Home1/>} />
@@ -112,11 +122,16 @@ function MainContent() {
         <Route path="/payment-table" element={<IPaymentTable />} />
         <Route path="/cash-payment/:id/:total" element={<CashPayment />} />
         <Route path="/card-payment/:id/:total" element={<CardPayment />} />
-        <Route path="/notification" element={<NotificationForm />} />
+
+          <Route path="/notification" element={<NotificationForm />} /> {/* Library management routes */}
+         {/* <Route path="/mylibrary" element={<EmyLibrary />} /> */}
+        <Route path="/bookmodel" element={<BookModal />} />
+        {/* <Route path="/bookform" element={<BookForm />} /> */}
 
         {/* Admin/Dashboard features */}
         <Route path="/newdashboard" element={<NewDashboard />} />
-        <Route path="/sidebar" element={<Sidebar />} />
+
+          <Route path="/sidebar" element={<Sidebar />} />
         <Route path="/dashboard" element={<LibraryManagement />} />
         <Route path="/borrow" element={<BorrowBooksForm />} />
         <Route path="/returns" element={<ReturnBooksForm />} />

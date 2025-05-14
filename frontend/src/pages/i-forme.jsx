@@ -21,6 +21,8 @@ const IForme = () => {
     "Children",
     "Science",
     "Travel",
+    "Adventure",
+    "Mystry&Thriller",
   ];
 
   // Helper: generate a random 6-digit ISBN string

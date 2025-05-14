@@ -1,4 +1,15 @@
 const express = require('express');
+
+require('dotenv').config(); 
+
+const inventorysroutes = require("./routes/inventorys");
+const paymentsroutes = require("./routes/payments");
+const notificationsroutes = require("./routes/notifications");
+
+const borrowRoutes = require('./routes/borrowbooks');
+const returnRoutes = require('./routes/returnbooks');
+const otpRoutes = require('./routes/otp');
+
 const mongoose = require('mongoose');
 const cors = require('cors');
 const dotenv = require('dotenv');
@@ -8,8 +19,6 @@ const upload = require('./middleware/upload');
 const connectDB = require('./config/db');
 const bodyParser = require('body-parser');
 
-// Load environment variables
-dotenv.config();
 
 // Validate required environment variables
 const requiredEnvVars = ['MONGODB_URI', 'CLOUDINARY_CLOUD_NAME', 'CLOUDINARY_API_KEY', 'CLOUDINARY_API_SECRET'];
@@ -42,7 +51,9 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+
+app.use(bodyParser.urlencoded({extended:true}));
+app.use("/api/inventorys",inventorysroutes);
 
 // Serve static files
 app.use(express.static(path.join(__dirname, '../frontend/build')));
@@ -66,7 +77,11 @@ app.use('/api/books', bookRoutes);
 app.use('/api/watch-later', watchLaterRoutes);
 app.use('/api/borrowbooks', borrowRoutes);
 app.use('/api/returnbooks', returnRoutes);
+
+// Inventory, Payments, Notifications, OTP APIs
+
 app.use('/api/inventorys', inventoryRoutes);
+
 app.use('/api/payments', paymentsRoutes);
 app.use('/api/notifications', notificationsRoutes);
 app.use('/api/library', libraryRoutes);
