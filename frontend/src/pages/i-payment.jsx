@@ -1,47 +1,87 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import axios from "axios"; // Ensure axios is imported
 import { jsPDF } from "jspdf";
+import axios from "axios";
+import { 
+  BarChart, 
+  Bar, 
+  XAxis, 
+  YAxis, 
+  CartesianGrid, 
+  Tooltip, 
+  Legend, 
+  ResponsiveContainer 
+} from 'recharts';
 import "./i-payment.css";
 
 const IPaymentTable = () => {
   const location = useLocation();
-  const newPayment = location.state; // The new payment passed via location state
+  const newPayment = location.state;
   const navigate = useNavigate();
 
   const [payments, setPayments] = useState([]);
   const [selectedISBN, setSelectedISBN] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
+  const [notification, setNotification] = useState("");
+  const [showAnalytics, setShowAnalytics] = useState(false);
+  const [analyticsData, setAnalyticsData] = useState([]);
 
-  // Fetching and adding payments
-  useEffect(() => {
-    // Fetch existing payments
+  const fetchPayments = () => {
     axios.get("http://localhost:5000/api/payments")
-      .then((res) => setPayments(res.data))
-      .catch((err) => console.error("Error fetching payments:", err));
+      .then(res => {
+        let paymentData = res.data;
 
-    // Add new payment
-    if (newPayment) {
-      const paymentWithStatus = { ...newPayment, status: "Pending" };
-      axios.post("http://localhost:5000/api/payments", paymentWithStatus)
-        .then(() => {
-          setPayments((prev) => [...prev, paymentWithStatus]);
-        })
-        .catch((err) => console.error("Error adding new payment:", err));
-    }
+        if (newPayment) {
+          const isDuplicate = paymentData.some(p => p.ISBN === newPayment.ISBN);
+          if (!isDuplicate) {
+            const newWithStatus = { ...newPayment, Status: "Pending" };
+            axios.post("http://localhost:5000/api/payments", newWithStatus)
+              .then(() => {
+                setNotification("Payment added successfully!");
+                setPayments([...paymentData, newWithStatus]);
+              })
+              .catch(() => {
+                setNotification("Failed to add new payment.");
+                setPayments(paymentData);
+              });
+          } else {
+            setPayments(paymentData);
+          }
+        } else {
+          setPayments(paymentData);
+        }
+      })
+      .catch(() => {
+        setNotification("Failed to fetch payments.");
+      });
+  };
+
+  useEffect(() => {
+    fetchPayments();
 
     const message = sessionStorage.getItem("paymentSuccessMessage");
     if (message) {
-      setPayments((prevPayments) =>
-        prevPayments.map((payment) =>
-          payment.status === "Pending"
-            ? { ...payment, status: message }
-            : payment
-        )
-      );
-      sessionStorage.removeItem("paymentSuccessMessage"); // Clear message after displaying
+      setNotification(message);
+      sessionStorage.removeItem("paymentSuccessMessage");
     }
-  }, [newPayment]);
+    
+    // Test the analytics function
+    console.log("Testing analytics processing function...");
+    try {
+      // Create some test payment data
+      const testPayments = [
+        { ReturnDate: "2023-01-15", TotalFine: 25, Status: "Paid" },
+        { ReturnDate: "2023-01-20", TotalFine: 30, Status: "Pending" },
+        { ReturnDate: "2023-02-05", TotalFine: 15, Status: "Paid" }
+      ];
+      
+      const result = processMonthlyFines(testPayments);
+      console.log("Analytics test result:", result);
+      console.log("Analytics test successful");
+    } catch (error) {
+      console.error("Analytics test failed:", error);
+    }
+  }, []);
 
   const handlePay = (isbn) => {
     setSelectedISBN(isbn === selectedISBN ? null : isbn);
@@ -52,16 +92,7 @@ const IPaymentTable = () => {
       navigate(`/card-payment/${isbn}/${total}`);
     } else if (method === "Cash") {
       navigate(`/cash-payment/${isbn}/${total}`);
-    } else {
-      alert(`Payment via ${method} initiated for ISBN: ${isbn}`);
     }
-
-    // Update the status to "Paid" once payment is initiated
-    setPayments((prevPayments) =>
-      prevPayments.map((payment) =>
-        payment.isbn === isbn ? { ...payment, status: "Paid" } : payment
-      )
-    );
     setSelectedISBN(null);
   };
 
@@ -70,158 +101,281 @@ const IPaymentTable = () => {
   };
 
   const generatePDF = () => {
-    const doc = new jsPDF();
-    const title = "Book Haven";
+    const doc = new jsPDF("p", "mm", "a4");
+    const title = "NOVELNest - Payment Report";
     const dateTime = new Date().toLocaleString();
-  
-    // Set title
-    doc.setFontSize(22);
+
     doc.setFont("helvetica", "bold");
-    doc.text(title, 14, 20);
-  
-    // Set generated date
-    doc.setFontSize(12);
+    doc.setFontSize(14);
+    doc.text(title, 105, 15, { align: "center" });
+
+    doc.setFontSize(9);
     doc.setFont("helvetica", "normal");
-    doc.text(`Generated on: ${dateTime}`, 14, 30);
-  
-    // Table column headers
+    doc.text(`Generated on: ${dateTime}`, 14, 22);
+
     const headers = [
-      "ISBN",
-      "Book Name",
-      "Borrower Name",
-      "Borrow Date",
-      "Return Date",
-      "Overdue Days",
-      "Total Fine",
-      "Status",
+      "ISBN", "Book Name", "Borrower Name", "Borrow Date",
+      "Return Date", "Overdue", "Fine", "Status", "Payment Method"
     ];
-  
-    // Column widths for better space distribution
-    const columnWidths = [20, 40, 40, 25, 25, 25, 25, 25]; // Reduced width for each column to fit better
-    const headerHeight = 10; // Reduced header height for better fit
-    const rowHeight = 8; // Reduced row height
-    const tableStartY = 50;
-  
-    // Set font for table content
-    doc.setFont("helvetica", "normal");
-  
-    // Draw table headers
-    let yPosition = tableStartY;
-    doc.setFillColor(0, 123, 255); // Header background color (blue)
-    doc.setTextColor(255, 255, 255); // White text color for the header
-    headers.forEach((header, index) => {
-      const x = 14 + columnWidths.slice(0, index).reduce((a, b) => a + b, 0);
-      doc.rect(x, yPosition, columnWidths[index], headerHeight, "F"); // Fill background color for headers
-      doc.text(header, x + columnWidths[index] / 2, yPosition + 6, { align: "center" }); // Centered header text
+    const columnWidths = [17, 26, 26, 21, 21, 13, 13, 15, 22];
+    const startX = 10;
+    const startY = 28;
+    const headerHeight = 7;
+    const rowHeight = 7;
+    let yPosition = startY;
+
+    doc.setFillColor(41, 128, 185);
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(8);
+    doc.setFont("helvetica", "bold");
+
+    let x = startX;
+    headers.forEach((header, i) => {
+      doc.rect(x, yPosition, columnWidths[i], headerHeight, "F");
+      doc.text(header, x + 1.5, yPosition + 5);
+      x += columnWidths[i];
     });
-  
-    doc.setTextColor(0, 0, 0); // Set text color to black for table content
-  
-    // Generate table rows
+
     yPosition += headerHeight;
+    doc.setTextColor(0);
+    doc.setFont("helvetica", "normal");
+
     payments.forEach((payment, index) => {
       const row = [
-        payment.isbn,
-        payment.bookName,
-        payment.borrowerName,
-        payment.borrowDate,
-        payment.returnDate,
-        payment.overdueDays,
-        payment.totalFine,
+        payment.ISBN,
+        payment.BookName,
+        payment.BorrowerName,
+        payment.BorrowDate,
+        payment.ReturnDate,
+        payment.OverdueDays?.toString(),
+        payment.TotalFine?.toString(),
+        payment.Status,
+        payment.paymentMethod || "-",
       ];
-  
-      row.forEach((value, colIndex) => {
-        const x = 14 + columnWidths.slice(0, colIndex).reduce((a, b) => a + b, 0);
-        const cellText = (value ?? "").toString();
-        const cellWidth = columnWidths[colIndex];
-  
-        // Add the text within the cell, wrapping it if necessary
-        doc.text(cellText, x + 5, yPosition + 6, { maxWidth: cellWidth - 10 });
+
+      if (index % 2 === 0) {
+        doc.setFillColor(245, 245, 245);
+        doc.rect(startX, yPosition, columnWidths.reduce((a, b) => a + b, 0), rowHeight, "F");
+      }
+
+      let cellX = startX;
+      row.forEach((val, colIndex) => {
+        doc.text((val ?? "").toString(), cellX + 1.5, yPosition + 5);
+        cellX += columnWidths[colIndex];
       });
-  
-      // Draw row lines (border for each row)
-      doc.setLineWidth(0.5);
-      doc.rect(14, yPosition, columnWidths.reduce((a, b) => a + b, 0), rowHeight); // Draw cell border
-  
-      // Move to next row
+
       yPosition += rowHeight;
+      if (yPosition > 280) {
+        doc.addPage();
+        yPosition = startY;
+      }
     });
-  
-    // Add overall table border
-    doc.setLineWidth(1);
-    doc.rect(14, tableStartY, columnWidths.reduce((a, b) => a + b, 0), yPosition - tableStartY); // Overall table border
-  
-    // Save the PDF with the table data
-    doc.save("payment_table.pdf");
+
+    doc.save("payment_report.pdf");
   };
 
-  // Filter payments based on the search term
-  const filteredPayments = payments.filter((payment) => {
-    return Object.values(payment).some((value) =>
-      value.toString().toLowerCase().includes(searchTerm.toLowerCase())
-    );
-  });
+  const handleAnalyze = () => {
+    try {
+      // Process payments to get monthly data
+      const monthlyData = processMonthlyFines(payments);
+      setAnalyticsData(monthlyData);
+      setShowAnalytics(true);
+    } catch (error) {
+      console.error("Error generating analytics:", error);
+      alert("There was an error generating the analytics. Please try again.");
+    }
+  };
+
+  const processMonthlyFines = (payments) => {
+    try {
+      // Group fines by month
+      const monthlyFines = {};
+      
+      payments.forEach(payment => {
+        if (payment.ReturnDate && payment.TotalFine) {
+          // Extract month and year from return date
+          let returnDate;
+          try {
+            returnDate = new Date(payment.ReturnDate);
+          } catch (e) {
+            // If date parsing fails, skip this payment
+            console.warn("Could not parse date:", payment.ReturnDate);
+            return;
+          }
+          
+          const monthYear = `${returnDate.getMonth() + 1}/${returnDate.getFullYear()}`;
+          
+          // Add to monthly totals
+          if (!monthlyFines[monthYear]) {
+            monthlyFines[monthYear] = {
+              month: monthYear,
+              totalFine: 0,
+              count: 0,
+              paid: 0,
+              pending: 0
+            };
+          }
+          
+          const fine = parseFloat(payment.TotalFine) || 0;
+          monthlyFines[monthYear].totalFine += fine;
+          monthlyFines[monthYear].count += 1;
+          
+          // Count paid vs pending
+          if (payment.Status === "Paid") {
+            monthlyFines[monthYear].paid += 1;
+          } else {
+            monthlyFines[monthYear].pending += 1;
+          }
+        }
+      });
+      
+      // Convert to array and sort by month
+      return Object.values(monthlyFines).sort((a, b) => {
+        const [aMonth, aYear] = a.month.split('/');
+        const [bMonth, bYear] = b.month.split('/');
+        
+        if (aYear !== bYear) return aYear - bYear;
+        return aMonth - bMonth;
+      });
+    } catch (error) {
+      console.error("Error processing monthly fines:", error);
+      return [];
+    }
+  };
+
+  const filteredPayments = payments.filter((payment) =>
+    Object.values(payment).some((value) =>
+      value?.toString().toLowerCase().includes(searchTerm.toLowerCase())
+    )
+  );
 
   return (
     <div className="container">
       <h2>Payment Table</h2>
 
-      {/* Search Bar */}
+      {notification && <div className="alert alert-success">{notification}</div>}
+
       <div className="search-bar">
         <input
           type="text"
           value={searchTerm}
           onChange={handleSearchChange}
-          placeholder="Search by ISBN."
+          placeholder="Search by ISBN, Author, etc."
           className="search-input"
         />
       </div>
 
-      {/* PDF Button */}
-      <button className="btn btn-danger" onClick={generatePDF}>
-        Generate PDF
-      </button>
+      <div className="button-group mb-3">
+        <button className="btn btn-danger me-2" onClick={generatePDF}>
+          Generate PDF
+        </button>
+        <button className="btn btn-primary" onClick={handleAnalyze}>
+          Analyze Fines
+        </button>
+      </div>
 
-      <table className="table">
+      {showAnalytics && (
+        <div className="analytics-modal">
+          <div className="analytics-content">
+            <div className="analytics-header">
+              <h3>Monthly Fine Analysis</h3>
+              <button className="close-btn" onClick={() => setShowAnalytics(false)}>×</button>
+            </div>
+            <div className="analytics-body">
+              {analyticsData.length > 0 ? (
+                <>
+                  <div style={{ width: '100%', height: 400 }}>
+                    <ResponsiveContainer>
+                      <BarChart data={analyticsData} margin={{ top: 20, right: 30, left: 20, bottom: 40 }}>
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="month" />
+                        <YAxis />
+                        <Tooltip formatter={(value) => [`$${value}`, 'Amount']} />
+                        <Legend />
+                        <Bar dataKey="totalFine" name="Total Fines" fill="#8884d8" />
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </div>
+                  
+                  <div className="analytics-summary">
+                    <h4>Summary Statistics</h4>
+                    <div className="stats-container">
+                      <div className="stat-box">
+                        <h5>Total Fines</h5>
+                        <p>${payments.reduce((sum, payment) => sum + (parseFloat(payment.TotalFine) || 0), 0).toFixed(2)}</p>
+                      </div>
+                      <div className="stat-box">
+                        <h5>Paid Fines</h5>
+                        <p>${payments.filter(p => p.Status === "Paid").reduce((sum, payment) => sum + (parseFloat(payment.TotalFine) || 0), 0).toFixed(2)}</p>
+                      </div>
+                      <div className="stat-box">
+                        <h5>Pending Fines</h5>
+                        <p>${payments.filter(p => p.Status !== "Paid").reduce((sum, payment) => sum + (parseFloat(payment.TotalFine) || 0), 0).toFixed(2)}</p>
+                      </div>
+                    </div>
+                  </div>
+                </>
+              ) : (
+                <div className="no-data-message">
+                  <p>No fine data available for analysis.</p>
+                  <p>Once you have payments with return dates and fines, they will appear here.</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      <table className="table table-striped">
         <thead>
           <tr>
-            {Object.keys(payments[0] || {}).map((key) => {
-              if (key !== "status") {
-                return (
-                  <th key={key}>{key.replace(/([A-Z])/g, " $1").trim()}</th>
-                );
-              }
-              return null;
-            })}
-            <th>Status</th> {/* Add Status column header */}
+            <th>ISBN</th>
+            <th>Book Name</th>
+            <th>Borrower Name</th>
+            <th>Borrow Date</th>
+            <th>Return Date</th>
+            <th>Overdue Days</th>
+            <th>Total Fine</th>
+            <th>Status</th>
+            <th>Payment Method</th>
             <th>Action</th>
           </tr>
         </thead>
         <tbody>
           {filteredPayments.map((payment, index) => (
             <tr key={index}>
-              {Object.entries(payment).map(([key, value], idx) => {
-                if (key !== "status") {
-                  return <td key={idx}>{value}</td>;
-                }
-                return null;
-              })}
-              <td>{payment.status}</td>
+              <td>{payment.ISBN}</td>
+              <td>{payment.BookName}</td>
+              <td>{payment.BorrowerName}</td>
+              <td>{payment.BorrowDate}</td>
+              <td>{payment.ReturnDate}</td>
+              <td>{payment.OverdueDays}</td>
+              <td>{payment.TotalFine}</td>
+              <td>{payment.Status}</td>
+              <td>{payment.paymentMethod || "-"}</td>
               <td>
-                <button className="btn btn-success" onClick={() => handlePay(payment.isbn)}>
-                  Pay
+                <button
+                  className="btn btn-success"
+                  onClick={() => handlePay(payment.ISBN)}
+                  disabled={payment.Status === "Paid"}
+                >
+                  {payment.Status === "Paid" ? "Paid" : "Pay"}
                 </button>
-                {selectedISBN === payment.isbn && (
-                  <div className="payment-options">
+                {selectedISBN === payment.ISBN && payment.Status !== "Paid" && (
+                  <div className="payment-options mt-2">
                     <button
-                      className="btn btn-primary"
-                      onClick={() => handlePaymentMethod("Cash", payment.isbn, payment.totalFine)}
+                      className="btn btn-primary me-1"
+                      onClick={() =>
+                        handlePaymentMethod("Cash", payment.ISBN, payment.TotalFine)
+                      }
                     >
                       Cash
                     </button>
                     <button
                       className="btn btn-secondary"
-                      onClick={() => handlePaymentMethod("Card", payment.isbn, payment.totalFine)}
+                      onClick={() =>
+                        handlePaymentMethod("Card", payment.ISBN, payment.TotalFine)
+                      }
                     >
                       Card
                     </button>
