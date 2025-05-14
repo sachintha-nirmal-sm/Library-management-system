@@ -1,6 +1,6 @@
 # 📚 Library Management System
 
-A comprehensive MERN stack-based Library Management System that simplifies and streamlines library operations with modern digital solutions. This system offers robust features such as user management, inventory tracking, e-library access, and book lending/returning services. It also includes an innovative Mood-Based Book Recommendation System to enhance user experience.
+A comprehensive MERN stack-based Library Management System that simplifies and streamlines library operations with modern digital solutions. This system offers robust features such as user management, inventory tracking, e-library access, and book lending/returning services. It also includes an innovative *Mood-Based Book Recommendation System* to enhance user experience.
 
 ---
 
@@ -30,47 +30,40 @@ A comprehensive MERN stack-based Library Management System that simplifies and s
 
 ## 🚀 Tech Stack
 
-- Frontend: React.js, Tailwind CSS
-- Backend: Node.js, Express.js
-- Database: MongoDB with Mongoose
-- Authentication: JWT
-- Other: Cloudinary (for images/PDFs), RESTful APIs
+- *Frontend:* React.js, Tailwind CSS
+- *Backend:* Node.js, Express.js
+- *Database:* MongoDB with Mongoose
+- *Authentication:* JWT
+- *Other:* Cloudinary (for images/PDFs), RESTful APIs
 
 ---
 
 ## 🛠 Installation
 
-1. Clone the repository:
-   bash
-   git clone https://github.com/your-username/library-management-system.git
+1. *Clone the repository:*
+   ```bash
+   git clone https://github.com/sachintha-nirmal-sm/Library-management-system.git
    cd library-management-system
+   ```
+2. *Backend Setup:*
 
-
-Backend Setup:
-
-bash
-Copy
-Edit
+```bash
 cd backend
 npm install
-npm start
-Frontend Setup:
+npm run dev
+```
+3. *Frontend Setup:*
 
-bash
-Copy
-Edit
+```bash
 cd frontend
 npm install
-npm run dev
-Environment Variables: Create .env files in both frontend and backend folders with appropriate configuration (MongoDB URI, JWT secret, etc.)
+npm start
+```
 
-📸 Screenshots (Optional)
-Add screenshots of your UI here to visually describe the project.
+4. Environment Variables: Create .env files in both frontend and backend folders with appropriate configuration (MongoDB URI, JWT secret, etc.)
 
 📂 Folder Structure
-pgsql
-Copy
-Edit
+```
 library-management-system/
 ├── backend/
 │   ├── models/
@@ -79,10 +72,11 @@ library-management-system/
 ├── frontend/
 │   ├── src/
 │   └── public/
+
+```
+---
 🤝 Contributing
 Feel free to fork this repo and make contributions. Pull requests are welcome!
 
 📄 License
 MIT License
-
-Update this readme.md file to have proper markdown tex

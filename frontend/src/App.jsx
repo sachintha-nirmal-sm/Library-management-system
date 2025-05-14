@@ -6,9 +6,7 @@ import {
   useLocation
 } from "react-router-dom";
 
-// import Navbar from "./components/Navbar";
 // Components
-import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import BookList from "./components/BookList";
 import BookModal from "./components/BookModal";
@@ -41,12 +39,11 @@ import NotificationForm from "./pages/notification";
 import LibraryManagement from "./pages/dashboard";
 import BorrowBooksForm from "./pages/BorrowBooksForm";
 import ReturnBooksForm from "./pages/ReturnBooksForm";
-
+import NewDashboard from "./pages/newdashboard";
 import Transactions from "./pages/transactions";
 import UpdateBorrowedBookForm from"./pages/BorrowUpdate";
 import Analyze from "./pages/Analyze";
 
-import UpdateBorrowedBookForm from "./pages/BorrowUpdate";
 
 import { Cloudinary } from "@cloudinary/url-gen";
 import { auto } from "@cloudinary/url-gen/actions/resize";
@@ -68,7 +65,7 @@ function MainContent() {
     setSelectedBook(null);
   };
 
-  const hideNavbarAndFooter = location.pathname === "/get-started";
+  const hideFooter = location.pathname === "/get-started";
 
   // Optional Cloudinary image transformation (example use case)
   const cld = new Cloudinary({ cloud: { cloudName: "dq0zuo86p" } });
@@ -80,15 +77,11 @@ function MainContent() {
 
   return (
     <>
-      {/* {!hideNavbarAndFooter && <Navbar />} */}
-      {!hideNavbarAndFooter && <Navbar />}
-
       <Routes>
         {/* Home routes */}
-        <Route path="/" element={<Home />} />
-        <Route path="/home1" element={<Home1 />} />
-        <Route path="/home2" element={<Home1 />} />
-
+        <Route path="/" element={<Home1/>} />
+        <Route path="/home1" element={<Home />} />
+     
         {/* Auth and info */}
         <Route path="/login" element={<Login />} />
         <Route path="/about" element={<About />} />
@@ -110,6 +103,8 @@ function MainContent() {
         <Route path="/a-booklist" element={<BookList onBookClick={handleBookClick} />} />
 
         {/* "i-" prefixed pages */}
+
+        {/* admin pages */}
         <Route path="/bookform" element={<IForme />} />
         <Route path="/booklist" element={<IBookList />} />
         <Route path="/update-book" element={<IUpdateBook />} />
@@ -120,24 +115,21 @@ function MainContent() {
         <Route path="/notification" element={<NotificationForm />} />
 
         {/* Admin/Dashboard features */}
+        <Route path="/newdashboard" element={<NewDashboard />} />
         <Route path="/sidebar" element={<Sidebar />} />
         <Route path="/dashboard" element={<LibraryManagement />} />
         <Route path="/borrow" element={<BorrowBooksForm />} />
         <Route path="/returns" element={<ReturnBooksForm />} />
-
-          <Route path="/transactions" element={<Transactions />} />
+        <Route path="/transactions" element={<Transactions />} />
         <Route path="/Borrowerupdate"element={<UpdateBorrowedBookForm/>}/>
         <Route path="/banalyze" element={<Analyze/>}/>
-        
-        <Route path="/borrowerupdate" element={<UpdateBorrowedBookForm />} />
-
-          </Routes>
+      </Routes>
 
       {isModalOpen && selectedBook && (
         <BookModal book={selectedBook} onClose={handleCloseModal} />
       )}
 
-      {!hideNavbarAndFooter && <Footer />}
+      {!hideFooter && <Footer />}
     </>
   );
 }
