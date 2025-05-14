@@ -30,7 +30,7 @@ const LibraryManagement = () => {
       'Transactions History': '/dashboard',
       'Manage Books': '/manage-books',
       'User Management': '/user-management',
-      'View Site': '/',
+      'View Site': '/home1',
       'Log out': '/login'
     };
     navigate(routes[page] || '/dashboard');
