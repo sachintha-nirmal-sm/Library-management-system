@@ -17,7 +17,7 @@ const Dashboard = () => {
       title: 'Inventory Management',
       description: 'Monitor book inventory, stock levels, and categories',
       icon: <FiArchive size={40} />,
-      path: '/inventory'
+      path: '/booklist'
     },
     {
       title: 'Borrow Management',
