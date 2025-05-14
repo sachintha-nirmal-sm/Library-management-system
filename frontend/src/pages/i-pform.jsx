@@ -57,7 +57,7 @@ const OverdueForm = () => {
 
       if (response.ok) {
         alert("Payment added successfully!");
-        navigate("/payment-table", { state: formData }); // Navigate after successful save
+        navigate("/payment-table", { state: formData });
       } else {
         alert("Failed to add payment: " + data.msg);
       }
