@@ -93,18 +93,27 @@ const ReturnBooksForm = () => {
 
   const handleScan = (result) => {
     try {
-      const scannedData = JSON.parse(result.getText());
+      const scannedText = result.getText();
+      console.log("Scanned QR data:", scannedText);
+      
+      const scannedData = JSON.parse(scannedText);
+      
+      // Close scanner after successful scan
+      setShowScanner(false);
+      
+      // Update book details with scanned data
       setBookDetails({
-        ...bookDetails,
         isbn: scannedData.isbn || bookDetails.isbn,
         bookName: scannedData.bookName || bookDetails.bookName,
         author: scannedData.author || bookDetails.author,
         category: scannedData.category || bookDetails.category,
         publishedDate: scannedData.publishedDate || bookDetails.publishedDate,
       });
-      alert('Book details scanned successfully! You can now fill in the borrower details.');
+      
+      alert('Book details scanned and filled successfully!');
     } catch (error) {
-      alert('Invalid QR code format. Please scan a valid book QR code.');
+      console.error("QR scanning error:", error);
+      alert('Invalid QR code format. Please scan a valid book QR code generated from the book list.');
     }
   };
 

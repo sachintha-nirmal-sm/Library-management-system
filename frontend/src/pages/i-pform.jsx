@@ -1,9 +1,10 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import "./i-pform.css";
 
 const OverdueForm = () => {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [formData, setFormData] = useState({
     ISBN: "",
@@ -15,12 +16,29 @@ const OverdueForm = () => {
     TotalFine: 0,
   });
 
+  // Load book data from location state on component mount
+  useEffect(() => {
+    if (location.state?.book) {
+      const book = location.state.book;
+      const overdueDays = calculateOverdueDays(book.borrowDate, book.returnDate);
+      setFormData({
+        ISBN: book.isbn || "",
+        BookName: book.bookName || "",
+        BorrowerName: book.borrowerName || "",
+        BorrowDate: book.borrowDate ? new Date(book.borrowDate).toISOString().split('T')[0] : "",
+        ReturnDate: book.returnDate ? new Date(book.returnDate).toISOString().split('T')[0] : "",
+        OverdueDays: overdueDays,
+        TotalFine: calculateFine(overdueDays),
+      });
+    }
+  }, [location.state]);
+
   // Calculate days overdue from two dates
   const calculateOverdueDays = (borrowDate, returnDate) => {
     if (!borrowDate || !returnDate) return 0;
     const diff = new Date(returnDate) - new Date(borrowDate);
     const days = Math.floor(diff / (1000 * 3600 * 24));
-    return days > 0 ? days : 0;
+    return days > 7 ? days - 7 : 0; // Only count days after the 7-day grace period
   };
 
   // Fine is ₹25 per overdue day

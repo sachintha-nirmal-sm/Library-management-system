@@ -143,9 +143,16 @@ const BookList = () => {
   };
 
   const handleGenerateQR = (b) => {
-    setQrData(
-      `ISBN: ${b.ISBN}\nBook Name: ${b.BookName}\nAuthor: ${b.Author}\nCategory: ${b.Category}\nPublished Date: ${b.PublishedDate}`
-    );
+    // Create a JSON object instead of a text string with newlines
+    const bookData = JSON.stringify({
+      isbn: b.ISBN || "",
+      bookName: b.BookName || "",
+      author: b.Author || "",
+      category: b.Category || "",
+      publishedDate: b.PublishedDate || ""
+    });
+    
+    setQrData(bookData);
     setShowQR(true);
   };
 
@@ -264,10 +271,10 @@ const BookList = () => {
                 <p>Do you want to delete this book?</p>
               </div>
               <div className="modal-footer">
-                <button className="btn btn-secondary" onClick={cancelDelete}>
+                <button className="Pbtn-green" onClick={cancelDelete}>
                   Cancel
                 </button>
-                <button className="btn btn-danger" onClick={confirmDelete}>
+                <button className="Dbtn-danger" onClick={confirmDelete}>
                   OK
                 </button>
               </div>
@@ -281,7 +288,7 @@ const BookList = () => {
           <h3>Generated QR Code</h3>
           <QRCodeCanvas value={qrData} size={200} />
           <button
-            className="btn btn-danger btn-sm mt-2"
+            className="Dbtn-danger btn-sm mt-2"
             onClick={() => setShowQR(false)}
           >
             Close

@@ -6,20 +6,17 @@ import {
   useLocation
 } from "react-router-dom";
 
-import Navbar from "./components/Navbar";
-// Components
-
+// Import components that exist in the project
 import Footer from "./components/Footer";
-import BookList from "./components/BookList";
+import Sidebar from "./components/Sidebar";
 import BookModal from "./components/BookModal";
 import BookForm from "./components/BookForm";
 import UpdateBook from "./components/UpdateBook";
-import Sidebar from "./components/Sidebar";
+import BookList from "./components/BookList";
 
 // Pages
 import Home from "./pages/Home";
 import Home1 from "./pages/Home1";
-
 import Login from "./pages/Login";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
@@ -38,13 +35,6 @@ import IPaymentTable from "./pages/i-payment";
 import CashPayment from "./pages/i-cash";
 import CardPayment from "./pages/i-card";
 import NotificationForm from "./pages/notification";
-// import EmyLibrary from "./pages/EmyLibrary";
-import Home1 from "./pages/Home1"; 
-// Home1 page
-import BookModal from "./components/BookModal"; // BookModal component
-// import BookForm from "./components/BookForm"; // BookForm component
-import Sidebar from "./components/Sidebar";
-
 import LibraryManagement from "./pages/dashboard";
 import BorrowBooksForm from "./pages/BorrowBooksForm";
 import ReturnBooksForm from "./pages/ReturnBooksForm";
@@ -52,11 +42,6 @@ import NewDashboard from "./pages/newdashboard";
 import Transactions from "./pages/transactions";
 import UpdateBorrowedBookForm from"./pages/BorrowUpdate";
 import Analyze from "./pages/Analyze";
-
-
-import { Cloudinary } from "@cloudinary/url-gen";
-import { auto } from "@cloudinary/url-gen/actions/resize";
-import { autoGravity } from "@cloudinary/url-gen/qualifiers/gravity";
 
 // App content component to manage conditional layout and modals
 function MainContent() {
@@ -76,17 +61,8 @@ function MainContent() {
 
   const hideFooter = location.pathname === "/get-started";
 
-  // Optional Cloudinary image transformation (example use case)
-  const cld = new Cloudinary({ cloud: { cloudName: "dq0zuo86p" } });
-  const img = cld
-    .image("cld-sample-5")
-    .format("auto")
-    .quality("auto")
-    .resize(auto().gravity(autoGravity()).width(500).height(500));
-
   return (
     <>
-
       <Routes>
         {/* Home routes */}
         <Route path="/" element={<Home1/>} />
@@ -112,9 +88,7 @@ function MainContent() {
         <Route path="/a-updatebook/:isbn" element={<UpdateBook />} />
         <Route path="/a-booklist" element={<BookList onBookClick={handleBookClick} />} />
 
-        {/* "i-" prefixed pages */}
-
-        {/* admin pages */}
+        {/* Inventory Management */}
         <Route path="/bookform" element={<IForme />} />
         <Route path="/booklist" element={<IBookList />} />
         <Route path="/update-book" element={<IUpdateBook />} />
@@ -122,21 +96,16 @@ function MainContent() {
         <Route path="/payment-table" element={<IPaymentTable />} />
         <Route path="/cash-payment/:id/:total" element={<CashPayment />} />
         <Route path="/card-payment/:id/:total" element={<CardPayment />} />
-
-          <Route path="/notification" element={<NotificationForm />} /> {/* Library management routes */}
-         {/* <Route path="/mylibrary" element={<EmyLibrary />} /> */}
-        <Route path="/bookmodel" element={<BookModal />} />
-        {/* <Route path="/bookform" element={<BookForm />} /> */}
+        <Route path="/notification" element={<NotificationForm />} />
 
         {/* Admin/Dashboard features */}
         <Route path="/newdashboard" element={<NewDashboard />} />
-
-          <Route path="/sidebar" element={<Sidebar />} />
+        <Route path="/sidebar" element={<Sidebar />} />
         <Route path="/dashboard" element={<LibraryManagement />} />
         <Route path="/borrow" element={<BorrowBooksForm />} />
         <Route path="/returns" element={<ReturnBooksForm />} />
         <Route path="/transactions" element={<Transactions />} />
-        <Route path="/Borrowerupdate"element={<UpdateBorrowedBookForm/>}/>
+        <Route path="/Borrowerupdate" element={<UpdateBorrowedBookForm/>}/>
         <Route path="/banalyze" element={<Analyze/>}/>
       </Routes>
 
