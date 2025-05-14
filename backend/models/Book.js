@@ -13,37 +13,6 @@ const BookSchema = new mongoose.Schema({
         trim: true,
         maxlength: [100, 'Author name cannot be more than 100 characters']
     },
-    description: {
-        type: String,
-        required: [true, 'Please add a description'],
-        maxlength: [500, 'Description cannot be more than 500 characters']
-    },
-    genre: {
-        type: String,
-        required: [true, 'Please add a genre'],
-        enum: [
-            'Fiction',
-            'Non-Fiction',
-            'Science Fiction',
-            'Mystery',
-            'Romance',
-            'Fantasy',
-            'Biography',
-            'History',
-            'Science',
-            'Technology',
-            'Self-Help',
-            'Poetry',
-            'Drama',
-            'Comedy',
-            'Horror',
-            'Thriller',
-            'Adventure',
-            'Children',
-            'Young Adult',
-            'Other'
-        ]
-    },
     isbn: {
         type: String,
         required: [true, 'Please add an ISBN'],
@@ -51,17 +20,43 @@ const BookSchema = new mongoose.Schema({
         trim: true,
         maxlength: [13, 'ISBN cannot be more than 13 characters']
     },
-    publisher: {
+    description: {
         type: String,
-        required: [true, 'Please add a publisher'],
         trim: true,
-        maxlength: [100, 'Publisher name cannot be more than 100 characters']
+        maxlength: [500, 'Description cannot be more than 500 characters']
     },
-    publicationYear: {
+    bookText: {
+        type: String,
+        trim: true
+    },
+    publishedYear: {
         type: Number,
-        required: [true, 'Please add a publication year'],
         min: [1000, 'Publication year must be a valid year'],
         max: [new Date().getFullYear(), 'Publication year cannot be in the future']
+    },
+    category: {
+        type: String,
+        required: [true, 'Category is required'],
+        trim: true,
+        enum: ['Novel', 'Horror', 'Adventure', 'Mystery & Thriller', 'Romance', 'Fantasy', 'Education']
+    },
+    genre: {
+        type: String,
+        trim: true
+    },
+    coverImage: {
+        type: String,
+        default: 'no-photo.jpg'
+    },
+    available: {
+        type: Boolean,
+        default: true
+    },
+    rating: {
+        type: Number,
+        min: 0,
+        max: 5,
+        default: 0
     },
     totalCopies: {
         type: Number,
@@ -79,11 +74,11 @@ const BookSchema = new mongoose.Schema({
         trim: true,
         maxlength: [50, 'Location cannot be more than 50 characters']
     },
-    coverImage: {
-        type: String,
-        default: 'no-photo.jpg'
-    },
     createdAt: {
+        type: Date,
+        default: Date.now
+    },
+    updatedAt: {
         type: Date,
         default: Date.now
     }
@@ -94,7 +89,8 @@ BookSchema.pre('save', function(next) {
     if (this.availableCopies > this.totalCopies) {
         this.availableCopies = this.totalCopies;
     }
+    this.updatedAt = Date.now();
     next();
 });
 
-module.exports = mongoose.model('Book', BookSchema); 
+module.exports = mongoose.model('Book', BookSchema);

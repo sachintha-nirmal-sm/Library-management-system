@@ -3,9 +3,13 @@
   color: white;
   text-align: center;
   padding: 20px 0;
-  position: relative; /* Change to absolute positioning */
+
+  /* Positioning fixed for a sticky footer */
+  position: fixed;
   bottom: 0;
   width: 100%;
+  left: 0; /* Ensure it stretches across the full width */
+  z-index: 1000; /* Ensure it stays above other content */
 }
 
 .footer-links {
