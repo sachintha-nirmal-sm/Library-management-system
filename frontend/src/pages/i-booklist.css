@@ -1,10 +1,11 @@
 /* General Styles */
 body {
-  font-family: 'Poppins', sans‐serif;
-  background-color: #f4f7f6;
+  font-family: "Poppins", sans-serif;
+  background: #70eff1;
   margin: 0;
-  color: #333;
+  /* Removed full-viewport flex centering to keep header and footer unchanged */
 }
+
 
 .container.mt-4 {
   max-width: 90%;
@@ -30,7 +31,7 @@ h2 {
 }
 
 .category-box {
-  background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+  background: linear-gradient(135deg, #0d6ec9, #79aad7);
   color: #fff;
   border-radius: 10px;
   width: 150px;
@@ -69,7 +70,7 @@ h2 {
 }
 
 .table th {
-  background: linear-gradient(135deg, #ff758c, #ff7eb3);
+  background: linear-gradient(135deg, #2c3e50, #34495e); /* Professional dark blue-gray gradient */
   color: white;
   font-weight: 600;
   text-align: center;
@@ -79,8 +80,8 @@ h2 {
   text-align: center;
   vertical-align: middle;
   padding: 12px;
-  background-color: #f8f9fa;
-  color: #2c3e50;
+  background-color: #f8f9fa; /* Light gray background for a clean look */
+  color: #2c3e50; /* Dark text for readability */
 }
 
 .table-bordered {
@@ -88,7 +89,7 @@ h2 {
 }
 
 .table tbody tr:hover {
-  background: rgba(255, 154, 158, 0.2);
+  background: rgba(44, 62, 80, 0.2); /* Subtle hover effect with professional tone */
 }
 
 /* General Button Styles */
@@ -201,4 +202,28 @@ button.custom-btn:hover {
 
 .modal-footer .btn-secondary:hover {
   background-color: #2ecc71;
+}
+
+/* Button for Add Book */
+.Abtn-green {
+  background-color: #27ae60;
+  color: white;
+  padding: 8px 15px;
+  font-size: 14px;
+  border-radius: 20px;
+  text-align: center;
+  border: none;
+  transition: all 0.3s ease-in-out;
+}
+
+.Abtn-green:hover {
+  transform: scale(1.05);
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+  background-color: #219955;
+}
+
+/* Button group styling */
+.button-group {
+  display: flex;
+  gap: 10px;
 }

@@ -23,7 +23,18 @@ const paymentSchema = new mongoose.Schema({
     },
     TotalFine:{
         type: Number,
-    }
+    },
+    Status:{
+        type: String,
+        default: "Unpaid",
+    },
+    paymentMethod:{
+        type: String,
+    },
+    paymentSlip:{
+        type: String,
+    },
+
 });
 
 module.exports = mongoose.model('payment', paymentSchema);

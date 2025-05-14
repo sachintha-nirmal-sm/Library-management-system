@@ -1,13 +1,14 @@
 const express = require('express');
-require('dotenv').config();               // Load environment variables
-const dbConnection = require('./config/db'); // Unified DB connection import
 
-// Route imports
+require('dotenv').config(); 
+
+const dbconnection = require('./config/db');
+const inventorysroutes = require("./routes/inventorys");
+const paymentsroutes = require("./routes/payments");
+const notificationsroutes = require("./routes/notifications");
+
 const borrowRoutes = require('./routes/borrowbooks');
 const returnRoutes = require('./routes/returnbooks');
-const inventoryRoutes = require('./routes/inventorys');
-const paymentsRoutes = require('./routes/payments');
-const notificationsRoutes = require('./routes/notifications');
 const otpRoutes = require('./routes/otp');
 
 const bodyParser = require('body-parser');
@@ -19,7 +20,9 @@ const PORT = process.env.PORT || 5000;
 // Middleware
 app.use(cors({ origin: true, credentials: true }));
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+
+app.use(bodyParser.urlencoded({extended:true}));
+app.use("/api/inventorys",inventorysroutes);
 
 // DB Connection
 dbConnection();
@@ -32,7 +35,6 @@ app.use('/api/borrowbooks', borrowRoutes);
 app.use('/api/returnbooks', returnRoutes);
 
 // Inventory, Payments, Notifications, OTP APIs
-app.use('/api/inventorys', inventoryRoutes);
 app.use('/api/payments', paymentsRoutes);
 app.use('/api/notifications', notificationsRoutes);
 app.use('/api/send-otp', otpRoutes);
