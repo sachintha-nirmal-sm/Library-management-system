@@ -198,3 +198,43 @@ exports.searchBooks = async (req, res, next) => {
         next(err);
     }
 };
+
+// Get books by category
+exports.getBooksByCategory = async (req, res, next) => {
+    try {
+        const { category } = req.params;
+        const books = await Book.find({ category: { $regex: category, $options: 'i' } });
+        
+        res.status(200).json({
+            success: true,
+            count: books.length,
+            data: books
+        });
+    } catch (err) {
+        next(err);
+    }
+};
+
+// Add the missing updateBookRating function
+exports.updateBookRating = async (req, res, next) => {
+    try {
+        const { rating } = req.body;
+        const { id } = req.params;
+
+        if (!rating || rating < 1 || rating > 5) {
+            return res.status(400).json({ success: false, message: 'Invalid rating value. Must be between 1 and 5.' });
+        }
+
+        const book = await Book.findById(id);
+        if (!book) {
+            return res.status(404).json({ success: false, message: 'Book not found.' });
+        }
+
+        book.rating = rating;
+        await book.save();
+
+        res.status(200).json({ success: true, data: book });
+    } catch (err) {
+        next(err);
+    }
+};

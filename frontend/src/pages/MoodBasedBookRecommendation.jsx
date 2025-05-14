@@ -1,89 +1,49 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import axiosInstance from '../config/axiosInstance';
+import { FaArrowLeft, FaBook, FaStar } from 'react-icons/fa';
 import './MoodBasedBookRecommendation.css';
 
+// Base64 encoded default cover image
+const DEFAULT_COVER = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIGhlaWdodD0iMTUwIiB2aWV3Qm94PSIwIDAgMTAwIDE1MCI+PHJlY3Qgd2lkdGg9IjEwMCIgaGVpZ2h0PSIxNTAiIGZpbGw9IiNlZWUiLz48dGV4dCB4PSI1MCIgeT0iNzUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IiM5OTkiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxMiI+Tm8gQ292ZXI8L3RleHQ+PC9zdmc+';
+
 const MoodBasedBookRecommendation = () => {
-  // State variables
+  const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(0);
   const [answers, setAnswers] = useState({});
   const [recommendations, setRecommendations] = useState([]);
   const [loading, setLoading] = useState(false);
   const [detectedMoods, setDetectedMoods] = useState([]);
+  const [books, setBooks] = useState([]);
 
-  // Sample book database
-  const booksDb = [
-    {
-      id: 1,
-      title: "The Alchemist",
-      author: "Paulo Coelho",
-      cover: "/api/placeholder/200/300",
-      moodTags: ["inspirational", "thoughtful", "spiritual"],
-      themes: ["journey", "destiny", "wisdom"],
-      tone: "hopeful"
+  // Mood mappings based on categories and genres
+  const moodMappings = {
+    happy: {
+      categories: ['Adventure', 'Romance', 'Fantasy'],
+      genres: ['Comedy', 'Adventure', 'Romance'],
+      description: 'uplifting and cheerful'
     },
-    {
-      id: 2,
-      title: "Harry Potter and the Philosopher's Stone",
-      author: "J.K. Rowling",
-      cover: "/api/placeholder/200/300",
-      moodTags: ["adventurous", "magical", "escapist"],
-      themes: ["friendship", "courage", "coming-of-age"],
-      tone: "exciting"
+    relaxed: {
+      categories: ['Education', 'Novel'],
+      genres: ['Educational', 'Literary Fiction'],
+      description: 'calm and peaceful'
     },
-    {
-      id: 3,
-      title: "The Road",
-      author: "Cormac McCarthy",
-      cover: "/api/placeholder/200/300",
-      moodTags: ["somber", "reflective", "intense"],
-      themes: ["survival", "father-son relationship", "apocalypse"],
-      tone: "dark"
+    excited: {
+      categories: ['Adventure', 'Mystery & Thriller'],
+      genres: ['Action', 'Thriller', 'Adventure'],
+      description: 'thrilling and engaging'
     },
-    {
-      id: 4,
-      title: "Pride and Prejudice",
-      author: "Jane Austen",
-      cover: "/api/placeholder/200/300",
-      moodTags: ["romantic", "witty", "social"],
-      themes: ["love", "class", "reputation"],
-      tone: "amusing"
+    thoughtful: {
+      categories: ['Novel', 'Education'],
+      genres: ['Literary Fiction', 'Philosophy', 'History'],
+      description: 'deep and thought-provoking'
     },
-    {
-      id: 5,
-      title: "The Hitchhiker's Guide to the Galaxy",
-      author: "Douglas Adams",
-      cover: "/api/placeholder/200/300",
-      moodTags: ["humorous", "absurd", "escapist"],
-      themes: ["adventure", "satire", "space travel"],
-      tone: "comedic"
-    },
-    {
-      id: 6,
-      title: "To Kill a Mockingbird",
-      author: "Harper Lee",
-      cover: "/api/placeholder/200/300",
-      moodTags: ["thoughtful", "serious", "emotional"],
-      themes: ["justice", "racial inequality", "morality"],
-      tone: "reflective"
-    },
-    {
-      id: 7,
-      title: "The Da Vinci Code",
-      author: "Dan Brown",
-      cover: "/api/placeholder/200/300",
-      moodTags: ["thrilling", "mysterious", "fast-paced"],
-      themes: ["conspiracy", "religion", "art"],
-      tone: "suspenseful"
-    },
-    {
-      id: 8,
-      title: "Eat, Pray, Love",
-      author: "Elizabeth Gilbert",
-      cover: "/api/placeholder/200/300",
-      moodTags: ["inspirational", "uplifting", "introspective"],
-      themes: ["self-discovery", "travel", "healing"],
-      tone: "reflective"
+    scary: {
+      categories: ['Horror', 'Mystery & Thriller'],
+      genres: ['Horror', 'Thriller', 'Mystery'],
+      description: 'intense and suspenseful'
     }
-  ];
+  };
 
   // Questions for mood assessment
   const questions = [
@@ -129,14 +89,28 @@ const MoodBasedBookRecommendation = () => {
     }
   ];
 
-  // Handle answer selection
+  useEffect(() => {
+    const fetchBooks = async () => {
+      try {
+        const response = await axiosInstance.get('/api/books');
+        // Ensure books is always an array
+        const booksData = Array.isArray(response.data) ? response.data : 
+                         Array.isArray(response.data?.data) ? response.data.data : [];
+        setBooks(booksData);
+      } catch (error) {
+        console.error('Error fetching books:', error);
+        setBooks([]); // Set empty array on error
+      }
+    };
+    fetchBooks();
+  }, []);
+
   const handleAnswer = (questionId, answerId) => {
     setAnswers({
       ...answers,
       [questionId]: answerId
     });
     
-    // Move to next question or process results
     if (currentStep < questions.length - 1) {
       setCurrentStep(currentStep + 1);
     } else {
@@ -144,52 +118,41 @@ const MoodBasedBookRecommendation = () => {
     }
   };
 
-  // Process answers to determine mood
   const processAnswers = () => {
     setLoading(true);
     
-    // Simulate processing time
     setTimeout(() => {
       const moodScores = {
-        happy: 0, 
-        sad: 0, 
-        reflective: 0, 
-        excited: 0, 
-        relaxed: 0, 
-        tense: 0, 
-        escapist: 0, 
-        intellectual: 0
+        happy: 0,
+        relaxed: 0,
+        excited: 0,
+        thoughtful: 0,
+        scary: 0
       };
       
       // Question 1: Preference
       if (answers.preference === "1") {
         moodScores.happy += 2;
         moodScores.relaxed += 1;
-        moodScores.escapist += 1;
       } else if (answers.preference === "2") {
-        moodScores.reflective += 2;
-        moodScores.intellectual += 2;
+        moodScores.thoughtful += 2;
       } else if (answers.preference === "3") {
         moodScores.excited += 2;
-        moodScores.tense += 1;
       } else if (answers.preference === "4") {
         moodScores.relaxed += 2;
-        moodScores.sad += 1;
       }
       
       // Question 2: Day
       if (answers.day === "1") {
-        moodScores.tense += 2;
+        moodScores.excited += 1;
         moodScores.relaxed -= 1;
       } else if (answers.day === "2") {
         moodScores.relaxed += 1;
         moodScores.happy += 1;
       } else if (answers.day === "3") {
-        moodScores.escapist += 2;
         moodScores.excited += 1;
       } else if (answers.day === "4") {
-        moodScores.sad += 1;
-        moodScores.escapist += 1;
+        moodScores.thoughtful += 1;
       }
       
       // Question 3: Weather
@@ -197,11 +160,10 @@ const MoodBasedBookRecommendation = () => {
         moodScores.happy += 1;
         moodScores.excited += 1;
       } else if (answers.weather === "2") {
-        moodScores.reflective += 1;
+        moodScores.thoughtful += 1;
         moodScores.relaxed += 1;
       } else if (answers.weather === "3") {
-        moodScores.sad += 1;
-        moodScores.reflective += 1;
+        moodScores.scary += 1;
       } else if (answers.weather === "4") {
         moodScores.relaxed += 1;
         moodScores.happy += 1;
@@ -210,16 +172,12 @@ const MoodBasedBookRecommendation = () => {
       // Question 4: Activity
       if (answers.activity === "1") {
         moodScores.excited += 2;
-        moodScores.escapist += 1;
       } else if (answers.activity === "2") {
         moodScores.relaxed += 2;
-        moodScores.reflective += 1;
       } else if (answers.activity === "3") {
-        moodScores.intellectual += 2;
-        moodScores.reflective += 1;
+        moodScores.thoughtful += 2;
       } else if (answers.activity === "4") {
         moodScores.happy += 2;
-        moodScores.excited += 1;
       }
       
       // Determine dominant moods (top 2)
@@ -235,39 +193,36 @@ const MoodBasedBookRecommendation = () => {
       const recommendedBooks = getRecommendedBooks(sortedMoods);
       setRecommendations(recommendedBooks);
       setLoading(false);
-      setCurrentStep(currentStep + 1); // Move to results page
+      setCurrentStep(currentStep + 1);
     }, 1500);
   };
 
-  // Get book recommendations based on detected moods
   const getRecommendedBooks = (moods) => {
-    // Mood mapping to book tags
-    const moodMapping = {
-      happy: ["uplifting", "humorous", "inspirational", "witty"],
-      sad: ["emotional", "somber", "thoughtful", "introspective"],
-      reflective: ["thoughtful", "introspective", "spiritual", "emotional"],
-      excited: ["adventurous", "thrilling", "fast-paced", "magical"],
-      relaxed: ["soothing", "romantic", "uplifting", "witty"],
-      tense: ["thrilling", "mysterious", "intense", "suspenseful"],
-      escapist: ["magical", "adventurous", "absurd", "escapist"],
-      intellectual: ["thoughtful", "serious", "reflective", "philosophical"]
-    };
+    const recommendedBooks = [];
     
-    // Gather relevant mood tags
-    const relevantTags = moods.flatMap(mood => moodMapping[mood] || []);
-    
-    // Find books matching the tags
-    const matchingBooks = booksDb.filter(book => 
-      book.moodTags.some(tag => relevantTags.includes(tag))
-    );
-    
-    // Return up to 3 books, randomly selected if we have more than 3 matches
-    return matchingBooks.length <= 3 
-      ? matchingBooks 
-      : matchingBooks.sort(() => 0.5 - Math.random()).slice(0, 3);
+    moods.forEach(mood => {
+      const mapping = moodMappings[mood];
+      if (!mapping) return;
+
+      const matchingBooks = books.filter(book => {
+        const categoryMatch = mapping.categories.includes(book.category);
+        const genreMatch = mapping.genres.includes(book.genre);
+        return categoryMatch || genreMatch;
+      });
+
+      // Add up to 2 books per mood
+      const selectedBooks = matchingBooks
+        .sort(() => 0.5 - Math.random())
+        .slice(0, 2);
+
+      recommendedBooks.push(...selectedBooks);
+    });
+
+    // Remove duplicates and limit to 4 books
+    return [...new Map(recommendedBooks.map(book => [book.isbn, book])).values()]
+      .slice(0, 4);
   };
 
-  // Restart the process
   const handleRestart = () => {
     setCurrentStep(0);
     setAnswers({});
@@ -275,9 +230,20 @@ const MoodBasedBookRecommendation = () => {
     setDetectedMoods([]);
   };
 
-  // Render the current step
+  const getBookCover = (book) => {
+    if (book.coverImage) {
+      if (book.coverImage.startsWith('data:image') || book.coverImage.startsWith('http')) {
+        return book.coverImage;
+      }
+      if (book.coverImage.startsWith('/uploads/')) {
+        return `http://localhost:5000${book.coverImage}`;
+      }
+      return `http://localhost:5000/uploads/${book.coverImage}`;
+    }
+    return DEFAULT_COVER;
+  };
+
   const renderStep = () => {
-    // Welcome screen
     if (currentStep === 0) {
       return (
         <div className="welcome-screen">
@@ -294,7 +260,6 @@ const MoodBasedBookRecommendation = () => {
       );
     }
     
-    // Questions
     if (currentStep >= 1 && currentStep <= questions.length) {
       const currentQuestion = questions[currentStep - 1];
       return (
@@ -328,7 +293,6 @@ const MoodBasedBookRecommendation = () => {
       );
     }
     
-    // Loading screen
     if (loading) {
       return (
         <div className="loading-screen">
@@ -338,35 +302,46 @@ const MoodBasedBookRecommendation = () => {
       );
     }
     
-    // Results screen
     return (
       <div className="results-container">
         <h2>Your Personalized Recommendations</h2>
         
         {detectedMoods.length > 0 && (
-          <p className="mood-description">Based on your responses, we think you might enjoy something that's: 
-            <span className="mood-highlight"> {detectedMoods.join(' and ')}</span>
+          <p className="mood-description">
+            Based on your responses, we think you might enjoy something that's: 
+            <span className="mood-highlight">
+              {' '}{detectedMoods.map(mood => moodMappings[mood].description).join(' and ')}
+            </span>
           </p>
         )}
         
         {recommendations.length > 0 ? (
           <div className="book-grid">
             {recommendations.map(book => (
-              <div key={book.id} className="book-card">
-                <img 
-                  src={book.cover} 
-                  alt={`Cover of ${book.title}`} 
-                  className="book-cover"
-                />
+              <div key={book.isbn} className="book-card">
+                <div className="book-cover">
+                  <img 
+                    src={getBookCover(book)} 
+                    alt={`Cover of ${book.title}`} 
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src = DEFAULT_COVER;
+                    }}
+                  />
+                </div>
                 <div className="book-info">
                   <h3 className="book-title">{book.title}</h3>
                   <p className="book-author">by {book.author}</p>
-                  <p className="book-themes">
-                    <span className="info-label">Themes:</span> {book.themes.join(', ')}
-                  </p>
-                  <p className="book-tone">
-                    <span className="info-label">Tone:</span> {book.tone}
-                  </p>
+                  <div className="book-meta">
+                    <span className="book-category">{book.category}</span>
+                    {book.genre && <span className="book-genre">{book.genre}</span>}
+                  </div>
+                  {book.rating && (
+                    <div className="book-rating">
+                      <FaStar />
+                      <span>{book.rating}/5</span>
+                    </div>
+                  )}
                 </div>
               </div>
             ))}
@@ -389,6 +364,13 @@ const MoodBasedBookRecommendation = () => {
 
   return (
     <div className="mood-reader-container">
+      <button 
+        className="mood-back-button"
+        onClick={() => navigate(-1)}
+      >
+        <FaArrowLeft /> Back
+      </button>
+      
       <div className="header">
         <h1>Library Mood Reader</h1>
       </div>

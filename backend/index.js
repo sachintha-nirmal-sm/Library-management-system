@@ -18,10 +18,11 @@ const returnRoutes = require('./routes/returnbooks');
 const inventoryRoutes = require('./routes/inventorys');
 const paymentsRoutes = require('./routes/payments');
 const notificationsRoutes = require('./routes/notifications');
-const otpRoutes = require('./routes/otp');
+const otpRoutes = require('./routes/otpRoutes');
+const watchLaterRoutes = require('./routes/watchLaterRoutes');
 
 const app = express();
-const PORT = process.env.PORT || 5001;
+const PORT = process.env.PORT || 5000;
 
 // Middleware
 app.use(cors({ origin: true, credentials: true }));
@@ -29,7 +30,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // Connect to MongoDB
-mongoose.connect(process.env.MONGO_URI)
+mongoose.connect(process.env.MONGODB_URI)
     .then(() => {
         console.log('MongoDB Connected...');
     })
@@ -52,6 +53,7 @@ app.use('/api/inventorys', inventoryRoutes);
 app.use('/api/payments', paymentsRoutes);
 app.use('/api/notifications', notificationsRoutes);
 app.use('/api/send-otp', otpRoutes);
+app.use('/api/watch-later', watchLaterRoutes);
 
 // Health check / root
 app.get('/', (req, res) => res.send('Hello World!'));

@@ -53,11 +53,11 @@ const Login = () => {
       localStorage.setItem('token', token);
       localStorage.setItem('role', role);
 
-      // Navigate to home or admin page based on role
+      // Navigate to correct page based on role
       if (role === 'admin') {
         navigate('/UserAdmin');
       } else {
-        navigate('/home');
+        navigate('/home1');  // Updated from '/home' to '/home1'
       }
     } catch (err) {
       console.error('Login failed:', err);
@@ -78,7 +78,6 @@ const Login = () => {
     if (name === 'email') setEmail(value);
     if (name === 'password') setPassword(value);
   };
-
   return (
     <div className="login-container">
       <div className="login-form" style={{ flexGrow: 1 }}>
@@ -131,7 +130,6 @@ const Login = () => {
       </div>
     </div>
   );
-};
 };
 
 export default Login;

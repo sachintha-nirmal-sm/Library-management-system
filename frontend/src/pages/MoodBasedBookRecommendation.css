@@ -251,3 +251,297 @@
   .restart-container {
     text-align: center;
   }
+
+.mood-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+}
+
+.mood-back-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background: white;
+  border: none;
+  border-radius: 50px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #2A6FDB;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+}
+
+.mood-back-button:hover {
+  transform: translateX(-5px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.mood-container h1 {
+  text-align: center;
+  font-size: 2.5rem;
+  color: #2C3E50;
+  margin-bottom: 1rem;
+  background: linear-gradient(135deg, #2A6FDB, #5BA4E6);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.mood-subtitle {
+  text-align: center;
+  color: #4A5568;
+  font-size: 1.1rem;
+  margin-bottom: 3rem;
+}
+
+.mood-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+  margin-bottom: 3rem;
+}
+
+.mood-card {
+  background: white;
+  border: none;
+  border-radius: 1rem;
+  padding: 2rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.mood-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+}
+
+.mood-card.selected {
+  background: linear-gradient(135deg, #2A6FDB, #5BA4E6);
+  color: white;
+}
+
+.mood-icon {
+  font-size: 3rem;
+  margin-bottom: 0.5rem;
+}
+
+.mood-card h3 {
+  font-size: 1.5rem;
+  margin: 0;
+}
+
+.mood-card p {
+  color: #4A5568;
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.mood-card.selected p {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.recommendations-section {
+  background: white;
+  border-radius: 1rem;
+  padding: 2rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.recommendations-section h2 {
+  text-align: center;
+  color: #2C3E50;
+  margin-bottom: 2rem;
+  font-size: 1.8rem;
+}
+
+.recommended-books-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+}
+
+.book-card {
+  background: white;
+  border-radius: 1rem;
+  overflow: hidden;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  border: 1px solid #E2E8F0;
+}
+
+.book-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+}
+
+.book-cover {
+  position: relative;
+  padding-top: 140%;
+  background: #F7FAFC;
+  overflow: hidden;
+}
+
+.book-cover img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.no-cover {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #A0AEC0;
+  padding: 1rem;
+  text-align: center;
+}
+
+.no-cover svg {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.book-info {
+  padding: 1.5rem;
+}
+
+.book-info h3 {
+  font-size: 1.2rem;
+  color: #2C3E50;
+  margin-bottom: 0.5rem;
+  line-height: 1.4;
+}
+
+.book-author {
+  color: #4A5568;
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+}
+
+.book-meta {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.book-category,
+.book-genre {
+  background: #EDF2F7;
+  color: #4A5568;
+  padding: 0.25rem 0.75rem;
+  border-radius: 50px;
+  font-size: 0.8rem;
+}
+
+.book-rating {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #F6AD55;
+  font-weight: 600;
+}
+
+.no-recommendations {
+  text-align: center;
+  color: #4A5568;
+  padding: 2rem;
+  font-size: 1.1rem;
+}
+
+.mood-loading {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.mood-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid #EDF2F7;
+  border-top-color: #2A6FDB;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.mood-error {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 2rem;
+  text-align: center;
+}
+
+.mood-error button {
+  padding: 0.75rem 1.5rem;
+  background: #2A6FDB;
+  color: white;
+  border: none;
+  border-radius: 50px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.mood-error button:hover {
+  background: #1A56B0;
+  transform: translateY(-2px);
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 768px) {
+  .mood-container {
+    padding: 1rem;
+  }
+
+  .mood-container h1 {
+    font-size: 2rem;
+  }
+
+  .mood-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .recommended-books-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .book-card {
+    max-width: 400px;
+    margin: 0 auto;
+  }
+}

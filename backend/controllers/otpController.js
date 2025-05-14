@@ -1,18 +1,20 @@
 const twilio = require('twilio');
 const crypto = require('crypto');
 
-// Initialize Twilio client
-const accountSid = process.env.TWILIO_ACCOUNT_SID;
-const authToken = process.env.TWILIO_AUTH_TOKEN;
-const twilioPhoneNumber = process.env.TWILIO_PHONE_NUMBER;
+// Initialize Twilio client (commented out for development)
+// const accountSid = process.env.TWILIO_ACCOUNT_SID;
+// const authToken = process.env.TWILIO_AUTH_TOKEN;
+// const twilioPhoneNumber = process.env.TWILIO_PHONE_NUMBER;
 
-// Log Twilio credentials (without sensitive parts)
-console.log('Twilio Config:', {
-    accountSid: accountSid ? `${accountSid.substring(0, 4)}...${accountSid.substring(accountSid.length - 4)}` : 'Not set',
-    twilioPhoneNumber: twilioPhoneNumber || 'Not set'
-});
-
-const client = twilio(accountSid, authToken);
+// For development, we'll use a mock client
+const client = {
+    messages: {
+        create: async ({ to, from, body }) => {
+            console.log('Mock SMS:', { to, from, body });
+            return { sid: 'MOCK_SID' };
+        }
+    }
+};
 
 // In-memory storage for OTPs
 const otpStore = new Map();

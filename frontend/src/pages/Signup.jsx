@@ -163,7 +163,7 @@ const Signup = () => {
       
         console.log('Submitting user data:', userData);
   
-        const response = await axios.post('http://localhost:5001/api/auth/register', userData);
+        const response = await axios.post('http://localhost:5000/api/auth/register', userData);
   
         console.log('Server response:', response.data);
   

@@ -1,11 +1,10 @@
+import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route, useLocation, Navigate } from "react-router-dom";
-import { getUserRole } from './services/api';
+import { Cloudinary } from "@cloudinary/url-gen";
+import { auto } from "@cloudinary/url-gen/actions/resize";
+import { autoGravity } from "@cloudinary/url-gen/qualifiers/gravity";
+import { getUserRole, userAPI } from './services/api';
 
-// import Navbar from "./components/Navbar";
-
-import React, { useState } from "react";
-
-// import Navbar from "./components/Navbar";
 // Components
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
@@ -15,49 +14,35 @@ import BookForm from "./components/BookForm";
 import UpdateBook from "./components/UpdateBook";
 import Sidebar from "./components/Sidebar";
 
-// Pages
+// Pages - Home & Auth
 import Home from "./pages/Home";
 import Home1 from "./pages/Home1";
-
 import Login from "./pages/Login";
+import Signup from "./pages/Signup";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
 import Services from "./pages/Services";
+import GetStartedPage from "./pages/GetStartedPage";
 
-import Home from "./pages/Home";  // Ensure Home is imported
-import About from "./pages/About";
-// import Footer from "./components/Footer";
-import GetStartedPage from "./pages/GetStartedPage"; 
-import Sidebar from "./components/Sidebar";
+// Pages - Library Management
 import LibraryManagement from "./pages/dashboard";
 import BorrowBooksForm from "./pages/BorrowBooksForm";
 import ReturnBooksForm from "./pages/ReturnBooksForm";
-// import Transactions from "./pages/transactions";
-import UpdateBorrowedBookForm from"./pages/BorrowUpdate";
-import Signup from "./pages/Signup";  // Updated import statement
-import Home1 from "./pages/Home1"; // Importing Home1
-import MoodBasedBookRecommendation from "./pages/MoodBasedBookRecommendation"; // Updated import statement
-import UserAccount from "./pages/UserAccount";  // Match the casing of the actual file
+import Transactions from "./pages/transactions";
+import UpdateBorrowedBookForm from "./pages/BorrowUpdate";
+import MoodBasedBookRecommendation from "./pages/MoodBasedBookRecommendation";
+import UserAccount from "./pages/UserAccount";
 import UserAdmin from "./pages/UserAdmin";
 
-// Create a ProtectedRoute component for admin-only access
-const AdminRoute = ({ children }) => {
-  const token = localStorage.getItem('token');
-  const role = getUserRole();
-
-  if (!token || role !== 'admin') {
-    return <Navigate to="/login" replace />;
-  }
-
-  return children;
-};
-
+// Pages - Library Features
 import EmyLibrary from "./pages/EmyLibrary";
 import CategoryPage from "./pages/CategoryPage";
 import LearnMore from "./pages/h-Learnmore";
 import WatchLater from "./pages/WatchLater";
 import BookDetails from "./pages/BookDetails";
-import GetStartedPage from "./pages/GetStartedPage";
+import Analyze from "./pages/Analyze";
+
+// Pages - Inventory & Payments
 import IForme from "./pages/i-forme";
 import IBookList from "./pages/i-booklist";
 import IUpdateBook from "./pages/i-UpdateBook";
@@ -66,20 +51,17 @@ import IPaymentTable from "./pages/i-payment";
 import CashPayment from "./pages/i-cash";
 import CardPayment from "./pages/i-card";
 import NotificationForm from "./pages/notification";
-import LibraryManagement from "./pages/dashboard";
-import BorrowBooksForm from "./pages/BorrowBooksForm";
-import ReturnBooksForm from "./pages/ReturnBooksForm";
 
+// Protected Route Component
+const AdminRoute = ({ children }) => {
+  const token = localStorage.getItem('token');
+  const role = getUserRole();
 
-import Transactions from "./pages/transactions";
-import UpdateBorrowedBookForm from"./pages/BorrowUpdate";
-import Analyze from "./pages/Analyze";
-
-import UpdateBorrowedBookForm from "./pages/BorrowUpdate";
-
-import { Cloudinary } from "@cloudinary/url-gen";
-import { auto } from "@cloudinary/url-gen/actions/resize";
-import { autoGravity } from "@cloudinary/url-gen/qualifiers/gravity";
+  if (!token || role !== 'admin') {
+    return <Navigate to="/login" replace />;
+  }
+  return children;
+};
 
 // App content component to manage conditional layout and modals
 function MainContent() {
@@ -106,30 +88,22 @@ function MainContent() {
     .format("auto")
     .quality("auto")
     .resize(auto().gravity(autoGravity()).width(500).height(500));
-
   return (
     <>
-      {/* {!hideNavbarAndFooter && <Navbar />} */}
-      <Routes>
-      <Route path="/" element={<Home1  />} />
-
-        <Route path="/home" element={<Home />} /> {/* Home page added correctly here */}
       {!hideNavbarAndFooter && <Navbar />}
-
       <Routes>
         {/* Home routes */}
-        <Route path="/" element={<Home />} />
-        <Route path="/home1" element={<Home1 />} />
-        <Route path="/home2" element={<Home1 />} />
+        <Route path="/" element={<Home1 />} />
+        <Route path="/home1" element={<Home />} />
+
 
         {/* Auth and info */}
         <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/services" element={<Services />} />
         <Route path="/get-started" element={<GetStartedPage />} />
-
-
 
         {/* Library and Books */}
         <Route path="/mylibrary" element={<EmyLibrary />} />
@@ -144,7 +118,7 @@ function MainContent() {
         <Route path="/a-updatebook/:isbn" element={<UpdateBook />} />
         <Route path="/a-booklist" element={<BookList onBookClick={handleBookClick} />} />
 
-        {/* "i-" prefixed pages */}
+        {/* Inventory and Payment routes */}
         <Route path="/bookform" element={<IForme />} />
         <Route path="/booklist" element={<IBookList />} />
         <Route path="/update-book" element={<IUpdateBook />} />
@@ -155,32 +129,19 @@ function MainContent() {
         <Route path="/notification" element={<NotificationForm />} />
 
         {/* Admin/Dashboard features */}
-
         <Route path="/sidebar" element={<Sidebar />} />
         <Route path="/dashboard" element={<LibraryManagement />} />
         <Route path="/borrow" element={<BorrowBooksForm />} />
         <Route path="/returns" element={<ReturnBooksForm />} />
-        {/* <Route path="/transactions" element={<Transactions />} /> */}
-        <Route path="/Borrowerupdate"element={<UpdateBorrowedBookForm/>}/>
-        
-        <Route path="/signup" element={<Signup />} /> {/* Updated route */}
-        <Route path="/MoodBasedBookRecommendation" element={<MoodBasedBookRecommendation />} /> {/* Updated route */}
-        
-        <Route path="/UserAccount" element={<UserAccount />} /> {/* Updated route */}
-        <Route path="/UserAdmin" element={<AdminRoute><UserAdmin /></AdminRoute>} /> 
-        
-        
-
-      </Routes>
-      {/* {!hideNavbarAndFooter && <Footer />} */}
-
-          <Route path="/transactions" element={<Transactions />} />
-        <Route path="/Borrowerupdate"element={<UpdateBorrowedBookForm/>}/>
-        <Route path="/banalyze" element={<Analyze/>}/>
-        
+        <Route path="/transactions" element={<Transactions />} />
         <Route path="/borrowerupdate" element={<UpdateBorrowedBookForm />} />
+        <Route path="/banalyze" element={<Analyze />} />
 
-          </Routes>
+        {/* User features */}
+        <Route path="/MoodBasedBookRecommendation" element={<MoodBasedBookRecommendation />} />
+        <Route path="/UserAccount" element={<UserAccount />} />
+        <Route path="/userAdmin" element={<AdminRoute><UserAdmin /></AdminRoute>} />
+      </Routes>
 
       {isModalOpen && selectedBook && (
         <BookModal book={selectedBook} onClose={handleCloseModal} />

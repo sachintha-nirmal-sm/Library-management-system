@@ -9,7 +9,7 @@ import img3 from "../assets/img/slideshow3.jpg";
 import img4 from "../assets/img/slideshow4.jpg";
 import img5 from "../assets/img/slideshow5.jpeg";
 import BookModal from '../components/BookModal'; 
-import { FaSearch, FaBookOpen, FaBookReader, FaExclamationCircle, FaBookmark, FaEye, FaBook, FaStar } from 'react-icons/fa';
+import { FaSearch, FaBookOpen, FaBookReader, FaExclamationCircle, FaBookmark, FaEye, FaBook, FaStar, FaTimes } from 'react-icons/fa';
 import SplineBackground from '../components/SplineBackground'; 
 import axiosInstance from '../utils/axiosConfig';
 import './Home.css';
@@ -31,6 +31,7 @@ const Home = () => {
   const [categoryCounts, setCategoryCounts] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [showMoodPopup, setShowMoodPopup] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -38,7 +39,7 @@ const Home = () => {
       try {
         setLoading(true);
         const response = await axiosInstance.get('/api/books');
-        const books = response.data;
+        const books = Array.isArray(response.data?.data) ? response.data.data : [];
         
         // Sort books by date (newest first) and get exactly 3 most recent
         const sortedBooks = [...books]
@@ -199,6 +200,18 @@ const Home = () => {
     return DEFAULT_COVER;
   };
 
+  const handleSearchClick = () => {
+    setShowMoodPopup(true);
+  };
+
+  const handleSkip = () => {
+    setShowMoodPopup(false);
+  };
+
+  const handleLetsTry = () => {
+    navigate('/MoodBasedBookRecommendation');
+  };
+
   if (loading) {
     return (
       <div className="home-loading">
@@ -279,6 +292,7 @@ const Home = () => {
                   className="search-input"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
+                  onClick={handleSearchClick}
                 />
                 {searchQuery && (
                   <button
@@ -310,6 +324,26 @@ const Home = () => {
               </div>
             )}
           </div>
+
+          {/* Mood Recommendation Popup */}
+          {showMoodPopup && (
+            <div className="mood-popup-overlay">
+              <div className="mood-popup">
+                <button className="popup-close" onClick={handleSkip}>
+                  <FaTimes />
+                </button>
+                <h3>Would you like to try Mood Based Recommendation?</h3>
+                <div className="popup-buttons">
+                  <button className="popup-button popup-skip" onClick={handleSkip}>
+                    Skip
+                  </button>
+                  <button className="popup-button popup-try" onClick={handleLetsTry}>
+                    Let's Try
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
 
           {searchResults.length > 0 && (
             <div className="search-results">
