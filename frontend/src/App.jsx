@@ -24,10 +24,10 @@ import CardPayment from "./pages/i-card";
 
 import NotificationForm from "./pages/notification";
 
-import EmyLibrary from "./pages/EmyLibrary";
+// import EmyLibrary from "./pages/EmyLibrary";
 import Home1 from "./pages/Home1"; // Home1 page
 import BookModal from "./components/BookModal"; // BookModal component
-import BookForm from "./components/BookForm"; // BookForm component
+// import BookForm from "./components/BookForm"; // BookForm component
 import Sidebar from "./components/Sidebar";
 import LibraryManagement from "./pages/dashboard";
 import BorrowBooksForm from "./pages/BorrowBooksForm";
@@ -81,9 +81,9 @@ function MainContent() {
         <Route path="/notification" element={<NotificationForm />} />
 
          {/* Library management routes */}
-         <Route path="/mylibrary" element={<EmyLibrary />} />
+         {/* <Route path="/mylibrary" element={<EmyLibrary />} /> */}
         <Route path="/bookmodel" element={<BookModal />} />
-        <Route path="/bookform" element={<BookForm />} />
+        {/* <Route path="/bookform" element={<BookForm />} /> */}
         <Route path="/sidebar" element={<Sidebar />} />
         <Route path="/dashboard" element={<LibraryManagement />} />
         <Route path="/borrow" element={<BorrowBooksForm />} />
