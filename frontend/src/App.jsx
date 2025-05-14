@@ -46,7 +46,6 @@ import Transactions from "./pages/transactions";
 import UpdateBorrowedBookForm from"./pages/BorrowUpdate";
 import Analyze from "./pages/Analyze";
 
-import UpdateBorrowedBookForm from "./pages/BorrowUpdate";
 
 import { Cloudinary } from "@cloudinary/url-gen";
 import { auto } from "@cloudinary/url-gen/actions/resize";
