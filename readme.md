@@ -1,6 +1,6 @@
 # 📚 Library Management System
 
-A comprehensive MERN stack-based Library Management System that simplifies and streamlines library operations with modern digital solutions. This system offers robust features such as user management, inventory tracking, e-library access, and book lending/returning services. It also includes an innovative Mood-Based Book Recommendation System to enhance user experience.
+A comprehensive MERN stack-based Library Management System that simplifies and streamlines library operations with modern digital solutions. This system offers robust features such as user management, inventory tracking, e-library access, and book lending/returning services. It also includes an innovative *Mood-Based Book Recommendation System* to enhance user experience.
 
 ---
 
