@@ -2,13 +2,16 @@ const express = require('express');
 
 require('dotenv').config(); 
 
+// Route imports - consolidated to avoid duplicates
 const inventorysroutes = require("./routes/inventorys");
 const paymentsroutes = require("./routes/payments");
 const notificationsroutes = require("./routes/notifications");
-
 const borrowRoutes = require('./routes/borrowbooks');
 const returnRoutes = require('./routes/returnbooks');
-const otpRoutes = require('./routes/otp');
+// const otpRoutes = require('./routes/otp');
+const bookRoutes = require('./routes/bookRoutes');
+const watchLaterRoutes = require('./routes/watchLaterRoutes');
+const libraryRoutes = require('./routes/libraryRoutes');
 
 const mongoose = require('mongoose');
 const cors = require('cors');
@@ -51,9 +54,7 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-
 app.use(bodyParser.urlencoded({extended:true}));
-app.use("/api/inventorys",inventorysroutes);
 
 // Serve static files
 app.use(express.static(path.join(__dirname, '../frontend/build')));
@@ -62,29 +63,16 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 // Health check / root
 app.get('/', (req, res) => res.send('Hello World!'));
 
-// Route imports and usage
-const bookRoutes = require('./routes/bookRoutes');
-const watchLaterRoutes = require('./routes/watchLaterRoutes');
-const borrowRoutes = require('./routes/borrowbooks');
-const returnRoutes = require('./routes/returnbooks');
-const inventoryRoutes = require('./routes/inventorys');
-const paymentsRoutes = require('./routes/payments');
-const notificationsRoutes = require('./routes/notifications');
-const libraryRoutes = require('./routes/libraryRoutes');
-
-// API Routes
+// API Routes - using consistent route naming
 app.use('/api/books', bookRoutes);
 app.use('/api/watch-later', watchLaterRoutes);
 app.use('/api/borrowbooks', borrowRoutes);
 app.use('/api/returnbooks', returnRoutes);
-
-// Inventory, Payments, Notifications, OTP APIs
-
-app.use('/api/inventorys', inventoryRoutes);
-
-app.use('/api/payments', paymentsRoutes);
-app.use('/api/notifications', notificationsRoutes);
+app.use('/api/inventorys', inventorysroutes);
+app.use('/api/payments', paymentsroutes);
+app.use('/api/notifications', notificationsroutes);
 app.use('/api/library', libraryRoutes);
+// app.use('/api/otp', otpRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
