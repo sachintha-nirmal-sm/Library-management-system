@@ -74,6 +74,7 @@ const Analyze = () => {
 
   const options = {
     responsive: true,
+    maintainAspectRatio: false,
     plugins: {
       legend: {
         position: 'top',
@@ -96,13 +97,20 @@ const Analyze = () => {
       <div className="charts-container">
         <div className="chart-wrapper">
           <h2>Books by Category</h2>
-          <Bar options={options} data={categoryChartData} />
+          <div className="chart-container">
+            <Bar options={options} data={categoryChartData} />
+          </div>
         </div>
         <div className="chart-wrapper">
           <h2>Monthly Number of Books Borrowed</h2>
-          <Bar options={options} data={monthlyChartData} />
+          <div className="chart-container">
+            <Bar options={options} data={monthlyChartData} />
+          </div>
         </div>
       </div>
+      <footer className="analyze-footer">
+        <p>&copy; {new Date().getFullYear()} Library Management System. All rights reserved.</p>
+      </footer>
     </div>
   );
 };
